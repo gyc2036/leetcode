@@ -1,0 +1,65 @@
+class Solution {
+public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        vector<int> nums3(nums1.size() + nums2.size(), 0);
+        int temp1, temp2, cursor1(0), cursor2(0);
+        for(int i = 0; i < nums1.size() + nums2.size(); i++){
+            if(cursor1 == nums1.size()){
+                nums3[i] = nums2[cursor2];
+                cursor2++;
+            } else if (cursor2 == nums2.size()){
+                nums3[i] = nums1[cursor1];
+                cursor1++;
+            } else {
+            if(nums1[cursor1] <= nums2[cursor2]){
+                nums3[i] = nums1[cursor1];
+                cursor1++;
+            } else {
+                nums3[i] = nums2[cursor2];
+                cursor2++;
+            }
+            }
+        }
+                if(nums3.size() / 2 * 2 == nums3.size()){
+                    return (double)(nums3[nums3.size() / 2 - 1] + nums3[nums3.size() / 2]) / 2;
+                } else {
+                    return nums3[nums3.size() / 2];
+                }
+        /*
+        int temp1, temp2, cursor1(0), cursor2(0);
+        if(!nums1.empty() && !nums2.empty()){
+            for(int i = 0; i < (nums1.size() + nums2.size()) / 2; i++){
+                if(nums1[cursor1] <= nums2[cursor2]){
+                    temp1 = nums1[cursor1];
+                    temp2 = nums2[cursor2];
+                    cursor1++;
+                } else {
+                    temp1 = nums2[cursor2];
+                    temp2 = nums1[cursor1];
+                    cursor2++;
+                }
+            }
+            if((cursor1 + cursor2) * 2 == nums1.size() + nums2.size()){
+                return (double)(temp1 + temp2) / 2;
+            } else {
+                return temp2;
+            }
+        } else {
+            if(nums1.empty()){
+                if(nums2.size() / 2 * 2 == nums2.size()){
+                    return (double)(nums2[nums2.size() / 2 - 1] + nums2[nums2.size() / 2]) / 2;
+                } else {
+                    return nums2[nums2.size() / 2];
+                }
+            } else {
+                if(nums1.size() / 2 * 2 == nums1.size()){
+                    return (double)(nums1[nums1.size() / 2 - 1] + nums1[nums1.size() / 2]) / 2;
+                } else {
+                    return nums1[nums1.size() / 2];
+                }
+            }
+        }
+        */
+
+    }
+};
