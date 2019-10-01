@@ -1,0 +1,67 @@
+bool rowCompleteTop = false;
+int currIndexTop = 0;
+while (rowCompleteTop == false){
+    
+    int toAddIndex = (2*(numRows - level));
+    
+    if (currIndexTop+ toAddIndex > s.size()){
+            rowCompleteTop = true;
+    }
+    else{
+            result += s[currIndexTop+ toAddIndex];
+
+    }
+    
+    currIndexTop += toAddIndex;
+    }
+
+    level++;
+
+for (int i = 1; i< numRows-1 ; i++){
+   bool rowComplete = false;
+    int currIndex = i;
+    result += s[i];
+    up = false;
+
+    while (rowComplete == false){
+        int toAddIndex;
+        if (up){
+
+            toAddIndex = (2*(level -1));
+            if ((currIndex+ toAddIndex) > s.size())
+                rowComplete = true;
+            else
+                result += s[currIndex+ toAddIndex];
+        }
+            else{
+
+                toAddIndex = (2*(numRows - level));
+                if (currIndex+ toAddIndex > s.size())
+                    rowComplete = true;
+                else
+                    result += s[currIndex+ toAddIndex];
+            }
+        up = !up;
+        currIndex += toAddIndex;
+    }
+    level++;
+}
+bool rowCompleteBot = false;
+int currIndexBot = numRows-1;
+result += s[numRows-1];
+while (rowCompleteBot == false){
+    
+    int toAddIndex = (2*(level -1));
+    
+    if (currIndexBot+ toAddIndex > s.size())
+        rowCompleteBot = true;
+    else{
+        result += s[currIndexBot+ toAddIndex];
+       
+    }
+    
+    currIndexBot += toAddIndex;
+}
+
+return result;
+}
