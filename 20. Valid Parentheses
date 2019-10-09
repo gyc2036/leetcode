@@ -1,0 +1,51 @@
+class Solution {
+public:
+    
+    bool isValid(string s) {
+        map<char,char>mapchar;
+mapchar[')']='(';
+mapchar['}']='{';
+mapchar[']']='[';
+        stack<char>cd;
+     for(int i=0;i<s.length();i++){
+   
+        if(s[i]=='(' || s[i]=='[' || s[i]=='{'){
+            cd.push(s[i]);
+        }
+        else{
+      
+            if(!cd.empty()) {
+                char check = cd.top();
+                if (check == mapchar[s[i]]) {
+                    cd.pop();
+                }
+                else{
+          
+                    cd.push(s[i]);
+                }
+            }
+            else{
+           
+                cd.push(s[i]);
+                break;
+            }
+
+        }
+    }
+
+    int c=0;
+    while(!cd.empty()){
+        c++;
+
+        cd.pop();
+    }
+        if(c>0){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    
+    
+};
