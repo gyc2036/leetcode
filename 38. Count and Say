@@ -1,0 +1,37 @@
+string countnsay2(string s)
+{
+    int index = 0 ; 
+    int count = 1 ;
+    string res = "" ;
+    while (index < s.size()-1)
+    {
+        if (s[index] == s[index+1])
+        {
+            count++ ; index++ ;
+        }
+        else
+        {
+            res += to_string(count) + s[index] ;
+            count = 1 ; index++ ;
+        }
+    }
+    // Count last numbers
+    if (count > 0)
+        res += to_string(count) + s[index] ;
+    else
+        res += to_string(1) + s[index] ;
+    
+    return res ;
+}
+string countAndSay(int n) {
+    
+    string res = "1" ;
+    int count = 1 ;
+    while(count < n)
+    {
+        res = countnsay2(res) ;
+        count++ ;
+    }
+    return res ;  
+}
+};
