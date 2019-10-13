@@ -1,0 +1,40 @@
+class Solution {
+public:
+    int divide(int dividend, int divisor) {
+        int flag = 1;
+        if((dividend>0 && divisor<0) || (dividend<0 && divisor>0))
+            flag = -1;
+        
+        int quotient = 0;
+        
+        if(dividend == divisor)
+            return 1;
+        if(divisor == INT_MIN)
+            return 0;
+        if(dividend == INT_MIN){
+            if(divisor == 1)
+                return INT_MIN;
+            dividend -= (flag*divisor); quotient++;
+        }
+        
+        dividend = abs(dividend);
+        divisor = abs(divisor);
+        
+        int w=1;
+        int td = divisor;
+        while(dividend >= td){
+            dividend -= td;
+            if(quotient >= INT_MAX-w)
+                return INT_MAX;
+            quotient += w;
+            
+            if(td < INT_MAX-td){        // the increase of divisor is exponential
+                td += td;
+                w += w;
+            }
+            if(dividend < td && dividend >= divisor){       // reset increasement interval
+                td = divisor; w = 1;}
+        }
+        return (flag == 1) ? quotient : -quotient;
+    }
+};
