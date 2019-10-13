@@ -1,0 +1,37 @@
+class Solution {
+public:
+    void solveSudoku(vector<vector<char>>& board) {
+        solveSudokuAux(board, -1);
+    }
+    
+    bool solveSudokuAux(vector<vector<char>>& board, int lastKnownIndex) {
+        
+        for (int i = lastKnownIndex + 1; i < 81; i++) {
+            int rowI = i/9, colI = i%9;
+            if (board[rowI][colI] == '.') {
+                for (int k = 0; k < 9; k++) {
+                    char v = '1' + k;
+                    if (isCandidate(board, rowI, colI, v)){
+                        board[rowI][colI] = v;
+                        if (solveSudokuAux(board, i)) {
+                            return true;
+                        }
+                        board[rowI][colI] = '.';
+                    }
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    bool isCandidate(vector<vector<char>>& board, int i, int j, char v) {
+        int smxI = i/3*3, smxJ = j/3*3;
+        for (int k = 0; k < 9; k++) {
+            if (board[i][k] == v) { return false; }
+            if (board[k][j] == v) { return false; }
+            if (board[smxI+k/3][smxJ+k%3] == v) { return false; }
+        }
+        return true;
+    }
+};
