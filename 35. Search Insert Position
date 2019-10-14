@@ -1,0 +1,31 @@
+class Solution {
+public:
+
+//this is a classic binary search problem
+
+int searchInsert(vector<int>& nums, int target) {
+    
+    int first = 0;
+    int last = nums.size()-1;
+    int pos;
+    int newLoc;
+    int mid;                        //define in loop
+    
+    bool flag = true;  //flag state is at false (not-found)
+    
+    while(flag && first <= last){
+        mid = ((first+last)/2);
+        if(nums[mid] == target){
+            flag = false;        //break loop
+            pos = mid;     //index position is re-assigned
+        }else if(nums[mid] > target){
+            last = mid-1;
+            pos = last+1;
+        }else{
+            first = mid+1;
+            pos = first;
+        }
+    }
+   return pos; 
+}
+};
