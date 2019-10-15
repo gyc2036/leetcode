@@ -1,0 +1,18 @@
+class Solution {
+public:
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        int n = strs.size();
+        if (n == 0) return {};
+        unordered_map<string, vector<string>> map;  
+        for (auto str : strs) {
+            string s = str;
+            sort(str.begin(), str.end()); // can use counting sort to bring it to O(m)
+            map[str].push_back(s); // key is sorted word and list contains anagrams.
+        }
+        vector<vector<string>> result;
+        for (auto [key, value] : map) { 
+            result.push_back(value);
+        }
+        return result;
+    }
+};
