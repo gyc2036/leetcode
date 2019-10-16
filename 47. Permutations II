@@ -1,0 +1,39 @@
+class Solution {
+public:
+    vector<vector<int>> ret;
+    
+    void search(vector<int>& nums, vector<pair<int,int>>& tmpSum, int size)
+    {
+        if (size == nums.size()) {
+            vector<int> tmp;
+            
+            for (auto &it: tmpSum) {
+                tmp.push_back(it.first);
+            }
+            ret.push_back(tmp);
+            
+            return;
+        }
+                
+        for (int i = 0; i < nums.size(); i++) {
+            auto it = find(tmpSum.begin(), tmpSum.end(), make_pair(nums[i], i));
+            if (it == tmpSum.end()) {
+                tmpSum.push_back(make_pair(nums[i], i));
+                search(nums, tmpSum, size+1);
+                tmpSum.pop_back();
+                while (i < nums.size()-1 && nums[i+1] == nums[i]) i++;
+            }
+        }
+    }
+    
+    vector<vector<int>> permuteUnique(vector<int>& nums) {
+        vector<pair<int,int>> tmpSum;
+        
+        if (nums.size()) {
+            sort(nums.begin(), nums.end());
+            search(nums, tmpSum, 0);
+        }
+        
+        return ret;
+    }
+};
