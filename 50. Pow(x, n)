@@ -1,0 +1,21 @@
+class Solution {
+public:
+    double myPow(double x, int n) {
+        double ans = 1.0;
+        long long N = n;
+        if (N < 0){
+            x = 1 / x;
+            N = (unsigned int)n * -1;
+        }
+        long long i=1;
+         while(i<=N){
+          ans=ans*x;
+          if(i*2<N){
+              ans=ans*ans;
+              i=i*2+1;
+          }else
+             ++i;
+         }
+        return ans;
+    }
+};
