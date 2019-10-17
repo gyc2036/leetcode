@@ -1,0 +1,24 @@
+class Solution {
+public:
+    vector<vector<int>> subsets(vector<int>& nums) {
+        vector<vector<int>> power_set;
+        power_set.reserve(2 << nums.size());
+        vector<int> prefix;
+        
+        helper(power_set, prefix, nums, 0);
+        
+        return power_set;
+    }
+    
+    void helper(vector<vector<int>>& power_set, vector<int>& prefix, const vector<int>& nums, int idx) {
+        if (idx == nums.size()) {
+            power_set.push_back(prefix);
+        } else {
+            helper(power_set, prefix, nums, idx + 1);
+            
+            prefix.push_back(nums[idx]);
+            helper(power_set, prefix, nums, idx + 1);
+            prefix.pop_back();
+        }
+    }
+};
