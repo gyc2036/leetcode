@@ -1,0 +1,27 @@
+class Solution {
+public:
+    string minWindow(string S, string T) {
+        int m = S.size(), n = T.size();
+        if (n <= 0 || m < n) return "";
+
+        int require[128] = {0}; // store the letters in T with their frequencies.
+        for (int i = 0; i < n; ++i) require[T[i]]++;    // Store the T letters and their counts.
+
+        int count = 0;
+        int minLen = INT_MAX, minIndex = 0;
+        for (int start = 0, end = 0; end < m; ++end) {
+            require[S[end]]--;    // seen this letter once.
+            if (require[S[end]] >= 0) count++;    // used one valid letter
+            while (count == n) {    // while we still have valid letters.
+                if (end - start + 1 < minLen) {   // get length of substring.
+                    minLen = end - start + 1;     // update min length
+                    minIndex = start;   // store minIndex
+                }
+                require[S[start]]++;    // increment current variable to take it back to >= 0
+                if (require[S[start]] > 0) count--; // used a valid letter, decrement count.
+                start++;    // move starting position
+            }
+        }
+        return minLen == INT_MAX ? "" : S.substr(minIndex, minLen);
+    }
+};
