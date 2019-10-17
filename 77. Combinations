@@ -1,0 +1,25 @@
+class Solution {
+public:
+    vector<vector<int>> combine(int n, int k) {
+        vector<vector<int>> ans;
+        vector<int> num, idx, tmp;
+        
+        for(int i = 1 ; i <= n; i++)
+            num.push_back(i);
+        
+        idx.resize(n);
+        for(int i = n-1 ; i >= n-k ; i--)
+            idx[i] = 1;
+        
+        do {
+            tmp.clear();
+            for(int i = 0; i < idx.size(); i++) {
+                if(idx[i] == 1)
+                    tmp.push_back(num[i]);
+            }
+            ans.push_back(tmp);
+        } while(next_permutation(idx.begin(), idx.end()));
+        
+        return ans;
+    }
+};
