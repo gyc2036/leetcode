@@ -1,0 +1,53 @@
+class Solution {
+public:
+    string addBinary(string a, string b) {
+        reverse(a.begin(),a.end());
+        reverse(b.begin(),b.end());
+        int as=a.size(),bs=b.size(),sum=0;
+        if(as>bs)
+        {
+            for(int i=0;i<as-bs;i++)
+                b+='0';
+        }
+        else 
+        {
+            for(int i=0;i<bs-as;i++)
+                a+='0';
+        }
+        int reminder=0;
+        as=a.size();
+        bs=b.size();
+        for(int i=0;i<as;i++)
+        {
+            int sum=(a.at(i)-48)+(b.at(i)-48)+reminder;
+            if(sum==0)
+            {
+               a.at(i)='0';
+               reminder=0;
+            }
+                
+            else if(sum==1)
+            {
+                a.at(i)='1';
+                reminder=0;
+            }
+                
+            else if(sum==2)
+            {
+                a.at(i)='0';
+                reminder=1;
+            }
+            else if(sum==3)
+            {
+                a.at(i)='1';
+                reminder=1;
+            }   
+        }
+        if(reminder>0)
+        {
+            a+='1';
+        }
+        reverse(a.begin(),a.end());
+        return a;
+    }
+};
