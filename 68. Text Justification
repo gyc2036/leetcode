@@ -1,0 +1,81 @@
+class Solution {
+public:
+    vector<string> fullJustify(vector<string>& words, int maxWidth) {
+        int n = words.size();
+        vector<string> result = {};
+        
+        int i = 0;
+        string line = "";
+        vector<string> curr_words = {};
+        vector<string> paddings = {};
+        
+        while (i < n) {
+            int curr_len = 0;
+            int curr_words_len = 0;
+            
+            curr_words.clear();
+
+            // trying to capture as many words as possible for the current line
+            while (i < n) {
+                curr_len += words[i].length();
+                
+                if (curr_len != maxWidth)
+                    curr_len += 1;
+                
+                if (curr_len > maxWidth)
+                    break;
+                
+                curr_words_len += words[i].length();
+
+                curr_words.push_back(words[i]);
+
+                ++i;
+            }
+    
+            // compute some params for the current line
+            int num_words  = curr_words.size();
+            int num_blanks = num_words > 1 ? num_words - 1 : 1;
+            int num_spaces = maxWidth - curr_words_len;
+            int spaces_per_word = num_spaces / num_blanks;
+            int spaces_per_word_left = num_spaces % num_blanks;
+  
+            // create a minimal padding
+            string padding = "";
+            for (int k = 0; k < spaces_per_word; ++k)
+                padding.push_back(' ');
+
+            // populate padding for each word
+            paddings.clear();
+            for (int k = 0; k < num_blanks; ++k)
+                paddings.push_back(padding);
+
+            // for each padding assign more spaces on the left 
+            // if the number of spaces on a line do not divide evenly between words
+            for (int k = 0; k < spaces_per_word_left; ++k)
+                paddings[k].push_back(' ');
+
+            // initially the current line is empty
+            line = "";
+            
+            if (i != n) { // if it is not the last line then alternate words and paddings
+                for (int k = 0; k < curr_words.size(); ++k) {
+                    line += curr_words[k];
+                    if (k < paddings.size())
+                        line += paddings[k];
+                }
+            } else { // if it is the last line, then put the words first and then add spaces left at the end
+                for (int k = 0; k < curr_words.size(); ++k)
+                    line += (!line.empty() ? " " : "") + curr_words[k];
+                
+                int num_spaces_left = maxWidth - line.length();
+                for (int k = 0; k < num_spaces_left; ++k)
+                    line.push_back(' ');
+            }
+            
+            // add the current justified line to the result
+            result.push_back(line);
+        }
+        
+        return result;
+    }
+};
