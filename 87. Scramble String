@@ -1,0 +1,78 @@
+class Solution {
+public:
+    int s[256];
+    bool isScramble(string s1, string s2) {
+        int s1_len = s1.length();
+        int s2_len = s2.length();
+        for(int i = 0;i < 256;i ++) s[i] = 0;
+        if(s1_len == 0 && s2_len == 0) return true;
+        else if(s1_len != s2_len) return false;
+        else return isScramble(s1, 0, s1_len - 1, s2, 0, s2_len - 1);
+    }
+    
+    bool isScramble(string &s1, int s1_i, int s1_j, string &s2, int s2_i, int s2_j) {
+        if(s1_i == s1_j && s2_i == s2_j) {
+            return s1[s1_i] == s2[s2_i];
+        }
+        
+        int i = s1_i, j = s2_i;
+        int ones = 0, minus_ones = 0;
+        while(i <= s1_j) {
+            s[s1[i]] ++;
+            if(s[s1[i]] > 0)
+                ones ++;
+            else
+                minus_ones --;
+            s[s2[j]] --;
+            if(s[s2[j]] >= 0)
+                ones --;
+            else
+                minus_ones ++;
+            if(ones == 0 && minus_ones == 0) {
+                break;
+            }
+            i ++;
+            j ++;
+        }
+        for(int p = s1_i, q = s2_i;p <= i && p <= s1_j;p ++, q ++) {
+            s[s1[p]] = 0;
+            s[s2[q]] = 0;
+        }
+        if(i < s1_j) {
+            if( isScramble(s1, s1_i, i, s2, s2_i, j) && isScramble(s1, i + 1, s1_j, s2, j + 1, s2_j))
+                return true;
+        }
+       
+        i = s1_i;
+        j = s2_j;
+        ones = 0;
+        minus_ones = 0;
+        while(i <= s1_j) {
+            s[s1[i]] ++;
+            if(s[s1[i]] > 0)
+                ones ++;
+            else
+                minus_ones --;
+            s[s2[j]] --;
+            if(s[s2[j]] >= 0)
+                ones --;
+            else
+                minus_ones ++;
+            if(ones == 0 && minus_ones == 0) {
+                 break;
+            }
+            i ++;
+            j --;
+        }
+        for(int p = s1_i, q = s2_j;p <= i && p <= s1_j;p ++, q --) {
+            s[s1[p]] = 0;
+            s[s2[q]] = 0;
+        }
+        if(i >= s1_j){
+            //cout<<s1.substr(s1_i, s1_j - s1_i + 1)<<" "<<s2.substr(s2_i, s2_j - s2_i + 1)<<endl;
+            return false;
+        }
+        else return isScramble(s1, s1_i, i, s2, j, s2_j) && isScramble(s1, i + 1, s1_j, s2, s2_i, j - 1);
+       
+    }
+};
