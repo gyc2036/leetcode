@@ -1,0 +1,54 @@
+class Solution {
+public:
+    ListNode* partition(ListNode* head, int x) {
+        
+        ListNode* temp = head;
+        ListNode* read = head;
+        ListNode* write = head;
+        
+        while (write != NULL && write->val < x)write = write->next;
+        
+        if (!write)return head;
+        
+        
+        read = write->next;
+        
+        while (read != NULL){
+            
+            if (read->val >= x){
+                read = read->next;
+                continue;
+            }
+            
+            int t = read->val;
+            bool f = true;
+            while (write != NULL){
+                
+                int tt = write->val;
+                write->val = t;
+                t = tt;
+                
+                write = write->next;
+                
+                while (write && write != read && write->val < x){
+                    write = write->next;
+                }
+                
+                if (f){
+                    f = false;
+                    temp = write;
+                }
+                if (write == read){
+                    write->val = t;
+                    break;
+                }
+            }
+            
+            read = write->next;
+            write = temp;
+        }
+        
+        return head;
+        
+    }
+};
