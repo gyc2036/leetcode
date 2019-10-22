@@ -1,0 +1,36 @@
+class Solution {
+public:
+    ListNode* insertionSortList(ListNode* head) {
+            ListNode* dummy = new ListNode(INT_MIN);
+            dummy->next = head;
+            ListNode* cur = head;
+            ListNode* pre = dummy;
+            if (!head || !head->next) return head;
+            
+            while(cur)
+            {
+                    ListNode* tra = dummy;
+                    while(tra!=cur)
+                    {
+                            if (tra->val<=cur->val && tra->next->val>cur->val)
+                            {
+                                    ListNode* tmp = cur->next;
+                                    ListNode* tra_ne = tra->next;
+                                    tra->next = cur;
+                                    cur->next = tra_ne;
+                                    pre->next = tmp;
+                                    cur = tmp;
+                                    break;
+                            }
+                            tra = tra->next;
+                    }
+                    if (tra==cur) 
+                    {
+                            cur = cur->next;
+                            pre = pre->next;
+                    }
+            }
+            cout<<INT_MIN<<endl;
+            return dummy->next;
+    }
+};
