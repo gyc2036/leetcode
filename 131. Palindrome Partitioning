@@ -1,0 +1,33 @@
+class Solution {
+    bool isPalindrome(string &s, int start, int end) {
+         while(start < end && s[start] == s[end]) {
+           start++;
+           end--;
+         }
+         return start >= end;;
+    }
+
+    void helper(string &s, int index, vector<string> &cur, vector<vector<string>> &result) {
+      if(index == s.size() && !cur.empty()) {
+         result.emplace_back(cur);
+         return;
+      }
+
+      for(int i = index; i< s.size(); i++) 
+        if(isPalindrome(s, index, i)) {      
+          cur.emplace_back(s.substr(index, i - index + 1));  
+          helper(s, i+1, cur, result);
+          cur.pop_back(); 
+        }
+}
+
+public:
+    vector<vector<string>> partition(string s) {
+        if(s.empty())
+            return {};
+        vector<string> cur;
+        vector<vector<string>> result;
+        helper(s, 0, cur, result);
+        return result;
+    }
+};```
