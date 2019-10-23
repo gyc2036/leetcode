@@ -1,0 +1,51 @@
+class Solution {
+public:
+    // creates 2D array where arr[i][j] indicates s[i:j] inclusive is a palindrome
+    vector<vector<bool>> build2DPalin(string & s) {
+        vector<vector<bool>> is_palin(s.size(), vector<bool>(s.size(), false));
+        for (int i = 0; i < s.size(); i++) {
+            if (i+1 < s.size() && s[i] == s[i+1]) {
+                is_palin[i][i+1] = true;
+            }
+            is_palin[i][i] = true;
+        }
+        
+        for (int i = s.size()-3; i >= 0; i--) {
+            for (int j = i+1; j < s.size(); j++) {
+                if (s[i] == s[j] && is_palin[i+1][j-1]) {
+                    is_palin[i][j] = true;
+                }
+            }
+        }
+        return is_palin;
+    }    
+    
+    int minCut(string s) {
+        vector<vector<bool>> is_palin = build2DPalin(s);
+        unordered_map<int, unordered_map<int,int>> dp;
+        return minCut(s, 0, s.size()-1, dp, is_palin)-1;
+    }
+    
+    // Returns minCut from i to j using memorization and 2D is palindrome array
+    int minCut(string & s, int i, int j, unordered_map<int, unordered_map<int,int>> & dp, vector<vector<bool>> & is_palin) {
+        if (dp.find(i) != dp.end() && dp[i].find(j) != dp[i].end()) return dp[i][j];
+        
+        int res = INT_MAX;
+        if (is_palin[i][j]) {
+            res = 1; // palindromes are the best
+        }
+        else {
+            // look for a palindrom then split it
+            // any non palin split is clearly sub-optimal
+            for (int k = i+1; k <= j; k++) {
+                if (is_palin[i][k-1]) {
+                    res = min(res, 1 + minCut(s, k, j, dp, is_palin));
+                }
+                if (res == 1) break; // optimization really
+            }
+        }
+        
+        dp[i][j] = res;
+        return res;
+    }
+};
