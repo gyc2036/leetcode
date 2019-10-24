@@ -1,0 +1,99 @@
+class Solution {
+
+public:
+
+int compute(int i, vector<vector<int>> &points)
+{
+    map<long double, int> mymap; //map holding real slopes
+    map<long double, int> myinfmap; //map holding slopes of Lines parallel to Y-Axis
+    
+    long double t;
+    
+    //We need to use long double to deal with cases like [[0,0],[94911151,94911150],[94911152,94911151]]. Slope of [0,0] with last two number must output different numbers.
+    
+    int max=0, max1=0;
+    int same=0;
+    
+    for(int j=i+1; j<points.size(); j++)
+    {
+        
+        if(points[i][0]==points[j][0] && points[i][1]==points[j][1])
+        {
+            same++;
+            continue;
+        }
+        else if(points[i][0] == points[j][0])
+        {
+             t= points[j][0];
+            if(myinfmap.find(t)==myinfmap.end())
+            {
+                myinfmap.insert({t, 1});
+            }
+            else
+            {
+                myinfmap[t]+=1;
+            }
+    
+        }
+        else
+        {
+
+            t= (long double)(points[i][1]-points[j][1])/(long double)(points[i][0]-points[j][0]);
+            if(mymap.find(t)==mymap.end())
+            {
+                mymap.insert({t, 1});
+            }
+            else
+            {
+                mymap[t]+=1;
+            }
+        
+        }
+    }
+    
+    for(auto it=mymap.begin(); it!=mymap.end(); it++)
+    {
+        if(it->second>max)
+        {
+            max=it->second;
+        }
+    
+    }
+   
+    for(auto it=myinfmap.begin(); it!=myinfmap.end(); it++)
+    {
+    
+        if(it->second>max1)
+        {
+            max1=it->second;
+        }
+    
+    }
+    
+    max=max>max1?max:max1;
+    return max+1+same;
+
+}
+int maxPoints(vector<vector<int>>& points) {
+
+    int temp, max=0;
+    int N=points.size();
+    
+    for(int i=0; i<N; i++)
+    {
+        
+        temp=compute(i, points); //compute computes slope of ith point with i+1 till N and returns the maximum frequency of points with same slope.
+    
+        if(max<temp)
+        {
+            // cout<<i<<endl;
+            max=temp;
+        }
+        if(N-i<=max)
+            break;
+        
+    }
+    
+    return max;
+}
+};
