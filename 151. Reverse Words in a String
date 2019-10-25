@@ -1,0 +1,27 @@
+class Solution {
+public:
+    string reverseWords(string s) {
+        while(s.back()==' ') s.pop_back();
+        reverse(s.begin(),s.end());
+        while(s.back()==' ') s.pop_back();
+        
+        istringstream ss(s);
+        string token;
+        
+        vector<string> op;
+        string output="";
+        while(getline(ss,token,' ')){
+            reverse(token.begin(),token.end());
+            // op+=token+" ";
+            if(token!="")
+                op.push_back(token);
+        }
+        for(int i=0; i<op.size(); i++) {
+            output+=op[i];
+            if(i!=op.size()-1) {
+                output+=" ";
+            }
+        }
+        return output;
+    }
+};
