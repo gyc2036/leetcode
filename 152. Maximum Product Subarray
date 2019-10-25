@@ -1,0 +1,14 @@
+ int maxProduct(vector<int>& nums) {
+        int minProd = nums[0]; // max product ending at current element
+        int maxProd = nums[0]; // min ...
+        int maxRet = nums[0];
+        for (int i = 1; i < nums.size(); ++i){
+            if (nums[i] < 0){
+                swap(minProd, maxProd);
+            }
+            minProd = min(nums[i], nums[i] * minProd);
+            maxProd = max(nums[i], nums[i] * maxProd);
+            maxRet = max(maxRet, maxProd);
+        }
+        return maxRet;
+    }
