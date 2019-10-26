@@ -1,0 +1,29 @@
+class Solution {
+public:
+    bool isOneEditDistance(string s, string t) {
+        // count the same chars. if there are max(s, t) -1 then they are one edit distance away
+        int same = 0;
+        int i = 0, j = 0;
+        while ( i < size(s) && j < size(t) ) {
+            if (s[i] == t[j]) {
+                same++;
+                i++, j++;
+            }
+            else { 
+                // increase where we have more chars o.w increase both
+                if (size(t) - j == size(s) -i) {
+                    i++,j++;
+                }
+                else if (size(t) - j > size(s) -i)
+                    j++;
+                else
+                    i++;
+            }
+        }
+        
+        if (same == max(size(s), size(t)) -1)
+            return true;
+        else
+            return false;
+    }
+};
