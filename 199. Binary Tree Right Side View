@@ -1,0 +1,24 @@
+class Solution {
+public:
+    vector<int> rightSideView(TreeNode* root) {
+        vector<int> result;
+        if (!root) {return result;}
+        //BFS
+        queue<TreeNode*> q;
+        q.push(root);
+        while (!q.empty()) {
+            result.push_back(q.front()->val);
+            for (int i = q.size(); i > 0; --i) {
+                TreeNode* node = q.front();
+                if (node->right) {
+                    q.push(node->right);
+                }
+                if (node->left) {
+                    q.push(node->left);
+                }
+                q.pop();
+            } // end of a level
+        }
+        return result;
+    }
+};
