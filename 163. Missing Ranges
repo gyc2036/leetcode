@@ -1,0 +1,57 @@
+class Solution {
+public:
+vector findMissingRanges(vector& nums, int lower, int upper) {
+vector res;
+vector pls,cls;
+
+    int i=0;
+   
+    if(nums.size()>=1){
+    while(i<nums.size()-1){
+        long long low=nums[i];
+        long long high=nums[i+1];
+        if(high-low==2)
+        {
+            string str;
+            str=to_string(low+1);
+            pls.push_back(str);
+        }
+        else if(high-low>2){
+            string str;
+             str=to_string(low+1)+"->"+to_string(high-1);   
+           
+            pls.push_back(str);
+        }
+        i+=1;
+    }
+    }
+    if(nums.size()>=1){
+        long long a=nums[0];
+        long long b=nums[nums.size()-1];
+        long long l=lower;
+        long long h=upper;
+    if(a-l==1)
+       cls.push_back(to_string(l));
+    if(a-l>1)
+       cls.push_back(to_string(l)+"->"+to_string(a-1));
+   for(i=0;i<pls.size();i++){
+       cls.push_back(pls[i]);
+   }
+   if(h-b==1)
+       cls.push_back(to_string(h));
+   if(h-b>1)
+       cls.push_back(to_string(b+1)+"->"+to_string(h)); 
+    }
+    else{
+        
+        if(lower==upper)
+            cls.push_back(to_string(lower));
+        else
+           cls.push_back(to_string(lower)+"->"+to_string(upper)); 
+    }
+    
+    return cls;
+    
+    
+}
+};
