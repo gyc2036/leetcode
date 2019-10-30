@@ -1,0 +1,34 @@
+class TwoSum {
+public:
+    /** Initialize your data structure here. */
+    TwoSum() {
+        
+    }
+    
+    /** Add the number to an internal data structure.. */
+    void add(int number) {
+        ++myMap[number];
+        if (number > maxValue) maxValue = number;
+        if (number < minValue) minValue = number;
+    }
+    
+    /** Find if there exists any pair of numbers which sum is equal to the value. */
+    bool find(int value) {
+        for (auto ele : myMap) {
+            if (value > 2*maxValue || value < 2*minValue) return false;
+
+            int temp = value-ele.first;
+            if (ele.first != temp && myMap.count(temp))
+                return true;
+            else if (ele.first == temp && myMap.count(temp) && myMap[temp] > 1)
+                return true;
+        }
+
+        return false;
+    }
+
+private:
+    unordered_map<int,int> myMap;
+    int maxValue = INT_MIN;
+    int minValue = INT_MAX;
+};
