@@ -1,0 +1,57 @@
+class Solution {
+public:
+    
+    int anyNumberOfTransactions(vector<int>& prices) {
+        if (prices.empty()) {
+            return 0;
+        }
+        
+        int maxProfit = 0;
+        for (int i = 1; i < prices.size(); ++i) {
+            if (prices[i] - prices[i-1] > 0) {
+                maxProfit += prices[i] - prices[i-1];
+            }
+        }
+        
+        return maxProfit;
+    }
+    
+    int maxProfit(int k, vector<int>& prices) {
+        if (k == 0 || prices.empty()) {
+            return 0;
+        }
+        
+        if (k >= prices.size()) {
+            return anyNumberOfTransactions(prices);
+        }
+        
+        // Transactions to day
+        vector<vector<int>> dp(k+1, vector<int>(prices.size(), 0));
+        
+        /* 
+         Max profit for i transactions on day j
+         is max of:
+         1. Max profit with i transactions on day j (i.e no transaction on this day), and
+         2. prices[j] - prices[l] + max profit with i-1 transactions on day l (i.e transaction today having 
+            bought on some day 'l' + the max profit with one less transaction on that day l)
+            
+            l is some day < j where the difference of prices[j] and prices[l] is the maximum
+         */
+        
+        for (int i = 1; i <= k; ++i) {
+            for (int j = 1; j < prices.size(); ++j) {
+                
+                int maxDiff = 0;
+                int diff = 0;
+                for (int l = 0; l < j; ++l) {
+                    diff = prices[j] - prices[l];
+                    maxDiff = max(maxDiff, diff + dp[i-1][l]);
+                }
+                
+                dp[i][j] = max(dp[i][j-1], maxDiff);
+            }
+        }
+        
+        return dp[k][prices.size()-1];
+    }
+};
