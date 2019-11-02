@@ -1,0 +1,40 @@
+vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
+	int n = numCourses;
+	vector<int> degree(n, 0);
+	unordered_map<int, vector<int>> map;
+	for (int i = 0; i < prerequisites.size(); i++)
+	{
+		int cource = prerequisites[i][0];
+		int preCource = prerequisites[i][1];
+		degree[cource] += 1; //degree means: how much cource you must finish before you take current couce
+		map[preCource].push_back(cource); //you have to take preCource before you teke cource;
+	}
+	
+	vector<int> res;
+	queue<int> cur;
+	for (int i = 0; i < n; i++)
+	{
+		if (degree[i] == 0)
+			cur.push(i);
+	}
+	while (!cur.empty())
+	{
+		if (find(res.begin(), res.end(), cur.front()) != res.end())
+		{
+			res.clear();
+			return res; // detect circle
+		}
+		res.push_back(cur.front());
+		for (int i = 0; i < map[cur.front()].size(); i++) {
+			degree[map[cur.front()][i]]--;
+			if (degree[map[cur.front()][i]] == 0)
+				cur.push(map[cur.front()][i]);
+		}
+		cur.pop();
+	}
+
+	if (res.size() != n)
+		res.clear();  // cannot finish all cources;
+
+	return res;
+}
