@@ -1,0 +1,28 @@
+ int minSubArrayLen(int s, vector<int>& nums) {
+        // Let's check three things: (1) is it empty? (2) is there a single value that is equal or greater than s?
+		// (3) is the sum of the entire array equal to s. These are all easy wins.
+        int check{};
+        for (int i{}; i < nums.size(); i++) {
+            check += nums[i]; 
+            if (nums[i] >= s) return 1; // If one item adds up to over s, you can't get any better than 1 item. 
+        }
+        if (check < s) return 0; // If the entire array doesn't add up to over s, then no item in the array
+		// adds up to over s.
+        if (check == s) return nums.size(); 		// If (3) return array size.
+		
+        int bestL{numeric_limits<int>::max()}; // Best, make it bad to start.
+        int left{};
+        int right{};
+        int sum{};
+        
+        for (; right < nums.size(); right++) {
+            sum += nums[right];
+            
+            while (sum >= s) {
+                bestL = min(right + 1 - left, bestL);
+                sum -= nums[left++];
+            }
+            
+        }
+        return bestL;
+    }
