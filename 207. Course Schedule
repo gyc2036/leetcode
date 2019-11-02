@@ -1,0 +1,27 @@
+bool canFinish(int numCourses, vector<pair<int, int>>& prereqs) {
+  vector<vector<int>> cs(numCourses);
+  for (auto p : prereqs) cs[p.first].push_back(p.second);
+
+  unordered_map<int, int> degree;
+  for (auto c : cs) for (auto d : c) ++degree[d];
+
+  unordered_set<int> hasPrereqs;
+  vector<int> canTake;
+  for (auto i = 0; i < numCourses; ++i)
+    if (degree[i] == 0) canTake.push_back(i);
+    else hasPrereqs.insert(i);
+
+  while (!hasPrereqs.empty() && !canTake.empty()) {
+    vector<int> newTakes;
+    for (auto i : canTake)
+      for (auto d : cs[i]) {
+        --degree[d];
+        if (degree[d] == 0) {
+          newTakes.push_back(d);
+          hasPrereqs.erase(d);
+        }
+      }
+    swap(canTake, newTakes);
+  }
+  return hasPrereqs.empty();
+}
