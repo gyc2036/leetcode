@@ -1,0 +1,53 @@
+// Node Data structure.
+struct Node {
+    string prefix;
+    Node* children[26] = {NULL};
+    bool isWord;
+    Node(string s) : prefix(s), children(), isWord() {}
+};
+
+class WordDictionary {
+private:
+    Node* trie; // root of Trie data structure.
+public:
+    /** Initialize your data structure here. */
+    WordDictionary() {
+        trie = new Node("");
+    }
+    
+    /** Adds a word into the data structure. */
+    void addWord(string word) {
+        Node* curr = trie;
+        for (int i = 0; i < word.size(); i++) {
+            if (curr->children[word[i] - 'a'] == NULL) {
+                curr->children[word[i] - 'a'] = new Node(word.substr(0, i + 1));
+            }
+            curr = curr->children[word[i] - 'a'];
+            if (i == word.size() - 1) curr->isWord = true; 
+        }
+    }
+    
+    /** Helper method for searching with dot. */
+    bool helper(string word, Node* node) {
+        for (int i = 0; word[i] and node; i++) {
+            char ch = word[i];
+            if (ch == '.') {    // any letter
+                Node* temp = node;
+                for (int j = 0; j < 26; j++) {  // recurse in all children nodes.
+                    node = temp->children[j];
+                    if (helper(word.substr(i+1), node)) return true;
+                }
+            }
+            else {
+                node = node->children[ch - 'a'];
+            }
+        }
+        return node and node->isWord;
+    }
+    
+    /** Returns if the word is in the data structure. A word could contain the dot character '.' to represent any one letter. */
+    bool search(string word) {
+        // call recursive helper procedure with trie root to find word.
+        return helper(word, trie);
+    }
+};
