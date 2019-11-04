@@ -1,0 +1,57 @@
+class Solution {
+    constexpr inline int _op_(int op1, int op2, int op) const {
+        switch(op) {
+            case '+':
+                return op1 + op2;
+            case '-':
+                return op1 - op2;
+            case '*':
+                return op1 * op2;
+            default:
+                break;
+        }
+        return op2;
+    }
+    
+    int inline strstoi(const string& str, int start, int end) const {
+        int ret = 0;
+        for(int i = start; i < end && isdigit(str[i]); ++i) {
+            ret *= 10;
+            ret += str[i] - '0';
+        }
+        return ret;
+    }
+    
+    vector<int> helper(const string& str, int start, int end) {
+        vector<int> ret;
+        bool found = false;
+        for(int i = start; i < end; ++i) {
+            vector<int> left, right;
+            if(str[i] == '+' || str[i] == '-' || str[i] == '*') {
+                left = helper(str, start, i);
+                right = helper(str, i+1, end);
+                found = true;
+            }
+            
+            for(auto l: left)
+                for(auto r: right) {
+                    ret.push_back(_op_(l, r, str[i]));
+                
+                }
+        }
+        
+        if(!found)
+            ret.push_back(strstoi(str, start, end));
+            
+        return ret;
+    }
+    
+    
+public:
+    vector<int> diffWaysToCompute(string input) {
+        if(!input.size())
+            return vector<int>();
+        
+        return helper(input, 0, input.size());        
+    }
+};
