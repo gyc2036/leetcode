@@ -1,0 +1,50 @@
+#include <iostream>
+#include <queue>
+#include <algorithm>
+#include <vector>
+#include <limits>
+
+template <typename T, class Container = vector<T>, class Compare = less<typename Container::value_type>>
+class max_priority_que_remove : public priority_queue<T, Container, Compare>
+
+{
+public :
+	bool remove (const T& toBeRemoved)
+	{
+		auto itr = std::find(this->c.begin(), this->c.end(), toBeRemoved);
+		if (itr == this->c.end())
+			return false;
+		this->c.erase(itr);
+        std::make_heap(this->c.begin(), this->c.end(), this->comp);
+		return true;
+	}
+};
+
+class Solution {
+public:
+    vector<int> maxSlidingWindow(vector<int>& vec, int k) {
+        vector<int> result;
+		if (k<=0)
+			return result;
+        if (vec.size() > std::numeric_limits<int>::max())
+        {
+            std::cout << "Returning from here" << std::endl;
+            return result;
+        }
+        result.reserve(vec.size()-k+1);
+		max_priority_que_remove<pair<int, int>> que;
+		int windowStart=0, windowEnd=0;
+		for (windowEnd = 0; windowEnd < vec.size(); windowEnd++)
+		{
+			que.push(make_pair(vec[windowEnd], windowEnd));
+			if (windowEnd >= k-1)
+			{
+				result.push_back((que.top()).first);
+				que.remove(make_pair(vec[windowStart], windowStart));
+				windowStart++;
+			}
+		}
+		return result;
+        
+    }
+};
