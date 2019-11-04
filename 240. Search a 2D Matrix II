@@ -1,0 +1,29 @@
+    bool searchMatrixHelper(const vector<vector<int>>& matrix, int target, int x, int y) {
+        if (x < 0 || y < 0 || x == matrix.size() || y == matrix[0].size()) return false; // Stay within the matrix
+        if (matrix[x][y] == target) return true;
+        
+        // Down or left is -1
+        // Up or right is 1
+        int direction = matrix[x][y] > target ? -1 : 1;
+
+        switch (direction) {
+            case -1 : // Look for the answer in either down or left.
+                return searchMatrixHelper(matrix, target, x - 1, y) || searchMatrixHelper(matrix, target, x, y - 1);
+                break; 
+            case 1 :  // Look for the answer in either up or right
+                return searchMatrixHelper(matrix, target, x + 1, y) || searchMatrixHelper(matrix, target, x, y + 1);
+                break;
+        }
+        return false; // Dummy value to satisfy leetcode's return type constraints.
+		// will enver be triggered.
+    }
+    
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        int rowCount = matrix.size(), colCount = matrix[0].size(); 
+		if (!rowCount) return false;
+        return searchMatrixHelper(matrix, target, 0, rowCount - 1);
+    } 
+	// Always start at bottom left or top right, it gives you the most optionality. If you start at 
+	// top left, you can go up in both directions (right if the target is greater than the bottom left, 
+	// or down if its less than the bottom left). If you start in bottom left or top right,
+	// then you need to make a binary choice, to go up or down.
