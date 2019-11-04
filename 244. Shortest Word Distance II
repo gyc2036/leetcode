@@ -1,0 +1,26 @@
+class WordDistance {
+public:
+    WordDistance(vector<string>& words) {
+        for (int i = 0; i < words.size(); ++i)
+            myMap[words[i]].push_back(i);
+    }
+    
+    int shortest(string word1, string word2) {
+        int shortest = INT_MAX;
+        int cur1 = 0;
+        int cur2 = 0;
+        int size1 = myMap[word1].size();
+        int size2 = myMap[word2].size();
+
+        while (cur1 < size1 && cur2 < size2) {
+            shortest = min(shortest,abs(myMap[word1][cur1] - myMap[word2][cur2]));
+
+            if (myMap[word1][cur1] < myMap[word2][cur2]) ++cur1;
+            else ++cur2;
+        }
+
+        return shortest;
+    }
+
+    unordered_map<string,vector<int>> myMap;
+};
