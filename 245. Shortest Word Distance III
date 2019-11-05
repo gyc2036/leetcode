@@ -1,0 +1,30 @@
+class Solution {
+public:
+    int shortestWordDistance(vector<string>& words, string word1, string word2) {
+        int pos1 = -1;
+        int pos2 = -1;
+        int shortest = words.size() - 1;
+        
+        vector<bool> check = {true,true};
+        int counter = 0;
+        if (word1 == word2) 
+            check[1] = false;
+
+        for (int i = 0; i < words.size(); ++i) {
+            if (words[i] == word1 && check[counter%2]) {
+                pos1 = i;
+                ++counter;
+                if (pos2 >= 0)
+                    shortest = min(shortest,pos1-pos2);
+            }
+            else if (words[i] == word2) {
+                pos2 = i;
+                ++counter;
+                if (pos1 >= 0)
+                    shortest = min(shortest,pos2-pos1);
+            }
+        }
+
+        return shortest;
+    }
+};
