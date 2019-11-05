@@ -1,0 +1,41 @@
+vector<char> rot({'0','1','x','x','x','x','9','x','8','6'});	// an array maps to its rotated digit
+vector<char> validDigit({'0','1','6','8','9'});					// valid rotated digit
+vector<char> middleDigit({'0','1','8'});						// allowed digit in the middel digit
+
+class Solution {
+public:    
+    vector<string> findStrobogrammatic(int n) {                
+        if (n == 1) return vector<string>({"0","1","8"});	// early return
+		
+        vector<string> answers;
+        string stro(n, ' '); 								// allocate a fixed-length string
+        fillFromNthChar(stro, 0, n, answers);				// start of recursion: fill from the 0-th digit
+		
+        return answers;
+    }
+    
+    void fillFromNthChar(string& stro, int ith, int size, vector<string>& answers)
+    {
+        int symID = (size - 1) - ith; 							// the symmetric digit ID
+        
+        int firstValidDigit = ( ith == 0 )? 1 : 0;				// we should avoid the leading zero for the first digit
+        for (int i = firstValidDigit; i <= 4; ++i )				// loop from the valid digit
+        {
+            char& c = validDigit[i];
+            stro[ith] = c;
+            stro[symID] = rot[c-'0']; 							// fill the ith & symmetric digit
+            if ( ith+1 == symID-1 ) 							// if next digit is the middel digit (happens when size is odd)
+            {
+                for (auto& m : middleDigit) 					// fill the middle digit with 0,1,8 and we're done
+                {
+                    stro[ith+1] = m;
+                    answers.push_back(stro);
+                }
+            }
+            else if ( ith+1 > symID-1 )							// if next digit exceeds the middle (happens when size is even)
+                answers.push_back(stro);						// we're done
+            else                        
+                fillFromNthChar(stro, ith+1, size, answers);	// recursively call for the next digit
+        }
+    }
+};
