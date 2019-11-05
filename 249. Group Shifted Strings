@@ -1,0 +1,37 @@
+class Solution {
+public:
+    inline void getNextWord( string &word ) {
+        for( int i = 0 ; i < word.size() ; ++i ) {
+            word[ i ] = ( ( word[ i ] - 'a' + 1 ) % 26 ) + 'a';
+        }
+    }
+    vector<vector<string>> groupStrings(vector<string>& strings) {
+        vector< vector< string > > result;
+		// keep track of the count. The problem explicitly doesn't state, but a few test cases have this input [ "a", "a" ]
+        unordered_map< string, int > stringMap; 
+        for( auto s : strings ) {
+            stringMap[ s ]++;
+        }
+        
+        while( !stringMap.empty() ) {
+            vector< string > answer;
+            string currWord = stringMap.begin()->first;
+            int count = stringMap.begin()->second;
+            stringMap.erase( stringMap.begin() );
+            while( count-- > 0 ) answer.push_back( currWord );
+            string nextWord = currWord;
+            getNextWord( nextWord );
+            while( currWord != nextWord ) {
+                auto it = stringMap.find( nextWord );
+                if( it != stringMap.end() ) {
+                    int count = it->second;
+                    while( count-- > 0 ) answer.push_back( it->first );
+                    stringMap.erase( it );
+                }
+                getNextWord( nextWord );
+            }
+            result.push_back( answer );
+        }
+        return result;
+    }
+};
