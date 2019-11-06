@@ -1,0 +1,17 @@
+class Solution {
+public:
+    void find( TreeNode *root, TreeNode *p, bool &found, TreeNode* &succ ) {
+        if( root ) {
+            find( root->left, p, found, succ );
+            if( root == p ) found = true;
+            else if( found ) { succ = root; found = false; }
+            find( root->right, p, found, succ );
+        }
+    }
+    TreeNode* inorderSuccessor(TreeNode* root, TreeNode* p) {
+        bool found = false;
+        TreeNode *succ = nullptr;
+        find( root, p, found, succ );
+        return succ;
+    }
+};
