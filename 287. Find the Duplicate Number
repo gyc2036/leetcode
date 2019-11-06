@@ -1,0 +1,17 @@
+int findDuplicate(vector<int>& nums) {
+        int pSlow, pFast;
+        pSlow = 0; pFast = 0;
+        while (true) {
+            pSlow = nums[pSlow];
+            pFast = nums[nums[pFast]];   
+            if (pSlow == pFast)
+                break;
+        }
+        pFast = 0;
+        while (pFast != pSlow) {
+            pSlow = nums[pSlow];
+            pFast = nums[pFast];
+        }
+         
+        return pSlow;
+    }
