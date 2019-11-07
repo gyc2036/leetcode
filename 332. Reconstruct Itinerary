@@ -1,0 +1,35 @@
+class Solution {
+public:
+  std::vector<std::string>
+  findItinerary(std::vector<std::vector<std::string>>& tickets) {
+    std::unordered_map<std::string, std::map<std::string, size_t>> hash;
+    for (auto const &p : tickets) {
+      ++hash[p.front()][p.back()];
+    }
+    std::vector<std::string> result;
+    helper("JFK", hash, result, tickets.size() + 1);
+    return result;
+  }
+private:
+  bool helper(
+      std::string const &from,
+      std::unordered_map<std::string, std::map<std::string, size_t>> &hash,
+      std::vector<std::string> &result,
+      const size_t length) {
+    result.push_back(from);
+    if (result.size() == length) {
+      return true;
+    }
+    for (auto &p : hash[from]) {
+      if (p.second > 0) {
+        --p.second;
+        if (helper(p.first, hash, result, length)) {
+          return true;
+        }
+        ++p.second;
+      }
+    }
+    result.pop_back();
+    return false;
+  }
+};
