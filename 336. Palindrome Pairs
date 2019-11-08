@@ -1,0 +1,67 @@
+struct TrieNode {
+    int ind;
+    TrieNode* child[26];
+    vector<int> suffix;
+    TrieNode(int i = -1) {
+        ind = i;
+        for (int i = 0; i < 26; i++)
+            child[i] = NULL;
+    };
+};
+
+class Solution {
+private:
+    TrieNode* root;
+public:
+    Solution() {
+        root = new TrieNode();
+    }
+    void addNode(string& word, int ind) {
+        TrieNode* tmpRoot = root;
+        for (int i = word.size() - 1; i >= 0; i--) {
+            int tmpind = word[i] - 'a';
+             
+            if (tmpRoot->child[tmpind] == NULL) {
+                tmpRoot->child[tmpind] = new TrieNode();
+            }
+            if (isPalindrom(word, 0, i)) {
+                tmpRoot->suffix.push_back(ind);
+            }
+            tmpRoot = tmpRoot->child[tmpind];
+        }
+        tmpRoot->ind = ind;
+        tmpRoot->suffix.push_back(ind);
+    }
+    
+    void searchNode(vector<string>& words, int wind, vector<vector<int>>& res) {
+        string tmpStr = words[wind];
+        TrieNode* tmpRoot = root;
+        for (int i = 0; i < tmpStr.size(); i++) {
+            if (tmpRoot->ind >= 0 && tmpRoot->ind != wind && isPalindrom(tmpStr, i, tmpStr.size() - 1))
+                res.push_back(vector<int>({wind, tmpRoot->ind}));
+            tmpRoot = tmpRoot->child[tmpStr[i] - 'a'];
+            if (tmpRoot == nullptr) return;
+        }
+        for (int i: tmpRoot->suffix) {
+            if (i != wind) res.push_back(vector<int>({wind, i}));
+        }
+    }
+    
+    bool isPalindrom(string word, int i, int j) {
+        while (i < j) {
+            if (word[i++] != word[j--]) return false;
+        }
+        return true;
+    }
+    
+    vector<vector<int>> palindromePairs(vector<string>& words) {
+        vector<vector<int>> res;
+        for (int i = 0; i < words.size(); i++) {
+            addNode(words[i], i);
+        }
+        for (int i = 0; i < words.size(); i++) {
+            searchNode(words, i, res);
+        }
+        return res;
+    }
+};
