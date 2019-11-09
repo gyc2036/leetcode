@@ -1,0 +1,39 @@
+class NestedIterator {
+public: 
+	queue<int> q;
+	
+    NestedIterator(vector<NestedInteger> &nestedList) {
+    	for (int i = 0; i < nestedList.size(); i++) {
+  			NestedInteger &ref = nestedList[i];
+  			if (ref.isInteger()) {
+  				setInteger(ref.getInteger());
+			} else {
+				setList(ref.getList());
+			}
+		}
+    }
+    
+    inline void setInteger(const int integer) {
+    	q.push(integer);
+	}
+    
+    inline void setList(const vector<NestedInteger> &nestedList) {	
+    	for (int i = 0; i < nestedList.size(); i++) {
+  			if (nestedList[i].isInteger()) {
+  				setInteger(nestedList[i].getInteger());
+			} else {
+				setList(nestedList[i].getList());
+			}
+		}
+    }
+
+    int next() {
+        int integer = q.front();
+        q.pop();
+        return integer;
+    }
+
+    bool hasNext() {
+		return !q.empty();
+    }
+};
