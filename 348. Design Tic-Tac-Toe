@@ -1,0 +1,47 @@
+class TicTacToe {
+    vector<vector<int>> h;
+    vector<vector<int>> v;
+    vector<int> diag1;
+    vector<int> diag2;
+    int winner;
+    int n;
+public:
+    /** Initialize your data structure here. */
+    TicTacToe(int k) {
+        winner = 0;
+        n = k;
+        h = vector<vector<int>>(n, {0, 0});
+        v = vector<vector<int>>(n, {0, 0});
+        diag1 = {0, 0};
+        diag2 = {0, 0};
+    }
+
+    int move(int row, int col, int player) {
+        if(winner) return winner;
+        if(player == 1){
+            h[col][0]++;
+            v[row][0]++;
+            
+            if(row == col)  diag1[0]++;
+            if(row + col == n - 1) diag2[0]++;
+            
+            if(h[col][0] == n ||
+               v[row][0] == n || 
+               diag1[0] == n || 
+               diag2[0] == n) winner = 1;
+        } else {
+            h[col][1]++;
+            v[row][1]++;
+            
+            if(row == col)  diag1[1]++;
+            if((row + col) == n - 1) diag2[1]++;
+
+            if(h[col][1] == n ||
+               v[row][1] == n || 
+               diag1[1] == n ||
+               diag2[1] == n) winner = 2;
+        }
+
+        return winner;
+    }
+};
