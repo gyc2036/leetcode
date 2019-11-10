@@ -1,0 +1,53 @@
+class Twitter {
+public:
+    Twitter() {
+        
+    }
+    
+    void postTweet(int userId, int tweetId) {
+        user_tweets[userId][clock++] = tweetId;
+    }
+    
+    vector<int> getNewsFeed(int userId) {
+        tweet_list list;
+        set<int>follow = user_follows[userId];
+        follow.insert(userId);
+        
+        for (int user : follow) {
+            tweet_list &tweets = user_tweets[user];
+            int count = 0;
+            
+            for (auto iter = tweets.rbegin(); 
+                 count < 10 && iter != tweets.rend(); 
+                 iter++, count++) {
+                list[iter->first] = iter->second;                
+            }
+        }
+
+        vector <int> results;
+        
+        for(auto iter = list.rbegin(); iter != list.rend(); iter++) {
+            if (results.size() == 10) {
+                break;
+            }
+            
+            results.push_back(iter->second);
+        }
+        
+        return results;
+    }
+    
+    void follow(int followerId, int followeeId) {
+        user_follows[followerId].insert(followeeId);    
+    }
+    
+    void unfollow(int followerId, int followeeId) {
+        user_follows[followerId].erase(followeeId);    
+    }
+    
+    typedef map<int, int> tweet_list;   // when -> content
+    map <int, tweet_list> user_tweets;  // user -> list of tweets
+    map <int, set<int>> user_follows;   // user -> set of users to follow
+    
+    int clock{0};
+};
