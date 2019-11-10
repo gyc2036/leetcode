@@ -1,0 +1,24 @@
+class Solution {
+public:
+    bool isReflected(vector<vector<int>>& points) {
+        if (points.empty()) return true;
+
+        double x = 0;
+        set<pair<int,int>> mySet;
+        for (int i = 0; i < points.size(); ++i) {
+            if (!mySet.count({points[i][0],points[i][1]})) {
+                x += points[i][0];
+                mySet.insert({points[i][0],points[i][1]});
+            }
+        }
+
+        x /= mySet.size(); 
+        for (int i = 0; i < points.size(); ++i) {
+            int xTemp = int(2*x) - points[i][0];
+            if (!mySet.count({xTemp,points[i][1]}))
+                return false;
+        }        
+
+        return true;
+    }
+};
