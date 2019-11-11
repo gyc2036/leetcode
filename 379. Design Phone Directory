@@ -1,0 +1,39 @@
+class PhoneDirectory {
+    int capacity;
+    int next;
+    unordered_set<int> recycled;
+public:
+    PhoneDirectory(int maxNumbers) {
+        capacity = maxNumbers;
+        next = 0;
+    }
+    
+    int get() {
+        int id = -1;
+        if (!recycled.empty()) {
+            id = *recycled.begin();
+            recycled.erase(recycled.begin());
+        } else if (next < capacity) {
+            id = next;
+            next++;
+        }
+        return id;
+    }
+    
+    bool check(int number) {
+        if (number >= next) {
+            return true;
+        }
+        if (recycled.find(number) != recycled.end()) {
+            return true;
+        }
+        return false;
+    }
+    
+    void release(int number) {
+        if (number >= next) {
+            return;
+        }
+        recycled.insert(number);
+    }
+};
