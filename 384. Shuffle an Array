@@ -1,0 +1,58 @@
+class Solution {
+    
+private: 
+    vector<int> m_vecNums; // Input vector array for manipulation    
+    vector<int> m_vecOriginalNums; // Original vector array for use in reset()
+    
+    int m_nArraySize; // Input array size
+    int m_nPrevRandomIndex; // Keep track of previous random index used for shuffle
+    
+public:
+    Solution(vector<int>& nums) {
+        m_nPrevRandomIndex = 0;
+        
+        m_vecNums.clear();
+        m_vecNums = nums; // Copy array
+        m_nArraySize = nums.size();
+
+        // Backup the original array for use in reset() method
+        m_vecOriginalNums = nums;
+    }
+    
+    /** Resets the array to its original configuration and return it. */
+    vector<int> reset() {        
+        return m_vecOriginalNums;
+    }
+    
+    /** Returns a random shuffling of the array. */
+    vector<int> shuffle() {
+        if (0 == m_nArraySize) {return m_vecNums;} // Base case       
+        
+        // Generate a random integer between 0 and 'array size - 1'.
+        auto nRandNum = rand() % m_nArraySize;
+        
+        // Check if the calculated random index is same as previous value
+        if (nRandNum == m_nPrevRandomIndex) { 
+            if (nRandNum != (m_nArraySize - 1)) {
+                nRandNum++;
+            }
+            else {
+                nRandNum = 0;
+            }
+        }
+
+        // Swap 2 elements using the randomly generated number
+        if ((m_nArraySize - 1) != nRandNum) {
+            // Swap elements at indexes 'nRandNum' and 'nRandNum + 1'.
+            swap(m_vecNums[nRandNum], m_vecNums[nRandNum + 1]);            
+        }
+        else {
+            // Swap elements at last index 'array size - 1' and first index '0'.
+            swap(m_vecNums[nRandNum], m_vecNums[0]);
+        }                
+        
+        m_nPrevRandomIndex = nRandNum; // Backup random index
+        
+        return m_vecNums;
+    }
+};
