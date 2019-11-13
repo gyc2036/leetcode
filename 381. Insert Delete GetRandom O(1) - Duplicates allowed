@@ -1,0 +1,44 @@
+class RandomizedCollection {
+    using Key = int;
+    using Id = size_t;
+    unordered_multimap<Key, Id> mp;
+    vector<Key> keys;
+    
+public:
+    
+    /** Inserts a value to the collection. Returns true if the collection did not already contain the specified element. */
+    bool insert(int key) {
+        bool contained = mp.count(key); //< O(1) on average, because hash table
+        mp.insert({key, keys.size()}); //< O(1) on average, because hash table
+        keys.push_back(key); //< O(1) on average, because amortized vector resizing policy
+        return !contained;
+    }
+    
+    /** Removes a value from the collection. Returns true if the collection contained the specified element. */
+    bool remove(int key) {
+        if (!mp.count(key)) //< O(1) on average, because hash table
+            return false;        
+        auto it = mp.find(key); //< O(1) on average, because hash table
+        Id id = it->second;
+        Id last_id = keys.size()-1;
+        if (id != last_id) {
+            swap(keys[id], keys[last_id]);	    
+            auto range = mp.equal_range(keys[id]); //< O(1) on average, because hash table
+            for (auto beg = range.first; beg != range.second; beg++)
+		//< O(1) on average, because range size equals to one on average
+                if (beg->second == last_id) {
+                    beg->second = id;
+                    break;
+                }
+        }
+        keys.pop_back();
+        mp.erase(it); //< O(1) on average, because hash table
+        return true;
+    }
+    
+    /** Get a random element from the collection. */
+    int getRandom() {
+        // O(1)
+        return keys[rand() % keys.size()];
+    } 
+};
