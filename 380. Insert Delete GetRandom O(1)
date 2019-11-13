@@ -1,0 +1,40 @@
+    bool insert(int val) {
+        if (data_.find(val) != data_.end())
+            return false;
+        
+        data_.insert(val);
+        
+        return true;
+    }
+    
+    bool remove(int val) {
+        if (data_.find(val) == data_.end())
+            return false;
+        
+        data_.erase(val);
+        
+        return true;
+    }
+    
+    int getRandom() {
+        int rand = std::rand();
+        
+        if (data_.find(rand) != data_.end())
+            return rand;
+        
+        // Insert a dummy value and get an iterator to it
+        // The next value is random
+        auto it = data_.insert(data_.begin(), rand);
+        ++it;
+        if (it == data_.end())
+            it = data_.begin();
+            
+        int result = *it;
+        
+        // Remove dummy value
+        data_.erase(rand);
+
+        return result;        
+    }
+    
+    std::unordered_set<int> data_;
