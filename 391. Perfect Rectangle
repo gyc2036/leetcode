@@ -1,0 +1,41 @@
+static const auto ___ = [](){
+    std::cout.sync_with_stdio(false);
+    cin.tie(0);
+    return 0;
+}();
+class Solution {
+public:
+    bool isRectangleCover(vector<vector<int>>& rectangles) {
+        unordered_map <int,int> m1; 
+		// store the count of appearance bottomleft/topright points
+        unordered_map <int,int> m2;
+		// store the count of appearance bottomright/topleft points
+        for(auto r:rectangles){
+            put(m1,r[0],r[1]);
+            put(m1,r[2],r[3]);
+            put(m2,r[0],r[3]);
+            put(m2,r[2],r[1]);
+        }
+        int count=0;
+        for(auto i:m1){
+			//only allow 2 pairs of unmatch: the corners of the entire rectangle 
+            if(m2.find(i.first)==m2.end()){
+                if(i.second>1)
+                    return false;
+                count++;
+                if(count>2)
+                    return false;
+            }
+            else if(m2[i.first]!=i.second){
+                return false;
+            }
+        }
+        return true;
+    }
+    inline void put(unordered_map<int,int> &mymap,int a1,int a2){
+	//Notice the abs(rectangles[i][j]) is less than 20000, we can use a1*20000+a2 as the key.
+        if(mymap.find(a1*20000+a2)!=mymap.end())
+                mymap[a1*20000+a2]++;
+        else mymap.insert(pair<double,int>(a1*20000+a2,1));
+    }
+};
