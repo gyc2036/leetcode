@@ -1,0 +1,43 @@
+  bool dfs(string s,string d,unordered_map<string,vector<pair<string,double>>>& graph,unordered_set<string>& vis,double& ans){
+    if(s==d){
+        ans*=1;
+        return true;
+    }
+    vis.insert(s);
+    for(auto p:graph[s]){
+        if(vis.find(p.first)==vis.end()){
+            ans*=p.second;
+            if (dfs(p.first,d,graph,vis,ans)){
+	            return true; 
+            }
+        ans/=p.second;
+	    }
+    }
+ return false;
+}
+
+
+vector<double> calcEquation(vector<vector<string>>& equations, vector<double>& values, vector<vector<string>>& queries) {
+
+    vector<double> ans;
+    unordered_map<string,vector<pair<string,double>>> graph;
+    for(int i=0;i<equations.size();i++){
+        auto eq=equations[i];
+        double val=values[i];
+         graph[eq[0]].push_back({eq[1],val});
+         graph[eq[1]].push_back({eq[0],1/val});
+    }
+
+    for(auto q:queries){
+        if(graph.find(q[0])==graph.end()||graph.find(q[1])==graph.end()){
+         ans.push_back(-1);
+        }else{
+            unordered_set<string> vis;
+            double res=1;
+            bool ifans=dfs(q[0],q[1],graph,vis,res);
+            res=ifans?res:-1;
+            ans.push_back(res);
+    }
+}
+return ans;
+}
