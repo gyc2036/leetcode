@@ -1,0 +1,18 @@
+int integerReplacement(int n) {
+        int res = 0;
+        long long int m = n;
+        while(m>3) {
+            if(m % 2 == 0) {
+                m /= 2;
+                res++;
+            } else if((m+1)%4==0) {
+                m++;
+                res++;
+            } else {
+                m--;
+                res++;
+            }
+        }
+        res += m-1;
+        return res;
+    }
