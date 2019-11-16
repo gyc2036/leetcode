@@ -1,0 +1,69 @@
+class Solution {
+public:
+    string decodeString(string s) {
+        string out;
+        int index = 0, begin = 0, count = 1;
+        string str;
+        while (index < s.size())
+        {
+            if (!isdigit(s[index]))
+            {
+                if (isdigit(s[begin]))
+                {
+                    count = atoi(s.substr(begin, index - begin).c_str());
+                    begin = index;
+                }
+
+                if (s[index] == '[' || index == s.size() - 1)
+                {
+                    if (s[index] == '[')
+                    {
+                        int i = index + 1;
+                        int pair = 0;
+                        while (i < s.size())
+                        {
+                            if (s[i] == '[')
+                                pair++;
+                            else if (s[i] == ']')
+                            {
+                                if (pair > 0)
+                                    pair--;
+                                else
+                                    break;
+                            }
+                            i++;
+                        }
+                        
+                        str = decodeString(s.substr(index + 1, i - index - 1));
+                        index = i + 1;
+                    }
+                    else
+                    {
+                        str = s.substr(begin, index - begin + 1);
+                        index++;
+                    }
+
+                    begin = index;
+                    for (int i = 0; i < count; i++)
+                        out += str;
+                    count = 1;
+                }
+                else
+                    index++;
+            }
+            else
+            {
+                if (isalpha(s[begin]))
+                {
+                    str = s.substr(begin, index - begin);
+                    for (int i = 0; i < count; i++)
+                        out += str;
+                    begin = index;
+                    count = 1;
+                }
+                index++;
+            }
+        }
+        return out;
+    }
+};
