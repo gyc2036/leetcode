@@ -1,0 +1,34 @@
+class Solution {
+    inline uint64_t make64(int a, int b)
+    { return (uint64_t)a << 32 | b; }
+    
+public:
+    bool canCross(vector<int>& vstones) {
+        if (vstones.size() < 2 || vstones[1] != 1) return false;
+        
+        stack<int> ss, sk;
+        unordered_set<int> stones(vstones.begin(), vstones.end());
+        unordered_set<uint64_t> visited;
+        int goal = vstones.back();
+        
+        ss.push(1);
+        sk.push(1);
+        while (!ss.empty())
+        {
+            int s = ss.top(); ss.pop();
+            int k = sk.top(); sk.pop();
+            
+            if (s == goal) return true;
+            
+            for (int i = -1; i <= 1; i++)
+                if (k + i && stones.count(s + k + i) && !visited.count(make64(s, k+i)))
+                {
+                    visited.insert(make64(s, k + i));
+                    ss.push(s + k + i);
+                    sk.push(k + i);
+                }    
+        }
+        
+        return false;
+    }
+};
