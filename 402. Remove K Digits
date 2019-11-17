@@ -1,0 +1,16 @@
+class Solution {
+public:
+    string removeKdigits(string num, int k) {
+        vector<int> stack;
+        for (auto n : num) {
+            while (stack.size() && stack.back() > n && k-- > 0) stack.pop_back();
+            stack.push_back(n);
+        }
+        while (stack.size() && k-- > 0) stack.pop_back();
+        int index = 0;
+        while (index < stack.size() && stack[index] - '0' == 0) index++;
+        string ans = "";
+        for (int i = index; i < stack.size(); i++) ans.push_back(stack[i]);
+        return ans == "" ? "0" : ans;
+    }
+};
