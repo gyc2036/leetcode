@@ -1,0 +1,141 @@
+struct Cell;
+typedef struct Cell {
+        Cell * parent;
+        int height;
+        int disjointHeight;
+        vector<Cell *> edges;
+        bool border;
+        int minEdge;
+} Cell;
+
+class Solution {
+    public:
+    int trapRainWater(vector<vector<int>>& heightMap) {
+        if(heightMap.size() < 3 || heightMap[0].size() < 3){
+            return 0;
+        }
+        vector<vector<Cell *>> cells;
+        for(int i = 0; i < heightMap.size(); ++i){
+            cells.push_back(vector<Cell*>());
+            for(int j = 0; j <heightMap[i].size(); ++j){
+                cells[i].push_back(
+                    new Cell
+                    {NULL, heightMap[i][j], 1, vector<Cell*>(),
+                    i == 0 || i == heightMap.size() - 1 || j == 0 || j == heightMap[0].size() - 1,
+                    0
+                    }
+                );
+            }
+        }
+        for(int i = 1; i < cells.size() - 1; ++i){
+            for(int j = 1; j < cells[0].size() - 1; ++j){
+                initRegion(cells, i, j);
+            }
+        }
+        Cell * region;
+        Cell * smallEdge;
+        for(int i = 1; i < cells.size() - 1; ++i){
+            for(int j = 1; j < cells[0].size() - 1; ++j){
+                region = find(cells[i][j]);
+                while(true){
+                    smallEdge = minEdge(region);
+                    if(smallEdge->border && smallEdge->height > region->height){
+                        region->height = smallEdge->height;
+                    }
+                    else if(!smallEdge->border && smallEdge->height >= region->height){
+                        region = unio(smallEdge, region);
+                    }
+                    else{
+                        break;
+                    }
+                }
+            }
+        }
+        int sum = 0;
+        for(int i = 1; i < cells.size() - 1; ++i){
+            for(int j = 1; j < cells[0].size() - 1; ++j){
+                sum += find(cells[i][j])->height - heightMap[i][j];
+            }
+        }
+        return sum;
+    }
+    void initRegion(vector<vector<Cell *>>& cells, int i, int j){
+        Cell * cell = cells[i][j];
+        cell->edges.push_back(cells[i - 1][j]);
+        cell->edges.push_back(cells[i + 1][j]);
+        cell->edges.push_back(cells[i][j + 1]);
+        cell->edges.push_back(cells[i][j - 1]);
+        int min = find(cell->edges[0])->height;
+        int minIdx = 0;
+        for(int i = 1; i < cell->edges.size(); ++i){
+            if(find(cell->edges[i])->height < min){
+                min = cell->edges[i]->height;
+                minIdx = i;
+            }
+        }
+        cell->minEdge = minIdx;
+    }
+    static Cell * find(Cell * cell){
+        while(cell->parent != NULL){
+            cell = cell->parent;
+        }
+        return cell;
+    }
+    Cell * unio(Cell * cell1, Cell * cell2){
+        Cell * child = find(cell1);
+        Cell * parent = find(cell2);
+        child->parent = parent;
+        if(child->disjointHeight == parent->disjointHeight){
+            parent->disjointHeight = child->disjointHeight + 1;
+        }
+        mergeEdges(child, parent);
+        parent->height = max(parent->height, child->height);
+        return parent;
+    }
+    struct compareCells{
+      bool operator()(Cell * a,Cell * b) const{
+        a = find(a);
+        b = find(b);
+        return a->height > b->height;
+      }
+    };
+    void mergeEdges(Cell* from, Cell* to){
+        vector<Cell *>& edges = from->edges;
+        vector<Cell *>& edges1 = to->edges;
+        Cell * cell;
+        Cell * rep;
+        vector<Cell *> newEdges;
+        int min = INT_MAX;
+        int minIdx = 0;
+        while(!edges.empty()){
+            cell = edges[edges.size() - 1];
+            rep = find(cell);
+            if(rep != from && rep != to){
+                newEdges.push_back(rep);
+                if(rep->height < min){
+                    min = rep->height;
+                    minIdx = newEdges.size() - 1;
+                }
+            }
+            edges.pop_back();
+        }
+        while(!edges1.empty()){
+            cell = edges1[edges1.size() - 1];
+            rep = find(cell);
+            if(rep != from && rep != to){
+                newEdges.push_back(rep);
+                if(rep->height < min){
+                    min = rep->height;
+                    minIdx = newEdges.size() - 1;
+                }
+            }
+            edges1.pop_back();
+        }
+        to->edges = newEdges;
+        to->minEdge = minIdx;
+    }
+    Cell* minEdge(Cell * region){
+        region = find(region);
+        return find(region->edges[region->minEdge]);
+    }
+};
