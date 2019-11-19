@@ -1,0 +1,42 @@
+class Trie {
+private:
+	unordered_map<int, Trie*> children = {};
+	bool isword = false;
+public:
+	Trie() {}
+
+	int findMaxXOR(vector<int>& nums) {
+		int maxXor = 0;
+		for (int i = 0; i < nums.size(); i++) {
+			Trie* node = this, * nodeXor = this;
+			int num = nums[i];
+			int curXor = 0;
+			for (int j = 31; j >= 0; j--) {
+				int index = ((num >> j) & 1);
+				// insert new number in trie  
+				if (!node->children.count(index))
+					node->children[index] = new Trie();
+				node = node->children[index];
+
+				// compute max xor of that new number 
+				// with all previously inserted
+				int toggle = index == 1 ? 0 : 1;
+				if (nodeXor->children.count(toggle)) {
+					curXor = (curXor << 1) | 1;
+					nodeXor = nodeXor->children[toggle];
+				}
+				else {
+					curXor = (curXor << 1);
+					nodeXor = nodeXor->children[index];
+				}
+			}
+			maxXor = max(curXor, maxXor);
+		}
+		return maxXor;
+	}
+};
+
+int findMaximumXOR(vector<int>& nums) {
+	Trie trie;
+	return trie.findMaxXOR(nums);
+}
