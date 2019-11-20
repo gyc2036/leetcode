@@ -1,0 +1,39 @@
+class Solution {
+public:
+    int characterReplacement(string s, int k) {
+        if (s.empty()) return 0;
+        int left, right, count, max_count = 1, conversions;
+        string alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for (char a : alpha) {
+            left = 0;
+            if (a == s[0]) {
+                count = 1;
+                conversions = 0;
+            }
+            else if (k > 0 && a!=s[0])
+                conversions = count = 1;
+            else {
+                conversions = count = 0;
+            }
+            right = 1;
+            while (right < s.size()) {
+                if (s[right] == a) {
+                    ++count;
+                }
+                else if (s[right] != a && conversions < k) {
+                    ++conversions; ++count;
+                }
+                else {
+                    while (s[left] == a && left < right) {
+                        --count; ++left;
+                    }
+                    ++left;
+                    count = right - left + 1;
+                }
+                max_count = max(count, max_count);
+                ++right;
+            }
+        }
+        return max_count;
+    }
+};
