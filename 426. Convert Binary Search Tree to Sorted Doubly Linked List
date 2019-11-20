@@ -1,0 +1,26 @@
+class Solution {
+public:
+  
+  void inorder(vector<Node*>& vec, Node* root) {
+    if(root == NULL) return;
+    inorder(vec, root->left);
+    vec.push_back(root);
+    inorder(vec, root->right);
+  }
+  
+  Node* treeToDoublyList(Node* root) {
+    if(root == NULL) return root;
+    vector<Node*> vec;
+    inorder(vec, root);
+    
+    Node* prev = vec[0];
+    for(int i = 1; i < vec.size(); i++) {
+      prev->right = vec[i];
+      vec[i]->left = prev;
+      prev = vec[i];
+    }
+    vec[vec.size() - 1]->right = vec[0];
+    vec[0]->left = vec[vec.size() - 1];
+    return vec[0];
+  }
+};
