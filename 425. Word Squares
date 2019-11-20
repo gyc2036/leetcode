@@ -1,0 +1,66 @@
+class Solution {
+    int n;
+    vector<vector<string>> result;
+    vector<int> path;
+    void dfs(const vector<string>& words, int level) {
+        if (level == n) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (words[path[i]][j] != words[path[j]][i]) {
+                        return;
+                    }
+                }
+            }
+            result.emplace_back();
+            for (int idx : path) {
+                result.back().push_back(words[idx]);
+            }
+            return;
+        }
+        
+        int low = 0;
+        if (level > 0) {
+            int high = words.size() - 1;
+            while (low < high) {
+                int mid = low + (high - low) / 2;
+                int j;
+                for (j = 0; j < level; j++) {
+                    if (words[mid][j] > words[path[j]][level]) {
+                        high = mid - 1;
+                        break;
+                    } else if (words[mid][j] < words[path[j]][level]) {
+                        low = mid + 1;
+                        break;
+                    }
+                }
+                if (j == level) {
+                    high = mid;
+                }
+            }
+        }
+        
+        for (int i = low; i < words.size(); i++) {
+            bool valid = true;
+            for (int j = 0; j < level; j++) {
+                if (words[i][j] != words[path[j]][level]) {
+                    valid = false;
+                    break;
+                }
+            }
+            if (!valid) {
+                break;
+            }
+            
+            path.push_back(i);
+            dfs(words, level + 1);
+            path.pop_back();
+        }
+    }
+public:
+    vector<vector<string>> wordSquares(vector<string>& words) {
+        n = words[0].length();
+        sort(words.begin(), words.end());
+        dfs(words, 0);
+        return result;
+    }
+};
