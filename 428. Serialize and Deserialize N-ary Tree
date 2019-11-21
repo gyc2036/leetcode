@@ -1,0 +1,50 @@
+class Codec {
+public:
+
+    void serialize( Node *root, string &s ) {
+        if( root ) {
+            if( s.size() ) s += ",";
+            s += to_string( root->val );
+            if( root->children.size() ) {
+                for( auto c : root->children ) {
+                    serialize( c, s );
+                }
+            }
+            s += ",#"; // encode end of children.
+            
+        } else {
+            if( s.size() ) s += ",";
+            s += "#";
+        }
+    }
+    // Encodes a tree to a single string.
+    string serialize(Node* root) {
+        string res;
+        if( root ) {
+            serialize( root, res );
+        }
+        return res;
+    }
+
+    // no need to check for idx overflow;
+    Node *deserialize( vector< string > &vals, int &idx ) {
+        Node *root = new Node( stoi( vals[ idx++ ] ), vector< Node * > {} );
+        while( vals[ idx ] != "#" ) {
+            root->children.push_back( deserialize( vals, idx ) );
+        }
+        ++idx; // increment to go past end of children marker.
+        return root;
+    }
+    // Decodes your encoded data to tree.
+    Node* deserialize(string data) {
+        if( data.size() ) {
+            stringstream d( data );
+            vector< string > vals;
+            string v;
+            int idx = 0;
+            while( getline( d, v, ',') ) vals.push_back( v );
+            return deserialize( vals, idx );
+        }
+        return nullptr;
+    }
+};
