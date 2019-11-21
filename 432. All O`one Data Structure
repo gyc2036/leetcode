@@ -1,0 +1,145 @@
+struct List {
+    List(int v): prev(nullptr), next(nullptr), val(v) {} 
+    List *prev;
+    List *next;
+    int val;
+    unordered_set<string> strings;
+};
+
+class AllOne {
+public:
+
+    AllOne() {
+        head = nullptr;
+        tail = nullptr;
+    }
+    
+    static inline void link(List *a, List *b) { // Connect two nodes in list
+        a->next = b;
+        b->prev = a;
+    }
+    
+    inline void deleteFromList(List *a) { // Delete an empty list node from the list, and update head/tail if required.
+        if(!a->next && !a->prev) {
+            head = tail = nullptr;
+        }
+        else if(!a->next) {
+            tail = a->prev;
+            tail->next = nullptr;
+            
+        }
+        else if(!a->prev) {
+            head = a->next;
+            head->prev = nullptr;
+        }
+        else {
+            link(a->prev, a->next);
+        }
+        delete a;
+    }
+    
+    void inc(string key) {
+        auto it = map.find(key);
+        if(it == map.end()) { // key does not exist
+            if(head && head->val == 1) { // if we already have a head with value 1, we simply insert into that node's set
+                head->strings.insert(key);
+            }
+			// head does not exist or is not value 1, we create new node with value 1,
+			// set that to head, add key to it, and connect it to previous head.
+			// We also update tails if tails is nullptr (there is only 1 node, so head = tail)
+            else { 
+                auto l = new List(1);
+                l->strings.insert(key);
+                if(head) link(l, head);
+                head = l;
+                if(!tail) tail = l;
+            }
+            map[key] = head; // Update map
+        }
+        else { // key exists
+            auto l = it->second;
+			l->strings.erase(key); // remove key from the current node
+            int nextVal = l->val+1; // find its incremented value
+            auto next = l->next; // get current node's next node
+			// if next node exists and it has the exact value, we add the key to that node
+			// if not, we make a new node, insert the key into that node, and insert this node between previous and next node.
+            if(next) {
+                if(next->val == nextVal) {
+                    next->strings.insert(key);
+                    map[key] = next;
+                }
+                else {
+                    auto nextL = new List(nextVal);
+                    nextL->strings.insert(key);
+                    link(l, nextL);
+                    link(nextL, next);
+                    map[key] = nextL;
+                }
+            }
+			// If next node does not exist, we need to add a new node to end of list, insert key into it, and use that as new tail.
+            else {
+                auto nextL = new List(nextVal);
+                nextL->strings.insert(key);
+                link(l, nextL);
+                tail = nextL;
+                map[key] = nextL;
+            }
+            if(l->strings.empty()) deleteFromList(l); // If the list node from which we moved the key is empty, we delete it.
+        }
+    }
+    
+    void dec(string key) {
+        auto it = map.find(key);
+        if(it != map.end()) { // key exists
+            auto l = it->second;
+            int prevVal = l->val-1;
+            l->strings.erase(key); // delete from current node
+            auto prev = l->prev;
+			// if there is a previous and it has the exact decremented value, we move the key to this node.
+			// otherwise, we need to make a new node, put key in that node, and insert it between prev and current node.
+            if(prev) {
+                if(prev->val == prevVal) {
+                    prev->strings.insert(key);
+                    map[key] = prev;
+                }
+                else {
+                    auto prevL = new List(prevVal);
+                    prevL->strings.insert(key);
+                    link(prev, prevL);
+                    link(prevL, l);
+                    map[key] = prevL;
+                }
+            }
+			// If no previous, we need to create a new node, with the decremented value, only if the value >= 1.
+			// If decremented value less than 1, we know its previous value is 1, so we should just remove this key
+			// Otherwise, we make a new node with the decremented value, link it to current node, and move head to this new node.
+            else {
+                if(prevVal < 1) {
+                    map.erase(key);
+                }
+                else {
+                    auto prevL = new List(prevVal);
+                    prevL->strings.insert(key);
+                    link(prevL, l);
+                    head = prevL;
+                    map[key] = prevL;
+                }
+            }
+            if(l->strings.empty()) deleteFromList(l); // Delete current node if after moving key it is empty
+        }
+    }
+    
+    string getMaxKey() { // Return first element in set of tail node
+        return tail ? *(tail->strings.begin()) : "";
+    }
+    
+    string getMinKey() { // Return first element in set of head node
+        return head ? *(head->strings.begin()) : "";
+    }
+    
+    unordered_map<string, List*> map;
+    List* head;
+    List* tail;
+};
+
+auto gucciGang = []() {std::ios::sync_with_stdio(false);cin.tie(nullptr);cout.tie(nullptr);return 0;}();
