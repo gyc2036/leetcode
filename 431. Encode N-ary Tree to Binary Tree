@@ -1,0 +1,137 @@
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val = NULL;
+    vector<Node*> children;
+
+    Node() {}
+
+    Node(int _val, vector<Node*> _children) {
+        val = _val;
+        children = _children;
+    }
+};
+*/
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+
+class Codec {
+public:
+
+    // Encodes an n-ary tree to a binary tree.    
+    TreeNode* encode(Node* root) {
+        if(root==NULL) return NULL;
+        
+        TreeNode* TreeParent= new TreeNode(root->val);
+        TreeNode* result  = TreeParent;
+        Node*     Nparent=root;
+        
+        queue<Node*>     Nparents;
+        queue<TreeNode*> Treeparents;
+        
+        Nparents.push(Nparent);
+        Treeparents.push(TreeParent);
+        int size;
+        
+        while(!Nparents.empty())
+        {   
+            size=Nparents.size(); 
+            
+            for(int i=0;i<size;i++)
+            {
+                Nparent=Nparents.front();
+                TreeParent =Treeparents.front();
+                if(Nparent->children.size()>0)
+                {
+                    TreeNode* child = new TreeNode(Nparent->children[0]->val);
+                    TreeParent->right=child;
+                    Nparents.push(Nparent->children[0]);
+                    Treeparents.push(child);
+
+                    for(int c=1;c<Nparent->children.size();c++)
+                    {
+                        child->left= new TreeNode(Nparent->children[c]->val);
+                        child=child->left;
+                        Treeparents.push(child);
+                        Nparents.push(Nparent->children[c]);
+                    }
+                }
+                
+                Nparents.pop();
+                Treeparents.pop();            
+            }
+            
+            
+        }        
+        
+    return result;
+    }
+    
+    
+    // Decodes your binary tree to an n-ary tree.
+    Node* decode(TreeNode* root) {
+        if(root==NULL) return NULL;
+        
+        Node* Nparent= new Node(root->val);
+        Node* result  = Nparent;
+        TreeNode* TreeParent = root;
+        
+        queue<Node*>     Nparents;
+        queue<TreeNode*> Treeparents;
+        
+        Nparents.push(Nparent);
+        Treeparents.push(TreeParent);
+        int size;
+        
+        while(!Treeparents.empty())
+        {
+            size=Treeparents.size(); 
+
+            for(int i=0;i<size;i++)
+            {
+                Nparent=Nparents.front();
+                TreeParent =Treeparents.front();
+            
+                if(TreeParent->right!=NULL)
+                {
+                    TreeParent=TreeParent->right;
+                    
+                    Node* child = new Node(TreeParent->val);
+                    Nparent->children.push_back(child);
+                    
+                    Nparents.push(child);
+                    Treeparents.push(TreeParent);
+                    
+                    TreeParent = TreeParent->left;
+                    while(TreeParent!=NULL)
+                    {
+                        child = new Node(TreeParent->val);
+                        Nparent->children.push_back(child);
+                        Treeparents.push(TreeParent);
+                        Nparents.push(child);
+                        TreeParent = TreeParent->left;
+                    }
+                }
+                
+                Nparents.pop();
+                Treeparents.pop();            
+            }
+        }
+        
+        
+        
+        return result;
+    }
+};
+
+// Your Codec object will be instantiated and called as such:
+// Codec codec;
+// codec.decode(codec.encode(root));
