@@ -1,0 +1,37 @@
+bool isEqual(vector<int>& a, vector<int>& b) {
+
+	for(int i=0; i<26; i++) 
+		if(a[i]!=b[i])
+			return false;
+	return true;
+}
+
+vector<int> findAnagrams(string s, string p) {
+
+	int S = s.size();
+	int P = p.size();     
+	if(s=="" || P>S) return {};
+
+	vector<int> countS(26, 0);
+	vector<int> countP(26 , 0);
+	vector<int> res;
+
+   for(int j=0; j<P; j++) { // fill countS and countP for the window size
+			countS[s[j]-'a']++;
+			countP[p[j]-'a']++;
+	}
+
+	if(isEqual(countS, countP))
+		res.push_back(0); 
+
+	for(int i=1; i<=S-P; i++) {
+
+		// window slides
+		countS[s[i-1]-'a']--;
+		countS[s[i+P-1]-'a']++;
+
+		if(isEqual(countS, countP))
+			res.push_back(i);
+	}
+	return res;
+}
