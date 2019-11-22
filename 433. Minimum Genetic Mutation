@@ -1,0 +1,29 @@
+int minMutation(string start, string end, vector<string>& bank) {
+	unordered_set<string> gene;
+	for(auto &s : bank) gene.insert(s);
+	queue<string> q;
+	unordered_set<string> visited;
+	q.push(start);
+	visited.insert(start);
+	int res=1;
+	vector<char> lett = {'A','C','G','T'};
+	while(q.size()) {
+		int n = q.size();
+		for(int i=0;i<n;i++) {
+			string u = q.front(); q.pop();
+			for(int k=0;k<8;k++) {
+				string v = u;
+				for(char c : lett) {
+					v[k] = c;
+					if(gene.count(v) && !visited.count(v)) {
+						if(v == end) return res;
+						visited.insert(v);
+						q.push(v);
+					}
+				}
+			}
+		}
+		res++;
+	}
+	return -1;
+}
