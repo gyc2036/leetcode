@@ -1,0 +1,93 @@
+class Solution {
+public:
+    int numberOfArithmeticSlices(vector<int>& A) {
+        int n = A.size();
+        if (n == 0) return 0;
+        vector<int> dp(n + 1, 0);
+        int result = 0;
+        for (int i = 0; i < n; ++i) {
+            if (i >= 2 && A[i] - A[i - 1] == A[i - 1] - A[i - 2]) {
+                dp[i] = dp[i - 1] + 1;
+            }
+            result += dp[i];
+        }
+        return result;
+    }
+};
+Let dp[{i, d}] donates the answer ending at i with diff d.
+dp[{i, j}]
+Then dp[{i, d}] += dp[{j, d}] + ? (j < i). However, we still need to consider previous pairs which diff is also d. We donate this part as ?.
+To compute this part, we simply need to find the occurence of A[j] - A[k] = A[i] - A[j], which is num in the code.
+
+class Solution {
+public:
+     int numberOfArithmeticSlices(vector<int>& A) {
+        map<long long,set<long long>> mp;
+        for (int i = 0; i < A.size(); ++i) {
+            mp[A[i]].insert(i);
+        }
+        int n = A.size(); 
+        if (n == 0) return 0;
+         
+        map<pair<long long,long long>, long long> dp;
+        long long result = 0;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < i; ++j) {
+                long long d = A[i]*1LL - A[j];
+                long long prev = A[j]*1LL - d;
+                if (mp.find(prev) != mp.end()) {
+                    auto st = mp[prev];
+                    auto end = st.lower_bound(j);
+                    int nums = 0;
+                    for (auto p=st.begin(); p!=end;++p) {
+                        nums ++;
+                    }
+                    if (nums >= 1) {
+                        dp[{i, d}] += dp[{j, d}] + nums;
+                    }
+                }
+            }
+        }
+        for (auto pr: dp) {
+            result += pr.second;
+        }
+        return result;
+    }
+};
+Also, we can use vector<int> to replace set<int>.
+
+class Solution {
+public:
+     int numberOfArithmeticSlices(vector<int>& A) {
+        unordered_map<long long,vector<int>> mp;
+        for (int i = 0; i < A.size(); ++i) {
+            mp[A[i]].push_back(i);
+        }
+        int n = A.size(); 
+        if (n == 0) return 0;
+         
+        unordered_map<int, unordered_map<long long, int>> dp;
+        int result = 0;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < i; ++j) {
+                int sum = 0;
+                long long d = 0LL + A[i] - A[j];
+                long long prev = 0LL + A[j] - d;
+                if (mp.find(prev) != mp.end()) {
+                    const vector<int>& st = mp[prev];
+                    int nums = lower_bound(st.begin(), st.end(), j) - st.begin();
+                    if (nums >= 1) {
+                        dp[i][d] += dp[j][d] + nums;
+                    }
+                }
+            }
+           
+        }
+        for (const auto& pr: dp) {
+            for (const auto& pr2: pr.second) {
+                result += pr2.second;
+            }
+        }
+        return result;
+    }
+};
