@@ -1,0 +1,26 @@
+class Solution {
+public:
+    vector<int> findDuplicates(vector<int>& nums) {
+        int i = 0;
+        vector<int> res;
+        int len = nums.size();
+        while (i < len) {
+            // if current element is in the right position 
+            // or current element has been added in the res, we just ++i;
+            
+            // if current element's right position has been occupied by another right element
+            // which means this element is duplicate
+            
+            // otherwise, we just swap current element to its right position
+            if (nums[i] - 1 == i || nums[i] == INT_MAX) ++i;
+            else if (nums[i] == nums[nums[i] - 1]) {
+                res.push_back(nums[i]);
+                nums[i] = INT_MAX;
+                ++i;
+            }
+            else swap(nums[i], nums[nums[i] - 1]);
+        }
+      
+        return res;
+    }
+};
