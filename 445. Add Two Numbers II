@@ -1,0 +1,83 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    
+    
+    ListNode *solve(ListNode* l1, ListNode* l2,int differ,int smallest_list){
+            if(l1==NULL&&l2==NULL){
+                return NULL;
+            }else if(l1==NULL){
+		        return l2;
+            }else if(l2==NULL){
+                   return l1;
+           }else{
+                     ListNode*prev_node;
+                     int val=0;
+                     if(smallest_list ==-1 && differ>0 ){
+                         prev_node=solve(l1,l2->next,differ-1,smallest_list);
+                         val=l2->val;
+                     }else if(smallest_list==1&& differ>0){
+                          prev_node=solve(l1->next,l2,differ -1,smallest_list);
+                          val=l1->val;
+                     }else{
+                         prev_node=solve(l1->next,l2->next,differ-1,smallest_list);
+                         val=l2->val + l1->val;
+                     }
+                    int remainder=0;
+                    if(prev_node!=NULL){
+                        remainder=(prev_node -> val)/10;
+                        prev_node->val=(prev_node->val)%10;
+                    }
+                    ListNode*cur_node=new ListNode(val+remainder);
+                    cur_node->next=prev_node;
+                    return cur_node;
+
+         }
+        
+    }
+    
+    int cal_len(ListNode*l){
+        
+        int cnt=0;
+        while(l!=NULL){
+            cnt++;
+            l=l->next;
+        }
+        return cnt;
+        
+    }
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        
+        
+        int first_len=cal_len(l1);
+        int second_len=cal_len(l2);
+        
+        
+        int smallest=0;
+        if(first_len>second_len){
+            smallest=1;
+        }else{
+            smallest=-1;
+        }
+        
+         ListNode*result=solve(l1,l2,abs(first_len-second_len),smallest);
+         if(result!=NULL){
+	            if(result->val >= 10){
+		            int remainder=0;
+                    remainder=(result -> val)/10;
+                    result->val=(result->val)%10;
+  		            ListNode*cur_node= new ListNode(remainder);
+		            cur_node->next=result;
+		            result=cur_node;                
+                }
+        }
+	    return result;
+    }
+};
