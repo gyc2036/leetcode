@@ -1,0 +1,59 @@
+class Solution {
+    bool dfsCheck(vector<unordered_set<int>> &adj, vector<int> &path,
+                 vector<bool> &on_path, vector<vector<int>> &results, 
+                  int idx, int len, int sz) {
+        if (on_path[idx]) return false;
+        path[len-1] = idx;
+        if (len == sz) {
+            if (adj[idx].size() == 0) {
+                results.push_back(path);
+                return results.size() == 1;
+            } else {
+                return false;
+            }
+        }
+        on_path[idx] = true;
+        for (auto e:adj[idx]) {
+            if (!dfsCheck(adj, path, on_path, results, e, len+1, sz)) return false;
+        }
+        on_path[idx] = false;
+        return true;
+    }
+public:
+    bool sequenceReconstruction(vector<int>& org, vector<vector<int>>& seqs) {
+        
+        unordered_set<int> heads;
+        int i, j, szo = org.size();
+        if (szo == 0) return seqs.size() == 0;
+        vector<int> path(szo);
+        vector<bool> on_path(szo+1, false);
+        vector<unordered_set<int>> adj(szo+1);
+        vector<vector<int>> results;
+        
+        for (i = 0; i < seqs.size(); i++) {
+            if (seqs[i].size() > 0) {
+                heads.insert(seqs[i][0]);
+            }
+        }
+        for (i = 0; i < seqs.size(); i++) {
+            for (j = 0; j+1 < seqs[i].size(); j++) {
+                if (seqs[i][j] <= 0 || seqs[i][j] > szo ||
+                    seqs[i][j+1] <= 0 || seqs[i][j+1] > szo) {
+                    return false;
+                }
+                adj[seqs[i][j]].insert(seqs[i][j+1]);
+                if (heads.find(seqs[i][j+1]) != heads.end()) {
+                    heads.erase(seqs[i][j+1]);
+                }
+            }
+        }
+        // only one head and one result allowed
+        if (heads.size() != 1 || 
+            (heads.size() > 0 && *heads.begin() != org[0]) ||
+            !dfsCheck(adj, path, on_path, results, *heads.begin(), 1, szo) ||
+            results.size() != 1) {
+            return false;
+        }
+        return equal(org.begin(), org.end(), results[0].begin());
+    }
+};
