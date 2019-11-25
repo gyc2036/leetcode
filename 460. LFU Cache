@@ -1,0 +1,71 @@
+class LFUCache {
+public:
+    int size;
+    
+    unordered_map<int, int> kv;    // key -> value
+    unordered_map<int, int> kf;    // key -> frequency
+    
+    list<int> lru;
+    unordered_map<int, list<int>::iterator> lru_iterator; // key -> iterator
+        
+    LFUCache(int capacity) : size(capacity) {
+    }
+    
+    int get(int key) {
+        if (kv.count(key)==0)
+            return -1;
+        
+        updateLFU(key);
+        updateLRU(key);
+        
+        return kv[key];
+    }
+    
+    void put(int key, int value) {   
+        if (size == 0)
+            return;
+        
+        if(kv.size() == size && kv.count(key) == 0){
+            evict();
+        }
+        
+        kv[key] = value;
+        updateLFU(key);
+        updateLRU(key);
+    }
+    
+    void updateLRU(int key) {
+        if (lru_iterator.count(key)) {
+            lru.erase(lru_iterator[key]);
+        }
+        
+        lru.push_front(key);
+        lru_iterator[key] = lru.begin();
+    }
+    
+    void updateLFU(int key) {        
+        if (kv.count(key)) {
+            kf[key] = kf[key]+1;
+        } else {
+            kf[key] = 1;
+        }        
+    }
+    
+    void evict() {
+        int min_used = INT_MAX;
+        int candidate;
+        
+        for (auto& key : lru) {
+            if (kf[key] <= min_used) {
+                min_used = kf[key];
+                candidate = key;
+            }
+        }
+        
+        kf.erase(candidate);
+        kv.erase(candidate);
+        
+        lru_iterator.erase(candidate);
+        lru.remove(candidate);
+    }
+};
