@@ -1,0 +1,42 @@
+class Solution {
+public:
+    int minTransfers(vector<vector<int>>& transactions) {
+        int res = INT_MAX;
+        unordered_map<int, int> m;
+        for (auto t : transactions) {
+            m[t[0]] -= t[2];
+            m[t[1]] += t[2];
+        }
+        vector<int> account;
+        for (auto a : m) {
+            if (a.second != 0)
+                account.push_back(a.second);
+        }
+        helper(account, 0, 0, res);
+        return res;
+    }
+    void helper(vector<int>& account, int start, int cnt, int& res) {
+        int n = account.size();
+        while (start < n && account[start] == 0)
+            ++start;
+        if (start == n) {
+            res = min(res, cnt);
+            return;
+        }
+		// use greedy to do pruning
+		// if two accounts can counteract each other, skip other possibilities
+        for (int i = start + 1; i < n; i++) {
+            if (account[i] + account[start] == 0) {
+                account[i] += account[start];
+                helper(account, start + 1, cnt + 1, res);
+                account[i] -= account[start];
+                return;
+            }    
+            else if ((account[i] > 0 && account[start] < 0) || (account[i] < 0 && account[start] > 0)) {
+                account[i] += account[start];
+                helper(account, start + 1, cnt + 1, res);
+                account[i] -= account[start];
+            }
+        }
+    }
+};
