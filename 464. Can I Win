@@ -1,0 +1,18 @@
+class Solution { // 8ms, 17MB
+public:
+    bool canIWin(int maxChoosableInteger, int desiredTotal) {
+        if(maxChoosableInteger * (maxChoosableInteger + 1) / 2 < desiredTotal) return false;
+        vector<int8_t> vis(1 << maxChoosableInteger, -1);
+        return isWinState(0, maxChoosableInteger, desiredTotal, vis);
+    }
+private:
+    bool isWinState(int used, int maxChoose, int desire, vector<int8_t>& vis){
+        if(~vis[used]) return vis[used];
+        for(int i = maxChoose; i > 0; --i){
+            if(used & (1 << (i - 1))) continue;
+            if(i >= desire || !isWinState(used | (1 << (i - 1)), maxChoose, desire - i, vis))
+                return vis[used] = 1;
+        }
+        return vis[used] = 0;
+    }
+};
