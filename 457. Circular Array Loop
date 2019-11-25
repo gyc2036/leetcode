@@ -1,0 +1,37 @@
+class Solution {
+public:
+    bool circularArrayLoop(vector<int>& nums) {
+        int n = nums.size();
+        for (int i = 0; i < n; i++) {
+            if (nums[i] >= 1001) {
+				// skip visited nodes
+                continue;
+            }
+            bool flag = (nums[i] > 0);
+            int j = i;
+            while (true) {
+                if (nums[j] == 1001 + i) {
+					// return true when see nodes visited in this iteration
+                    return true;
+                } else if (nums[j] >= 1001) {
+					// break when see nodes visited in previous iteration (can not form a loop)
+                    break;
+                }
+                int next = (j + n + nums[j] % n) % n;
+                if (next == j) {
+					// self loop
+                    nums[j] = 1001;
+                    break;
+                } else if (flag == (nums[j] > 0)) {
+					// same direction, maybe in a loop
+                    nums[j] = 1001 + i;
+                    j = next;
+                } else {
+					// break when change direction
+                    break;
+                }
+            }
+        }
+        return false;
+    }
+};
