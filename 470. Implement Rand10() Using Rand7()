@@ -1,0 +1,9 @@
+class Solution {    
+public:
+    int rand10() {
+        int val6, val5;
+        while((val6 = rand7()) > 6);
+        while((val5 = rand7()) > 5);
+        return (val6 % 2) * 5 + val5;
+    }
+};
