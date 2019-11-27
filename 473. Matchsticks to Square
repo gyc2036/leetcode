@@ -1,0 +1,26 @@
+bool makesquare(vector<int>& nums) {
+        int sum = 0;
+        for(auto i : nums) sum += i;
+        if(sum % 4 != 0 || sum == 0) return false;
+        vector<int> used(nums.size(),0);
+        sort(nums.begin(), nums.end());
+        reverse(nums.begin(), nums.end());
+        if(!dfs(nums, 0, sum/4, used)) return false;
+        if(!dfs(nums, 0, sum/4, used)) return false;
+        if(!dfs(nums, 0, sum/4, used)) return false;
+        return true;
+        
+    }
+    bool dfs(vector<int> &nums, int i, int target, vector<int> &used) {
+        if(i >= nums.size()) return false;
+        if(used[i]==1) return dfs(nums,i+1,target,used);
+        if(target == nums[i]) {
+            used[i] = 1;
+            return true;
+        } else if(target > nums[i]) {
+            used[i] = 1;
+            if(dfs(nums, i+1, target-nums[i], used)) return true;
+            used[i] = 0;
+        }
+        return dfs(nums, i+1, target, used);
+    }
