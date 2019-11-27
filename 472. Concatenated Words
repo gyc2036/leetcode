@@ -1,0 +1,53 @@
+struct trieNode {
+    trieNode(): children(vector<trieNode*>(26, nullptr)), stop(false) {}
+    vector<trieNode*> children;
+    bool stop;
+};
+
+void insert(trieNode *h, const string& s) {
+    if(s == "") return;
+    for(const auto &c: s) h = h->children[c-'a'] = h->children[c-'a'] ? h->children[c-'a'] : new trieNode();
+    h->stop = true;
+}
+
+bool check(trieNode *h, const string& s) {
+    for(const auto &c: s) {
+        h = h->children[c-'a'];
+        if(!h) return false;
+    }
+    return h->stop;
+}
+
+void print(trieNode *h, string s = "") { // Print all words in a trie
+    if(h->stop) cout << s << endl;
+    for(int i = 0; i < 26; ++i)
+        if(h->children[i]) print(h->children[i], s + (char)(i+'a'));
+}
+
+class Solution {
+public:
+    vector<string> findAllConcatenatedWordsInADict(vector<string>& words) {
+        if(words.size() < 2) return {};
+        trieNode* h = new trieNode();
+        for(const auto &w: words) insert(h, w);
+        vector<string> ans;
+        for(const auto &w: words)
+            if(valid(w, h)) ans.emplace_back(w);
+        return ans;
+    }
+    static bool valid(const string& s, trieNode* h) {
+        if(s.size() <= 1 && !check(h, s)) return false;
+        int size = s.size()-1;
+        string l = "", r = "";
+        for(int i = 0; i < size; ++i) {
+            l += s[i];
+            r = s.substr(i+1);
+            if(check(h, l) && (check(h, r) || valid(r, h))) {
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
+auto gucciGang = []() {std::ios::sync_with_stdio(false);cin.tie(nullptr);cout.tie(nullptr);return 0;}();
