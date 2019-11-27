@@ -1,0 +1,33 @@
+class Solution {
+public:
+    int dp[601][101][101];
+    int util(int index, int m, int n, vector<string>&strs)
+    {
+        int x = strs.size();
+        if(index >= x)
+            return 0;
+        if(dp[index][m][n] != 0)
+            return dp[index][m][n];
+        else
+        {
+            string str = strs[index];
+            int ones=0,zeroes=0;
+            for(int i=0;i<str.size();i++)
+            {
+                if(str[i] == '0')
+                    zeroes++;
+                else
+                    ones++;
+            }
+            if(m-zeroes >= 0 && n-ones >= 0)
+                return dp[index][m][n] = max(1+util(index+1,m-zeroes,n-ones,strs), 
+                                                util(index+1,m,n,strs));
+            else
+                return dp[index][m][n] = util(index+1,m,n,strs);
+        }
+    }
+    int findMaxForm(vector<string>& strs, int m, int n) {
+        memset(dp,0,sizeof dp);
+        return util(0,m,n,strs);
+    }
+};
