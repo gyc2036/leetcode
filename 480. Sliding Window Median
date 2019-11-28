@@ -1,0 +1,51 @@
+class Solution {
+    private Queue<Integer> minHeap, maxHeap;
+    public double[] medianSlidingWindow(int[] nums, int k) {
+        minHeap = new PriorityQueue<>();
+        maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+        
+        for(int j = 0; j < k; j++) {
+            if(j == 0 || nums[j] <= maxHeap.peek()) {
+                maxHeap.offer(nums[j]);
+            }else {
+                minHeap.offer(nums[j]);
+            }
+        }
+        balance();
+        double[] result = new double[nums.length - k + 1];
+        int j = 0;
+        result[j] = getMedianOfK(k);
+        for(int i = k; i < nums.length; i++) {
+            if(maxHeap.contains(nums[i-k])) {
+                maxHeap.remove(nums[i-k]);
+            } else {
+                minHeap.remove(nums[i-k]);
+            }
+            
+            if(maxHeap.isEmpty() || nums[i] <= maxHeap.peek()) {
+                maxHeap.offer(nums[i]);
+            }else {
+                minHeap.offer(nums[i]);
+            }
+            balance();
+            result[++j] = getMedianOfK(k);
+        }
+        return result;
+    }
+    private void balance() {
+        while(maxHeap.size() < minHeap.size()) {
+            maxHeap.offer(minHeap.poll());
+        }
+        while(minHeap.size() < maxHeap.size() - 1) {
+            minHeap.offer(maxHeap.poll());
+        }
+    }
+    private double getMedianOfK(int k) {
+        if(k % 2 == 0) {
+            double a1 = (double)maxHeap.peek();
+            double a2 = (double)minHeap.peek();
+            return (a1 + a2) / 2.0;
+        }
+        return (double)maxHeap.peek();
+    }
+}
