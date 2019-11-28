@@ -1,0 +1,47 @@
+class Solution {
+public:
+    //Count the number of D's starting at start_index, starting when encountering an 'I'
+    int CountNumDs(const string &str, int start_index) {
+        int count = 0;
+        for (int i = start_index; i < str.size(); ++i) {
+            char c = str[i];
+            if (c == 'D') {
+                ++count;
+                continue;
+            }
+            if (c != 'D')
+                break;
+        }
+        start_index += count;
+        return count;
+    }
+    vector<int> findPermutation(string s) {
+        int initial_value = 1 + CountNumDs(s, 0);
+		//We keep a range [min, max] where if a 'D' is encountered then the value min - a will added to the result vector while
+		// if an 'I' is encountered then max + 1 will be added to the result vector.
+        int min = initial_value, max = initial_value;
+        vector<int> result;
+        result.push_back(initial_value);
+        for (int i = 0; i < s.size(); ++i) {
+            char c = s[i];
+            if (c == 'D') {
+                --min;
+                result.push_back(min);
+            } else { //s[i] == 'I'
+                if (i + 1 < s.size() && s[i + 1] == 'I' || i + 1 == s.size()) {
+                    ++max;
+                    result.push_back(max);
+                } else if (i + 1 < s.size() && s[i + 1] == 'D') {
+				    //Recompute the value of min and max.
+                    int num_ds = CountNumDs(s, i + 1); //Count the number of consecutive 'D's starting at index i + 1
+                    int value = max + num_ds + 1;
+                    max = value;
+                    min = value;
+                    result.push_back(max);
+                }
+            }
+            }
+        }
+        return result;
+    }
+};
