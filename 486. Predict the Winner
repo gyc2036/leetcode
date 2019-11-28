@@ -1,0 +1,39 @@
+class Solution {
+public:
+    bool PredictTheWinner(vector<int>& nums) {
+        int n = nums.size() ; 
+        if(n ==  1) return 1; 
+        int dp[n][n][2]; 
+        memset(dp , 0 , sizeof dp) ; 
+        for(int lenn = 1 ; lenn <= n ;++lenn){
+            for(int i=0;i<=n-lenn;++i){
+                int j = i + lenn - 1;
+                int sum = 0 ; 
+                for(int k = i ; k<= j ; ++k) sum = sum + nums[k] ; 
+                if(i==j){
+                    dp[i][j][0] = nums[i];
+                    dp[i][j][1] = 0;
+                }
+                
+                else{
+                    int left = nums[i] + dp[i+1][j][1] ;
+                    int right = nums[j] + dp[i][j-1][1] ; 
+                    dp[i][j][0] = max(left ,right) ; 
+                    dp[i][j][1] = sum - dp[i][j][0]; 
+                }
+            }
+        }
+        for(int i = 0 ; i < n ; ++i){
+            for(int j = 0 ; j < n ; ++j){
+                cout << dp[i][j][0] << " " << dp[i][j][1] << " , " ;
+            }
+            cout << endl ;
+        }
+        int foo = dp[0][n-1][0] ; 
+        cout << " foo " << foo << endl ; 
+        int sum = accumulate(nums.begin() , nums.end() , 0);
+        int res = sum - foo ; 
+        if(foo >= res) return 1; 
+        return 0 ; 
+    }
+};
