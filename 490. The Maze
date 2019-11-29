@@ -1,0 +1,133 @@
+namespace std {
+	template <>
+	struct hash<pair<int,int>> {
+		size_t operator() (pair<int,int> p) const {
+			hash<int> intHash;
+			return intHash(p.first)^intHash(p.second);
+		}
+	};
+}
+
+class Solution {
+private:
+	unordered_set<pair<int,int>> failPath;	
+	int nextRow(int row, int dir);
+	int nextCol(int col, int dir);
+	int prevRow(int row, int dir);
+	int prevCol(int col, int dir);
+public:
+    bool hasPath(vector<vector<int>>& maze, vector<int>& start, vector<int>& destination);
+    bool dfs(vector<vector<int>>& maze, int r, int c, vector<int>& destination);
+    bool bfs(vector<vector<int>>& maze, vector<int>& s, vector<int>& d);
+};
+
+int Solution::nextRow(int row, int dir)
+{
+	if (dir == 0) return --row;
+	if (dir == 2) return ++row;
+	return row;	
+}
+
+int Solution::nextCol(int col, int dir)
+{
+	if (dir == 1) return --col;
+	if (dir == 3) return ++col;
+	return col;
+}
+
+int Solution::prevRow(int row, int dir)
+{
+	if (dir == 0) return ++row;
+	if (dir == 2) return --row;
+	return row;		
+}
+
+int Solution::prevCol(int col, int dir)
+{
+	if (dir == 1) return ++col;
+	if (dir == 3) return --col;
+	return col;	
+}
+
+bool Solution::dfs(vector<vector<int>>& maze, int r, int c, vector<int>& destination)
+{
+	if (r == destination[0] && c == destination[1]) return true;
+	if (failPath.find(make_pair(r,c)) != failPath.end()) return false;
+	maze[r][c] = 2;
+	for (int i = 0; i < 4; i++) {
+		int row = r;
+		int col = c;
+		int move = 0;
+		while (true) {
+			row = nextRow(row, i);
+			col = nextCol(col, i);
+			if (row < 0 || col < 0) break;
+			if (row >= maze.size() || col >= maze[0].size()) break;
+			if (maze[row][col] == 2) {
+				move = 0;
+				break;	
+			}
+			if (maze[row][col] == 1) break;
+			move++;
+		}
+		if (move == 0) continue;
+		row = prevRow(row, i);
+		col = prevCol(col, i);
+		if (dfs(maze, row, col, destination)) return true;
+	}
+	maze[r][c] = 0;
+	failPath.insert(make_pair(r,c));
+	return false;
+}
+
+bool Solution::bfs(vector<vector<int>>& maze, vector<int>& s, vector<int>& d)
+{
+	int row = s[0];
+	int col = s[1];
+	int move = 0;
+	queue<pair<int,int>> q;
+	pair<int,int> p;
+	
+	maze[row][col] = 2;
+	q.push(make_pair(row, col));
+	
+	while (!q.empty()) {
+		p = q.front(); q.pop();
+		
+		if (p.first == d[0] && p.second == d[1]) 
+			return true;
+
+		for (int i = 0; i < 4; i++) {
+			move = 0;
+			row = p.first;
+			col = p.second;
+			while (true) {
+				row = nextRow(row, i);
+				col = nextCol(col, i);
+				if (row < 0 || col < 0) break;
+				if (row >= maze.size() || col >= maze[0].size()) break;
+				if (maze[row][col] == 2) {
+					move = 0;
+					break;	
+				}
+				if (maze[row][col] == 1) break;
+				move++;
+			}
+			if (move == 0) continue;
+			row = prevRow(row, i);
+			col = prevCol(col, i);
+			
+			maze[row][col] = 2;
+			q.push(make_pair(row, col));		
+		}
+	}
+ 	return false;
+}
+
+bool Solution::hasPath(vector<vector<int>>& maze, vector<int>& start, vector<int>& destination)
+{
+	if (maze.size() == 0) return false;
+	if (maze[0].size() == 0) return false;
+	//return dfs(maze, start[0], start[1], destination);
+	return bfs(maze, start, destination);
+}
