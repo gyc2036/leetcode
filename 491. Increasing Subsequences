@@ -1,0 +1,50 @@
+vector<vector<int>> ans ; 
+
+void solve(vector<int> &nums , int index , vector<int> &res)
+{
+    int n = nums.size() ; 
+    if(index == n){
+        if(res.size() <= 1) return ; 
+        ans.push_back(res) ; 
+        return ; 
+    }
+    if(index == 0 or res.size() == 0 ) {
+       res.push_back(nums[index]) ; 
+       solve(nums , index + 1 , res) ; 
+       res.pop_back();
+        solve(nums , index + 1 , res)  ; 
+        return ; 
+    }
+    else{
+        int prev = res[res.size() - 1] ; 
+        int curr = nums[index] ; 
+        if(curr < prev) solve(nums , index + 1 , res) ; 
+        else {
+            res.push_back(nums[index]) ; 
+            solve(nums , index+1 , res ) ; 
+            res.pop_back();
+            solve(nums , index+1 , res);
+        }
+        return ; 
+    }
+}
+
+class Solution {
+public:
+    vector<vector<int>> findSubsequences(vector<int>& nums) {
+        ans.clear() ; 
+        vector<int> res; 
+        res.clear() ; 
+        solve(nums , 0 , res) ; 
+        set<vector<int>> s ; 
+        for(int i = 0 ;  i < ans.size() ; ++i){
+            vector<int> res = ans[i] ; 
+            s.insert(res);
+        }
+        ans.clear() ; 
+        for(auto x:  s) {
+            ans.push_back(x) ; 
+        }
+        return ans; 
+    }
+};
