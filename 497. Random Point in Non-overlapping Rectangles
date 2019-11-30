@@ -1,0 +1,29 @@
+class Solution {
+public:
+    map<int,int> toRect;
+    vector<vector<int>> rs;
+    int total = 0;
+    Solution(vector<vector<int>>& rects) : rs(rects){
+        toRect[0] = 0;
+        for(int i = 0;i<rs.size();i++){
+            auto& x = rs[i];
+            int area = (x[2] - x[0] + 1) * (x[3] - x[1] + 1);
+            total += area;
+            toRect[total] = i+1;
+        }
+    }
+    
+    vector<int> f(const vector<int>& r, int i){
+        int width = r[2] - r[0] + 1;
+        int _x = i % width;
+        int _y = i / width; 
+        return {r[0] + _x, r[1] + _y};
+    }
+    
+    vector<int> pick() {
+        int r = rand() % total;
+        auto ptr = toRect.upper_bound(r);
+        ptr = next(ptr,-1);
+        return f(rs[ptr->second],r - ptr->first);
+    }
+};
