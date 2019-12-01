@@ -1,0 +1,56 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define all(x) x.begin(), x.end()
+
+template <typename T, int R, int C>
+using static_matrix = std::array<std::array<T, C>, R>;
+
+template <typename K, typename V>
+using hashmap = std::unordered_map<K, V>;
+
+template <typename F, typename ForwardIterator>
+decltype(auto) fminbnd(const F& f, ForwardIterator from, ForwardIterator to) {
+  return f(*min_element(from, to, [&f](auto x, auto y) { return std::less<invoke_result_t<F, decltype(*from)>>()(f(x), f(y)); }));  
+}
+
+template <class F>
+struct y_combinator {
+  F f;
+
+  template <class... Args>
+  decltype(auto) operator()(Args&&... args)  const { return f(std::ref(*this), std::forward<Args>(args)...); }
+  
+  template <class... Args>
+  decltype(auto) operator()(Args&&... args)  { return f(std::ref(*this), std::forward<Args>(args)...); }
+};
+
+template <class F> y_combinator(F) -> y_combinator<F>;
+
+class Solution {
+ public:
+  int findRotateSteps(string ring, string key) {
+    const int N = 100 + 1;
+
+    const hashmap<char, vector<int>> ring_index_set([&ring]{
+      hashmap<char, vector<int>> built;
+      for (int i = 0; i < size(ring); ++i) 
+        built[ring[i]].emplace_back(i);
+      return std::move(built);
+    }());
+
+    auto cost = [&ring](int from, int to) {
+      return std::min(std::abs(to - from), (int)size(ring) - std::abs(to - from)) + 1;
+    };
+    
+    auto f = y_combinator{[&, memo = static_matrix<optional<int>, N, N>{}](auto&&f, int r, int k) mutable -> int {
+      if (k == 0)          return cost(0, r);
+      else if (memo[r][k]) return *(memo[r][k]);
+      else                 return *(memo[r][k] = fminbnd([&](int x){ return f(x, k - 1) + cost(x, r); },
+                                                         all(ring_index_set.at(key[k - 1]))));
+    }};
+
+    return fminbnd([&](int r) { return f(r, size(key) - 1); },
+                   all(ring_index_set.at(key[size(key) - 1])));
+  }
+};
