@@ -1,0 +1,35 @@
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* left;
+    Node* right;
+    Node* parent;
+};
+*/
+class Solution {
+public:
+    Node* f(Node* root){
+        if(!root->parent){
+            return nullptr;
+        }
+        if(root->parent->right != root){
+            return root->parent;
+        }
+        return f(root->parent);
+    }
+    Node* f1(Node* root){
+        if(root->left == nullptr){
+            return root;
+        }
+        return f1(root->left);
+    }
+    Node* inorderSuccessor(Node* node) {
+        if(node->right){
+            return f1(node->right);
+        }
+        return f(node);
+        
+    }
+};
