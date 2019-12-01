@@ -1,0 +1,39 @@
+class Solution {
+
+public:
+
+int findSum(TreeNode *root, unordered_map<int, int> &mymap, int &max, int &val)
+{
+    if(root==NULL)
+        return 0;
+
+    int sum=root->val+findSum(root->left, mymap, max, val)+findSum(root->right, mymap, max, val);
+    
+    mymap[sum]++;
+    
+    if(mymap[sum]>max)
+    {
+        max=mymap[sum];
+        val=sum;
+    }
+    
+    return sum;
+}
+
+vector<int> findFrequentTreeSum(TreeNode* root) {
+
+    unordered_map<int, int> mymap, nodemap;
+    vector<int> ans;
+    
+    int max=0, val=0;
+    int sum = findSum(root, mymap, max ,val);
+    
+    for(auto it=mymap.begin(); it!=mymap.end(); it++)
+    {
+        if(it->second==max)
+            ans.push_back(it->first);
+    }
+    
+    return ans;
+}
+};
