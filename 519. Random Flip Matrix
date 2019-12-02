@@ -1,0 +1,48 @@
+struct VectorHash {
+	size_t operator()(const std::vector<int>& v) const {
+		std::hash<int> hasher;
+		size_t seed = 0;
+		for (int i : v) {
+			seed ^= hasher(i) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+		}
+		return seed;
+	}
+};
+
+class Solution {
+public:
+    Solution(int n_rows, int n_cols) 
+    {
+        row = n_rows;
+        col = n_cols;
+        disR = uniform_int_distribution<int>(0, row - 1);
+        disC = uniform_int_distribution<int> (0, col - 1);
+    }
+    
+    vector<int> flip() 
+    {
+        int rIndex, cIndex;
+        do
+        {
+            rIndex = disR(generator);
+            cIndex = disC(generator);
+        }while(isVisited.find({rIndex, cIndex}) != isVisited.end());
+        
+        
+        isVisited.insert({rIndex, cIndex});
+        
+        return {rIndex, cIndex};
+    }
+    
+    void reset() 
+    {
+        isVisited.clear();
+    }
+    
+private:
+    default_random_engine generator;
+    uniform_int_distribution<int> disR;
+    uniform_int_distribution<int> disC;
+    unordered_set<vector<int>, VectorHash> isVisited;
+    int row, col;
+};
