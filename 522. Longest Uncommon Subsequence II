@@ -1,0 +1,37 @@
+int findLUSlength(vector<string>& strs) {
+        int n = strs.size();
+        unordered_map<string, int> um;
+        for(int i=0; i<n; i++) {
+            getSubSeq(um, strs[i], i);
+        }
+        int res = 0;
+        for(auto it=um.begin(); it!=um.end(); ++it) {
+            if(it->second >= 0) res = max(res, (int)it->first.size());
+        }
+        return res > 0 ? res : -1;
+    }
+    void getSubSeq(unordered_map<string, int> &um, string &s, int index)  {
+        if(s.size() == 0) return;
+        int n = s.size();
+        vector<vector<string>> dp(n);
+        for(int i=0; i<n; i++) {
+            dp[i].push_back(string(1,s[i]));
+            if(!um.count(dp[i][0])) um[dp[i][0]] = index;
+            else if(um[dp[i][0]] != index && um[dp[i][0]] >= 0) um[dp[i][0]] = -1;
+        }
+        for(int l=2; l<=n; l++) {
+            vector<vector<string>> dp_new(n);
+            for(int i=0; i<n; i++) {
+                for(int j=0; j<i; j++) {
+                    if(dp[j].size()) {
+                        for(auto &t : dp[j]) dp_new[i].push_back(t + string(1, s[i]));
+                    }
+                }
+                for(int k=0;k<dp_new[i].size();k++) {
+                    if(!um.count(dp_new[i][k])) um[dp_new[i][k]] = index;
+                    else if(um[dp_new[i][k]] != index && um[dp_new[i][k]] >= 0) um[dp_new[i][k]] = -1;
+                }
+            }
+            dp.swap(dp_new);
+        }
+    }
