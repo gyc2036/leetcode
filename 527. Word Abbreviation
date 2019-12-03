@@ -1,0 +1,55 @@
+class Solution {
+public:
+vector wordsAbbreviation(vector& dict) {
+// key is the length of a word, value is the vector of a word's index
+int n = dict.size();
+if(n < 1)
+return dict;
+
+    vector<string> res(dict.size(), "");
+    vector<int> index(n, 0);
+    for(int i = 0; i < n; ++i)
+        index[i] = i;
+    
+    genAbbr(dict, index, 0, res);
+    
+    return res;
+}
+
+string abbrev(string &str, int k) { // k is length of prefix
+    if (str.size() - k <= 2) {
+        return str;
+    }
+    
+    return str.substr(0, k) + to_string(str.size()-k-1) + str.back();
+}
+
+void genAbbr(vector<string>& dict, vector<int>& index, int cur, vector<string>& result) {
+    int n = dict[index[0]].length();
+    unordered_map<string, vector<int>> um;  
+    
+    for(int i = cur; i < n-1 && index.size() > 0; ++i) {
+        //create abbrev
+        for(auto j : index)
+            um[abbrev(dict[j], i+1)].push_back(j);
+        
+        //check if there are unique ones
+        for(auto& p : um) {
+            // unique
+            if(p.second.size() == 1) {
+                int target = p.second[0];
+                result[target] = p.first;
+                
+                // remove the index
+                for(auto it = index.begin(); it != index.end(); ++it)
+                    if(*it == target) {
+                        index.erase(it);
+                        break;
+                    }
+            }
+            else 
+                genAbbr(dict, index, i+1, result);
+        }
+    }
+}
+};
