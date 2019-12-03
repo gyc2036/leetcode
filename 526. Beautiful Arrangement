@@ -1,0 +1,24 @@
+class Solution {
+public:
+    int turnOff(int cur, int off) {
+        return cur & ~(1 << off);
+    }
+
+    int countArrangement(int n) {
+        if (!n) return 0;
+        vector<vector<int>> dp(n + 1, vector<int>(1 << n, 0));
+
+        for(int state = 0; state < (1 << n); ++state) dp[0][state] = 1;
+
+        for(int i = 1; i <= n; ++i) {
+            for(int state = 0; state < (1 << n); ++state) {
+                int next;
+                for(int j = 1; j <= n; ++j) if (((state >> (j - 1)) & 1) && (i % j == 0 || j % i == 0)) {
+                    next = turnOff(state, j - 1);
+                    dp[i][state] += dp[i-1][next];
+                }
+            }
+        }
+        return dp[n][(1 << n) - 1];
+    }
+};
