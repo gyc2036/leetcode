@@ -1,0 +1,52 @@
+class Solution {
+    int N;
+    vector<double> prob;
+    vector<int> alias;
+    
+    void init(vector<int>& w) {
+        N = w.size();
+        prob.resize(N, 1.0);
+        alias.resize(N);
+        list<pair<int, double>> low, high;
+        int sum = accumulate(w.begin(), w.end(), 0);
+        for (int i = 0; i < N; i++) {
+            int n = w[i];
+            double p = (double)n*N/sum;
+            if (p < 1.0) {
+                low.push_back({i, p});
+            } else {
+                high.push_back({i, p});
+            }
+        }
+        while (!low.empty() && !high.empty()) {
+            auto iter1 = low.begin();
+            auto iter2 = high.begin();
+            prob[iter1->first] = iter1->second;
+            alias[iter1->first] = iter2->first;
+            iter2->second -= (1.0 - prob[iter1->first]);
+            if (iter2->second < 1.0) {
+                low.push_back(*iter2);
+                high.erase(iter2);
+            } 
+            low.erase(iter1);
+        }
+    }
+public:
+    Solution(vector<int>& w) {
+        init(w);
+    }
+    
+    int pickIndex() {
+        int r = rand()%N; // RAND_MAX > 10000
+        double p = rand()/(RAND_MAX+1.0);
+        if (p < prob[r])
+            return r;
+        return alias[r];
+    }
+};
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution* obj = new Solution(w);
+ * int param_1 = obj->pickIndex();
+ */
