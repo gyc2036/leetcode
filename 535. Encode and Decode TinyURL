@@ -1,0 +1,41 @@
+class Solution {
+private:
+    string baseURL="http://tinyurl.com/";
+    unordered_map<string, string> mapping;
+    
+public:
+    Solution() {
+        srand((unsigned)time(NULL));
+    }
+
+    // Encodes a URL to a shortened URL.
+    string encode(string longUrl) {
+        string shortUrl;
+        do {
+            shortUrl = generate();
+        } while (mapping.count(shortUrl) != 0);
+
+        mapping.insert(make_pair(shortUrl, longUrl));
+        return baseURL+shortUrl;
+    }
+
+    // Decodes a shortened URL to its original URL.
+    string decode(string shortUrl) {
+        return mapping[shortUrl.substr(baseURL.length())];
+    }
+
+    string generate() {
+        string data;
+        for (auto i = 0; i < 6; i++) {
+            int val = rand() % 62;
+            if (val < 10) {
+                data += val+'0';
+            } else if (val < 36) {
+                data += val-10+'a';
+            } else {
+                data += val-36+'A';
+            }
+        }
+        return data;
+    }
+};
