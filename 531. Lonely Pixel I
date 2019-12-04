@@ -1,0 +1,32 @@
+int findLonelyPixel(char** picture, int pictureSize, int* pictureColSize){
+    int* row = (int*)calloc(pictureSize,sizeof(int));
+    int* col = (int*)calloc(pictureColSize[0],sizeof(int));
+    int count = 0;
+    int i,j;
+    
+    for(i=0;i<pictureSize;i++)
+    {
+        for(j=0;j<pictureColSize[0];j++)
+        {
+            if(picture[i][j]=='B')
+            {
+                row[i]++;
+                col[j]++;
+                if((row[i]==1) && (col[j]==1))
+                    count++;
+                if(row[i]==2)
+                {
+                    if(count)
+                        count--;
+                }
+                if(col[j]==2)
+                {
+                    if(count)
+                        count--;
+                }
+            }
+        }
+    }
+    
+    return count;
+}
