@@ -1,0 +1,37 @@
+class Solution {
+public:
+  int i = 0; // this must be global
+  int getVal(string s) {
+    int neg = 1;
+    if(s[i] == '-') {
+      i++;
+      neg = -1;
+    }
+    int num = 0;
+    while(s[i] <= '9' && s[i] >= '0') {
+      num *= 10;
+      num += s[i] - '0';
+      i++;
+    }
+    num *= neg;
+    return num;
+  }
+  
+  TreeNode* str2tree(string s) {
+    if(i == s.length()) return NULL;
+    int num = getVal(s);
+    TreeNode* root = new TreeNode(num);
+    if(i < s.length() && s[i] == '(') {
+      i++;
+      root->left = str2tree(s);
+      i++;
+    }
+    if(i < s.length() && s[i] == '(') {
+      i++;
+      root->right = str2tree(s);
+      i++;
+    }
+    
+    return root;
+  }
+};
