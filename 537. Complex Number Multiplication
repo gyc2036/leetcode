@@ -1,0 +1,22 @@
+class Solution {
+public:
+	// parses the complex string and return the number as an integer pair 
+    pair<int, int> parseComplexString(string a){
+        pair<int, int> p;
+        auto it = a.find_first_of("+");
+        auto it2 = a.find_first_of("i");
+        string first = a.substr(0, it);
+        string second = a.substr(it+1, it2-it-1);
+        p.first = stoi(first);
+        p.second = stoi(second);
+        return p;
+    }
+	
+    string complexNumberMultiply(string num1, string num2) {
+        auto a = parseComplexString(num1);
+        auto b = parseComplexString(num2);
+        int real = a.first * b.first + a.second * b.second*-1;
+        int cplx = a.second * b.first + a.first * b.second;
+        return to_string(real) + "+" + to_string(cplx)+"i";
+    }
+};
