@@ -1,0 +1,73 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    vector<int> boundaryOfBinaryTree(TreeNode* root) {
+        vector<int> boundary;
+        
+        if(!root) return boundary;
+        
+        boundary.push_back(root->val);
+        
+        if(!root->left && !root->right) return boundary;
+        
+        
+        if(root->left)
+            leftBoundary(root->left,boundary);
+        
+        addLeaves(root,boundary);
+        if(root->right)
+            rightBoundary(root->right,boundary);
+        
+        return boundary;
+        
+    }
+    
+
+    void leftBoundary(TreeNode* root, vector<int>& boundary) {
+        if(!root->left && !root->right) {
+            return;
+        }
+        
+        boundary.push_back(root->val);
+        if(root->left) {
+            leftBoundary(root->left,boundary);
+            return;
+        }
+        leftBoundary(root->right,boundary);
+        return;
+    }
+    
+    void rightBoundary(TreeNode* root,vector<int>& boundary) {
+        if(!root->left && !root->right) {
+            return;
+        }
+        
+        if(root->right) {
+            rightBoundary(root->right,boundary);
+            boundary.push_back(root->val);
+            return;
+        }
+        rightBoundary(root->left,boundary);
+        boundary.push_back(root->val);
+        return;
+    }
+    
+    void addLeaves(TreeNode* root,vector<int>& boundary) {
+        if(!root) return;
+        if(!root->left && !root->right) {
+            boundary.push_back(root->val);
+        }
+        
+        addLeaves(root->left,boundary);
+        addLeaves(root->right,boundary);
+        return;
+    }
+};
