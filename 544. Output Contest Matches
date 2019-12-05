@@ -1,0 +1,18 @@
+/* tktripathy */
+class Solution {
+public:
+    string findContestMatch(int n) {
+        list<string> x[2]; string ret; int i = 1, k = 0;
+        while (i <= n) { x[k].push_back(to_string(i)); i++; } i = 2;
+        while(n / i >= 1) {
+            while(x[k%2].size()) {
+                string s;
+                s += '('; s = s + x[k%2].front() + ','; x[k%2].pop_front(); 
+                s = s + x[k%2].back(); x[k%2].pop_back(); s = s + ')';
+                x[(k+1)%2].push_back(s); /* toggle lists */ ret = s;
+            }
+            i = i * 2; k++;
+        }
+        return ret;
+    }
+};
