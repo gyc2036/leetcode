@@ -1,0 +1,49 @@
+class Solution {
+private:
+    int getMin(const string& t) {
+        // convert string to min
+        int i = 0;
+        int h = 0;
+        int m = 0;
+        bool minflag = false;
+        while (i < t.size()) {
+            if (t[i] == ':') {
+                minflag = true;
+            }
+            else if (not minflag) {
+                h = h * 10 + t[i] - '0';
+            }
+            else {
+                m = m * 10 + t[i] - '0';
+            }
+            i += 1;
+        }
+        return h * 60 + m;
+    }
+    
+public:
+    int findMinDifference(vector<string>& timePoints) {
+        set<int> s;
+        // construct BST
+        for(const string& t : timePoints) {
+            int tmp = getMin(t);
+            if (s.count(tmp)) {
+                // same time stamp already exists, return 0
+                return 0;
+            }
+            s.insert(tmp);
+        }
+        // loop from small to large, get minimum diff
+        int tlast = -1;
+        int tmin = INT_MAX;
+        for (int t : s) {
+            if (tlast != -1) {
+                tmin = min(t - tlast, tmin);
+            }
+            tlast = t;
+        }
+        // also check the diff between the largest and the smallest time stamp
+        tmin = min(tmin, 24 * 60 - *(s.rbegin()) + *(s.begin()));
+        return tmin;
+    }
+};
