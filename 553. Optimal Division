@@ -1,0 +1,31 @@
+class Solution {
+public:
+    
+    string convert(int n) {
+        char temp[10];
+        sprintf(temp, "%d", n);
+        string s = string(temp);
+        return s;
+    }
+    
+    string optimalDivision(vector<int>& nums) {
+        
+        string answer;
+        
+        if(nums.size() == 1) {
+            answer = convert(nums[0]);
+        }
+        else if(nums.size() == 2) {
+            answer = convert(nums[0]) + "/" + convert(nums[1]);
+        }
+        else {
+            answer = convert(nums[0]) + "/(";
+            for(int i=1; i<nums.size(); i++) {
+                answer += convert(nums[i]) + "/";
+            }
+            answer[answer.size()-1] = ')';
+        }
+        
+        return answer;
+    }
+};
