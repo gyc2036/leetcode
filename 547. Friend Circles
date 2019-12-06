@@ -1,0 +1,41 @@
+class Solution {
+public:
+    vector<int> parents;
+    set<int> circles;
+    
+    int findCircleNum(vector<vector<int>>& M) {
+        int count = M.size();
+        
+        for (int i=0; i<count; i++) {
+            parents.push_back(i);
+        }
+        
+        for (int i=0; i<count; i++) {
+            for (int j=i; j< count; j++) {
+                if (M[i][j]==1) {
+                    uni(i, j);
+                }
+            }
+        }
+        
+        for(int i =0; i<count; i++) {
+            circles.insert(find(i));
+        }
+                
+        return circles.size();
+    }
+    
+    void uni (int node1, int node2) {
+        int parent1 = find(node1);
+        int parent2 = find(node2);
+        
+        parents[parent2] = parent1;
+    }
+    
+    int find(int node) {
+        if (node == parents[node])
+            return node;
+        return find(parents[node]);
+    }
+    
+};
