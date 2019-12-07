@@ -1,0 +1,20 @@
+class Solution {
+public:
+    int subarraySum(vector<int>& nums, int k) {
+        int res=0;
+        int sum=0;      //这里的sum是每一个nums中每一个值的累加，从头加到尾 
+        unordered_map<int , int> map;
+        map[0]=1;     //这里我一开始有些不明白，实际上可以这样理解：
+		              // 当执行下面的“ res+=map[sum-k]; ”时， 倘若sum=k， 则res+=map[0].  map[0]需要有一个不为0的初值
+        
+        for(int i : nums){
+            sum+=i;
+            res+=map[sum-k];    //关键点， sum的意思：从首部开始加到这里总共的和； 
+			                    //map[sum-k]的意思：有多少个位置（我们记为left），从首部开始加到这个位置，其和为sum-k；
+								//res加上这个数的意思： 对于每一个left，我从left一直加到当前位置，其和为k，’left->当前‘ 也就是subarray
+            map[sum]++;
+        }
+        
+        return res;
+    }
+};
