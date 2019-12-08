@@ -1,0 +1,41 @@
+template <class F>
+struct rec {
+  F f;
+  template <class... Args>
+  decltype(auto) operator()(Args&&... args)  const { return f(std::ref(*this), std::forward<Args>(args)...); }
+  
+  template <class... Args>
+  decltype(auto) operator()(Args&&... args)  { return f(std::ref(*this), std::forward<Args>(args)...); }
+};
+
+template <class F> rec(F) -> rec<F>; // deduction guide for rec
+
+
+class Solution {
+ public:
+  int maxVacationDays(vector<vector<int>>& flights, vector<vector<int>>& days) {
+    const int N = size(flights);
+    const int K = size(days[0]);
+    const int maxn = 100 + 5;
+    const int maxk = 100 + 5;
+    
+    auto f = rec{[&, memo = array<array<optional<int>, maxk>, maxn>{}](auto &&f, int city_id, int week) mutable -> int {
+      if (memo[city_id][week])
+        return *memo[city_id][week];
+      return *(memo[city_id][week] = [&]{
+        if (week == K)
+          return 0;
+        int stay = f(city_id, week + 1) + days[city_id][week];
+        int move = [&](int acc = INT_MIN) {
+          for (int new_city = 0; new_city < N; ++new_city)
+            if(flights[city_id][new_city] == 1 and new_city != city_id)
+              acc = std::max(acc, f(new_city, week + 1) + days[new_city][week]);
+          return acc;
+        }();
+        return std::max(stay, move);
+      }());
+    }};
+
+    return f(0, 0);
+  }
+};
