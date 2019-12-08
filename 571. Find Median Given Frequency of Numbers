@@ -1,0 +1,15 @@
+with t1 as 
+    (select (sum(Frequency)+1)/2 as num1_bond, (sum(Frequency)+1)/2 + (sum(Frequency)+1)%2 as num2_bond from Numbers),
+
+t2 as 
+    (select Number, sum(Frequency) over (order by Number) as cm_f from Numbers),
+
+t3 as 
+    (select
+        (case when t2.cm_f >= t1.num1_bond then t2.Number else Null end) as num1,
+        (case when t2.cm_f >= t1.num2_bond then t2.Number else Null end) as num2
+        from t2
+        cross join t1)
+
+select cast((cast(min(num1) as float) + cast(min(num2) as float))/2 as decimal(38,4)) as median
+from t3
