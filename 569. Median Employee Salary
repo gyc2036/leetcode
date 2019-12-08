@@ -1,0 +1,22 @@
+WITH Company_tot(Company, tot) AS (
+SELECT Company,
+COUNT(*) AS tot
+from Employee
+group by Company
+),
+
+Employee_Company_tot(Id, Company, Salary, rownumber_salary, tot) AS (
+SELECT e.Id,
+e.Company,
+e.Salary,
+row_number() OVER (PARTITION BY e.Company ORDER BY e.Salary ASC) AS rownumber_salary,
+c.tot
+from Employee e left join Company_tot c
+on e.Company = c.Company
+)
+
+select Id,
+Company,
+Salary
+from Employee_Company_tot
+where rownumber_salary = (tot+1)/2 OR rownumber_salary = (tot+2)/2
