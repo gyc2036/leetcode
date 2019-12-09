@@ -1,0 +1,5 @@
+int distributeCandies(vector<int>& candies) {
+        unordered_map<int,int> m;
+        for(int c : candies) m[c]++;
+        return m.size()>=candies.size()/2 ? candies.size()/2 : m.size();
+    }
