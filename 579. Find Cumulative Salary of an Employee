@@ -1,0 +1,11 @@
+select id, month, salary
+from (
+  select id, month,
+    sum(salary) over(partition by id order by month rows between 2 preceding and current row) salary,
+    max(month) over(partition by id) most_recent_month
+  from
+    employee
+  ) _
+where month != most_recent_month
+order by id, month desc
+;
