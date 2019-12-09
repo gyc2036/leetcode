@@ -1,0 +1,16 @@
+class Solution {
+public:
+    int minDistance(int height, int width, vector<int>& tree, vector<int>& squirrel, vector<vector<int>>& nuts) {
+        int dis = 0, diff = INT_MIN;
+        for(int i = 0 ; i < nuts.size() ; i++){
+            int dis_s = distance_calculate(nuts[i],squirrel);
+            int dis_t = distance_calculate(nuts[i],tree);
+            diff = max(diff,dis_t-dis_s);
+            dis += 2*dis_t;
+        }
+        return dis - diff;
+    }
+    int distance_calculate(vector<int>& n1, vector<int>& n2){
+        return abs(n1[0]-n2[0]) + abs(n1[1]-n2[1]);
+    }
+};
