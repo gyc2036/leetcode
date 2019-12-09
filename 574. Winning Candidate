@@ -1,0 +1,4 @@
+select c.name from Candidate c left join Vote v on c.id = v.CandidateId
+group by v.candidateId
+order by count(c.name) desc
+limit 1
