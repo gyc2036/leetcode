@@ -1,0 +1,28 @@
+class Solution {
+public:
+    int dist(vector<int>& p1, vector<int>& p2) {
+        vector<int> p = {p2[0]-p1[0], p2[1]-p1[1]};
+        return p[0]*p[0] + p[1]*p[1];
+    }
+    
+    bool square(vector<int>& p1, vector<int>& p2, vector<int>& p3, vector<int>& p4) {
+        // In this case p1 and p4 are diagonally opposite, as are p2 and p3
+        // With this algorithm we need to check for p1 == p4 or we may get false positives
+        if (p1 == p4) return false;
+        // Check that all four points in the arrangement are at the same distance from their neighbours
+        int d = dist(p1, p2);
+        if (d != dist(p1, p3) or d != dist(p2, p4) or d != dist(p3, p4)) return false;
+        // Now all that's left is that p1-p2 and p1-p3 are orthogonal
+        // We use the dot product to find out
+        vector<int> p1p2 = {p2[0]-p1[0], p2[1]-p1[1]};
+        vector<int> p1p3 = {p3[0]-p1[0], p3[1]-p1[1]};
+        return (p1p2[0]*p1p3[0] + p1p2[1]*p1p3[1] == 0);
+    }
+    
+    bool validSquare(vector<int>& p1, vector<int>& p2, vector<int>& p3, vector<int>& p4) {
+        // We only need to check for three arrangements, depending on which point is opposite to p1
+        // The point opposite to p1 is the last argument to square
+        // If one of these combinations is correct, it is a valid square
+        return square(p1, p2, p3, p4) or square(p1, p2, p4, p3) or square(p1, p3, p4, p2);
+    }
+};
