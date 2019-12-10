@@ -1,0 +1,178 @@
+class BaseFile {
+    private:
+        string name;
+    public:
+        BaseFile(string name) : name(name) {}
+        string getName() {
+            return this->name;
+        }
+};
+
+class File : public BaseFile {
+    private:
+        string content;
+    public:
+        File(string name, string content) : BaseFile(name) {
+            this->content = content;
+        }
+        string read() {
+            return this->content;
+        }
+        void append(string content) {
+            this->content.append(content);
+        }
+};
+
+
+class Directory : public BaseFile {
+    private:
+        map<string, File*> files;
+        map<string, Directory*> directories;
+    public:
+        Directory(string name) : BaseFile(name) {}
+        ~Directory() {
+            for (auto &f: files) {
+                delete f.second;
+            }
+            for (auto &d: directories) {
+                delete d.second;
+            }
+        }
+    
+        bool hasFile(string fileName) {
+            if (this->files.find(fileName) != this->files.end()) {
+                return true;
+            }
+            return false;
+        }
+        map<string, File*>::iterator getFile(string fileName) {
+            return this->files.find(fileName);
+        }
+        void addFile(File* file) {
+            this->files.insert(pair<string, File*>(file->getName(), file));
+        }
+        bool hasDirectory(string directoryName) {
+            if (this->directories.find(directoryName) != this->directories.end()) {
+                return true;
+            }
+            return false;
+        }
+        map<string, Directory*>::iterator getDirectory(string directoryName) {
+            return this->directories.find(directoryName);
+        }
+        void addDirectory(Directory* dir) {
+            this->directories.insert(pair<string, Directory*>(dir->getName(), dir));
+        }
+        vector<string> getAllNames() {
+            vector<string> names;
+            for (auto &f: files) {
+                names.push_back(f.first);
+            }
+            for (auto &d: directories) {
+                names.push_back(d.first);
+            }
+            sort(names.begin(), names.end());
+            return names;
+        }
+};
+
+class FileSystem {
+    private:
+        vector<string> tokenize(const string &path) {
+            vector<string> names;
+            stringstream instring(path);
+            string intermediate;
+            int i = 0;
+            while (getline(instring, intermediate, '/')) {
+                if (i > 0) {
+                    names.push_back(intermediate);
+                }
+                else {
+                    i += 1;
+                }
+            }
+            return names;
+        }
+        
+    public: 
+        Directory *root;
+        
+        FileSystem() {
+            this->root = new Directory("");
+        }
+
+        vector<string> ls(string path) {
+            vector<string> names = this->tokenize(path);
+            vector<string> results;
+            
+            if (names.size() > 0) {
+                Directory* cwd = root;
+                for (int i = 0; i < names.size() - 1; ++i) {
+                    if (cwd->hasDirectory(names.at(i))) {
+                        cwd = cwd->getDirectory(names.at(i))->second;
+                    }
+                }
+                if (cwd->hasDirectory(names.back())) {
+                    results = cwd->getDirectory(names.back())->second->getAllNames();
+                } else if (cwd->hasFile(names.back())) {
+                    results.push_back(cwd->getFile(names.back())->first);
+                }
+            }
+            else {
+                results = root->getAllNames();
+            }
+
+            return results;
+        }
+
+        void mkdir(string path) {
+            vector<string> dirNames = this->tokenize(path);
+            Directory* cwd = root;
+            for (auto &name : dirNames) {
+                if (!cwd->hasDirectory(name)) {
+                    Directory* dir = new Directory(name);
+                    cwd->addDirectory(dir);
+                    cwd = dir;
+                } else {
+                    cwd = cwd->getDirectory(name)->second;
+                }
+            }
+        }
+
+        void addContentToFile(string filePath, string content) {
+            vector<string> names = this->tokenize(filePath);
+            if (names.size() > 0) {
+                Directory* cwd = root;
+                for (int i = 0; i < names.size() - 1; ++i) {
+                    if (cwd->hasDirectory(names.at(i))) {
+                        cwd = cwd->getDirectory(names.at(i))->second;
+                    }
+                }
+
+                if (cwd->hasFile(names.back())) {
+                    cwd->getFile(names.back())->second->append(content);
+                } else {
+                    File* file = new File(names.back(), content);
+                    cwd->addFile(file);
+                }
+            }
+        }
+
+        string readContentFromFile(string filePath) {
+            string content = "";
+            vector<string> names = this->tokenize(filePath);
+            if (names.size() > 0) {
+                Directory* cwd = root;
+                for (int i = 0; i < names.size() - 1; ++i) {
+                    if (cwd->hasDirectory(names.at(i))) {
+                        cwd = cwd->getDirectory(names.at(i))->second;
+                    }
+                }
+
+                if (cwd->hasFile(names.back())) {
+                    content = cwd->getFile(names.back())->second->read();
+                }   
+            }
+            return content;
+        }
+};
