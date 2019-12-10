@@ -1,0 +1,32 @@
+class Solution {
+public:
+    vector<int> killProcess(vector<int>& pid, vector<int>& ppid, int kill) {
+
+        std::multimap<int, int> pid_children;
+        for(int i = 0; i < pid.size(); ++i) {
+            pid_children.emplace(ppid[i],pid[i]);
+        }
+        
+        std::vector<int> queue_of_pids_to_kill;
+        queue_of_pids_to_kill.push_back(kill);
+        std::vector<int> killed_pids;
+        
+        while(!queue_of_pids_to_kill.empty()) {
+            // Retrieve the process to kill from the queue
+            int curr_pid = queue_of_pids_to_kill.back();
+            queue_of_pids_to_kill.pop_back();
+            
+            // Add it to the returned vector
+            killed_pids.push_back(curr_pid);
+            
+            // Find all nodes that are childern of curr_pid
+            // and add them to the list of pids to delete
+            auto [b,e] = pid_children.equal_range(curr_pid);
+            for(auto it = b; it != e; ++it) {
+                queue_of_pids_to_kill.push_back(it->second);
+            }
+        }
+        
+        return killed_pids;
+    }
+};
