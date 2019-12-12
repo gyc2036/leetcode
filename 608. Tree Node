@@ -1,0 +1,10 @@
+9 VIEWS
+
+SELECT id,
+CASE WHEN p_id IS NOT NULL AND id IN (SELECT DISTINCT p_id
+FROM tree) THEN 'Inner'
+WHEN p_id IS NOT NULL AND id NOT IN (SELECT DISTINCT p_id
+FROM tree) THEN 'Leaf'
+ELSE 'Root'
+END AS type
+FROM tree
