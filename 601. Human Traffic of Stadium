@@ -1,0 +1,14 @@
+with s as (
+select 
+  sum(case when people >= 100 then 1 else 0 end)
+    over (order by visit_date
+          rows between 2 preceding and current row      
+         ) as rn,
+  id 
+from stadium )
+select 
+distinct 
+std.id, std.visit_date, std.people from s
+ join stadium std on std.id between s.id - 2 and s.id
+where s.rn >= 3
+order by 1 asc
