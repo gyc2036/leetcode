@@ -1,0 +1,45 @@
+class Solution {
+public:
+    vector<vector<string>> findDuplicate(vector<string>& paths) {
+        map<string,vector<string>> m;
+        for (int i = 0; i <paths.size(); i++) {
+            string info = paths[i];
+            int start = 0;
+            size_t limit = info.find(' ',start);
+            string dir = info.substr(0,limit);
+            start = limit + 1;
+            while((limit=info.find( ' ', start)) != string::npos) {
+                string fileContent = info.substr(start, limit-start);
+                int contentStart = fileContent.find('(');
+                int contentEnd = fileContent.find(')');
+                string fileName = fileContent.substr(0, contentStart);
+                string content = fileContent.substr(contentStart+1, contentEnd - contentStart -1);
+                if (m.find(content) == m.end()) {
+                    vector<string> temp;
+                    m[content] = temp;
+                }
+                m[content].push_back(dir+'/'+fileName);
+                start = limit +1;
+            }
+            limit = info.size();
+            string fileContent = info.substr(start, limit-start);
+            int contentStart = fileContent.find('(');
+            int contentEnd = fileContent.find(')');
+            string fileName = fileContent.substr(0, contentStart);
+            string content = fileContent.substr(contentStart+1, contentEnd-contentStart -1);
+            if (m.find(content) == m.end()) {
+                vector<string> temp;
+                m[content] = temp;
+            }
+            m[content].push_back(dir+'/'+fileName);
+            start = limit +1;
+            
+        }
+        vector<vector<string>> sol;
+        for(map<string, vector<string>>::iterator it = m.begin(); it!= m.end(); it++) {
+            if(it->second.size()>1)
+            sol.push_back(it->second);
+        }
+        return sol;
+    }
+};
