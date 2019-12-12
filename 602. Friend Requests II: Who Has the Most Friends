@@ -1,0 +1,12 @@
+select a.requester_id as id, ifnull(requested,0)+ifnull(accepted,0) num
+from
+(select requester_id, count(distinct accepter_id) requested
+from request_accepted
+group by 1) a
+left join
+(select accepter_id, count(distinct requester_id) accepted
+from request_accepted
+group by 1) b
+on a.requester_id=b.accepter_id
+order by 2 desc
+limit 1
