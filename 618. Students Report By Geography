@@ -1,0 +1,14 @@
+Select t1.name as America,t2.name as Asia, t3.name as Europe
+ from
+(    
+    (Select name ,ROW_NUMBER ( ) over (partition by continent order by name) as rnk from student
+    where continent = 'America') t1
+    full join 
+    (Select name ,ROW_NUMBER ( ) over (partition by continent order by name) as rnk from student
+    where continent = 'Asia') t2 
+    on t1.rnk=t2.rnk
+    full join
+    (Select name ,ROW_NUMBER ( ) over (partition by continent order by name) as rnk from student
+    where continent = 'Europe') t3
+    on isnull(t2.rnk,t1.rnk) =t3.rnk
+) 
