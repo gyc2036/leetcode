@@ -1,0 +1,59 @@
+class MyCircularQueue {
+public:
+    /** Initialize your data structure here. Set the size of the queue to be k. */
+    vector<int> queue;
+    int head, tail, size;
+    
+    MyCircularQueue(int k) {
+        queue.resize(k, -1);
+        head = tail = 0;
+        size = k;
+    }
+    
+    /** Insert an element into the circular queue. Return true if the operation is successful. */
+    bool enQueue(int value) {
+        if(isFull()){return false;}
+        if(queue[tail] == -1){
+            queue[tail] = value;
+        } else {
+            queue[next(tail)] = value;
+            tail = next(tail);
+        }
+        return true;
+    }
+    
+    /** Delete an element from the circular queue. Return true if the operation is successful. */
+    bool deQueue() {
+        if(isEmpty()){return false;}
+        queue[head] = -1;
+        if(queue[next(head)] != -1){
+            head = next(head);
+        }
+        return true;
+    }
+    
+    /** Get the front item from the queue. */
+    int Front() {
+        return queue[head];
+    }
+    
+    /** Get the last item from the queue. */
+    int Rear() {
+        return queue[tail];
+    }
+    
+    /** Checks whether the circular queue is empty or not. */
+    bool isEmpty() {
+        return queue[head] == -1;
+    }
+    
+    /** Checks whether the circular queue is full or not. */
+    bool isFull() {
+        return queue[next(tail)] != -1;
+    }
+    
+    // next function moves the index, and "circles" it if necessary
+    int next(int start){ 
+        return (start+1)%size;
+    }
+};
