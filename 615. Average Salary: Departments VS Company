@@ -1,0 +1,12 @@
+select distinct to_char(pay_date,'YYYY-MM') pay_month,
+department_id,
+case
+when avg(amount) over(partition by e.department_id ,to_char(pay_date,'YYYY-MM'))>avg(amount) over(partition by to_char(pay_date,'YYYY-MM'))
+then 'higher'
+when avg(amount) over(partition by e.department_id ,to_char(pay_date,'YYYY-MM'))<avg(amount) over(partition by to_char(pay_date,'YYYY-MM'))
+then 'lower'
+else 'same'
+end comparison
+from salary s
+join employee e
+on (e.employee_id=s.employee_id)
