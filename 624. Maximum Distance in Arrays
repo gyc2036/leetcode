@@ -1,0 +1,32 @@
+class Solution {
+public:
+int maxDistance(vector<vector>& arrays) {
+int ans = -1;
+int a = arrays[0][0];
+int b = arrays[0][arrays[0].size() - 1];
+for(int i = 1; i < arrays.size(); i++)
+{
+if(abs(a - arrays[i][arrays[i].size() - 1]) > ans)
+{
+ans = abs(a - arrays[i][arrays[i].size() - 1]);
+}
+
+        if(abs(b - arrays[i][0]) > ans)
+        {
+            ans = abs(b - arrays[i][0]);
+        }
+        
+        
+        if(a > arrays[i][0])
+        {
+            a = arrays[i][0];
+        }
+        
+        if(b < arrays[i][arrays[i].size() - 1])
+        {
+            b = arrays[i][arrays[i].size() - 1];
+        }
+    }
+    return ans;
+}
+};
