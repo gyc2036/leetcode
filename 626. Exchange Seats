@@ -1,0 +1,9 @@
+SELECT t1.id, t2.student FROM seat t1
+LEFT JOIN seat t2
+ON t1.id = 
+CASE
+    WHEN (t2.id % 2 = 1 AND t2.id = (SELECT MAX(id) FROM seat)) THEN t2.id
+    WHEN t2.id % 2 = 1 THEN t2.id+1
+    WHEN t2.id % 2 = 0 THEN t2.id-1
+END
+ORDER BY t1.id;
