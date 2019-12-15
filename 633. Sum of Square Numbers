@@ -1,0 +1,21 @@
+/**
+ * @param Integer $c
+ * @return Boolean
+ */
+function judgeSquareSum($c) {
+    $start = 0;
+    $top = round(sqrt($c));
+    
+    while($start <= $top){
+        $ans = $start*$start + $top*$top;
+        if($ans == $c){
+            return true;
+        }
+        if($ans > $c){
+            $top--;
+        }
+        if($ans < $c){
+            $start--;
+        }
+    }
+}
