@@ -1,0 +1,53 @@
+	public class Solution
+        {
+            public int[] SmallestRange(IList<IList<int>> nums)
+            {
+                var list = new List<Record>();
+                for (var i = 0; i < nums.Count; i++)
+                    for (var j = 0; j < nums[i].Count; j++)
+                        list.Add(new Record { Index = i, Num = nums[i][j] });
+                if (list.Count == 0) return new int[2];
+                list.Sort(new RecordComparer());
+                var map = new int[nums.Count];
+                var counter = 0;
+                var start = 0;
+                int[] range = null;
+                for (var i = 0; i < list.Count; i++)
+                {
+                    map[list[i].Index]++;
+                    if (map[list[i].Index] == 1) counter++;
+                    while (counter == map.Length)
+                    {
+                        if (range == null)
+                        {
+                            range = new[] { list[start].Num, list[i].Num };
+                        }
+                        else
+                        {
+                            var diff = list[i].Num - list[start].Num;
+                            var rangeDiff = range[1] - range[0];
+                            if (diff < rangeDiff)
+                            {
+                                range = new[] { list[start].Num, list[i].Num };
+                            }
+                        }
+                        map[list[start].Index]--;
+                        if (map[list[start].Index] == 0) counter--;
+                        start++;
+                    }
+                }
+                return range;
+            }
+            public class RecordComparer : IComparer<Record>
+            {
+                public int Compare(Record x, Record y)
+                {
+                    return x.Num < y.Num ? -1 : 1;
+                }
+            }
+            public class Record
+            {
+                public int Num;
+                public int Index;
+            }
+        }
