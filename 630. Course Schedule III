@@ -1,0 +1,113 @@
+public class Solution 
+{
+    public int ScheduleCourse(int[][] courses) 
+    {
+        Array.Sort(courses, (x, y) => x[1].CompareTo(y[1]));
+		var pq = new PriorityQueue<int>(Comparer<int>.Create((x, y) => -x.CompareTo(y)));
+		int time = 0;
+		foreach(var course in courses)
+        {
+			time += course[0];
+			pq.Enqueue(course[0]);
+			if(time > course[1]) 
+                time -= pq.Dequeue();
+		}
+	
+		return pq.Count;
+    }
+}
+
+public class PriorityQueue<T>
+{
+	private List<T> data;
+
+	private readonly IComparer<T> comparer;
+
+	public PriorityQueue(IComparer<T> comparer) // e.g., var pq = new PriorityQueue<int>(Comparer<int>.Create((x, y) => x.CompareTo(y)));
+	{
+		this.data = new List<T>();
+		this.comparer = comparer;
+	}
+
+	public PriorityQueue()
+		: this(Comparer<T>.Default)
+	{
+	}
+
+	public int Count => this.data.Count;
+
+	public void Enqueue(T item)
+	{
+		this.data.Add(item);
+		var currentIndex = this.data.Count - 1;
+		while ((currentIndex > 0) && (this.comparer.Compare(this.data[currentIndex], this.data[Parent(currentIndex)]) < 0))
+		{
+			this.SwapData(currentIndex, Parent(currentIndex));
+			currentIndex = Parent(currentIndex);
+		}
+	}
+
+	public T Dequeue()
+	{
+		if (this.Count == 0) throw new Exception("Unable to Dequeue() from an empty queue.");
+		var result = this.data[0];
+		this.data[0] = this.data[this.data.Count - 1];
+		this.data.RemoveAt(this.data.Count - 1);
+		var currentIndex = 0;
+		while (currentIndex < this.data.Count)
+		{
+			int nextIndex, leftChildIndex = (2 * currentIndex) + 1, rightChildIndex = (2 * currentIndex) + 2;
+			var left = (leftChildIndex < this.data.Count) && (this.comparer.Compare(this.data[leftChildIndex], this.data[currentIndex]) < 0);
+			var right = (rightChildIndex < this.data.Count) && (this.comparer.Compare(this.data[rightChildIndex], this.data[currentIndex]) < 0);
+			if (left && right) nextIndex = this.comparer.Compare(this.data[leftChildIndex], this.data[rightChildIndex]) < 0 ? leftChildIndex : rightChildIndex;
+			else if (left) nextIndex = leftChildIndex;
+			else if (right) nextIndex = rightChildIndex;
+			else break;
+
+			this.SwapData(currentIndex, nextIndex);
+			currentIndex = nextIndex;
+		}
+
+		return result;
+	}
+
+	public void Clear()
+	{
+		this.data = new List<T>();
+	}
+
+	public T Peek()
+	{
+		if (this.Count == 0) throw new Exception("Unable to Peek() from an empty queue.");
+		return this.data[0];
+	}
+
+	public bool IsConsistent()
+	{
+		if (this.data.Count == 0) { return true; }
+		var lastIndex = this.data.Count - 1;
+		for (var parentIndex = 0; parentIndex < this.data.Count; ++parentIndex)
+		{
+			int leftChildIndex = (2 * parentIndex) + 1, rightChildIndex = (2 * parentIndex) + 2;
+			if ((leftChildIndex <= lastIndex) && (this.comparer.Compare(this.data[parentIndex], this.data[leftChildIndex]) > 0))
+				return false;
+
+			if ((rightChildIndex <= lastIndex) && (this.comparer.Compare(this.data[parentIndex], this.data[rightChildIndex]) > 0))
+				return false;
+		}
+
+		return true;
+	}
+
+	private void SwapData(int index1, int index2)
+	{
+		var temp = this.data[index1];
+		this.data[index1] = this.data[index2];
+		this.data[index2] = temp;
+	}
+
+	private static int Parent(int i)
+	{
+		return (i - 1) / 2; // return i % 2 == 0 ? (i - 2) / 2 : (i - 1) / 2;
+	}
+}
