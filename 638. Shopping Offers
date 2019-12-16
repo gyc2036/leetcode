@@ -1,0 +1,49 @@
+class Solution {
+public:
+    int shoppingOffers(vector<int>& price, vector<vector<int>>& special, vector<int>& needs) {
+        int n = price.size();
+        vector<int> costs(1 << (n * 3), INT_MAX);
+        queue<pair<unsigned, int>> qu;
+        qu.emplace(0, 0);
+        while (!qu.empty()) {
+            unsigned bits = qu.front().first;
+            int cost = qu.front().second;
+            qu.pop();
+            if (cost >= costs[bits]) {
+                continue;
+            }
+            costs[bits] = cost;
+            for (int i = 0; i < n; i++) {
+                char count = ((bits >> (i * 3)) & 0b111) + 1;
+                if (count <= needs[i]) {
+                    unsigned newBits = (bits & (~(0b111 << (i * 3)))) | (count << (i * 3));
+                    if (cost + price[i] < costs[newBits]) {
+                        qu.emplace(newBits, cost + price[i]);
+                    }
+                }
+            }
+            for (const vector<int> &offer : special) {
+                bool valid = true;
+                unsigned bits2 = bits;
+                for (int i = 0; i < n; i++) {
+                    char count = ((bits2 >> (i * 3)) & 0b111) + offer[i];
+                    if (count > needs[i]) {
+                        valid = false;
+                        break;
+                    } else {
+                        bits2 = (bits2 & (~(0b111 << (i * 3)))) | (count << (i * 3));
+                    }
+                }
+                if (valid && cost + offer[n] < costs[bits2]) {
+                    qu.emplace(bits2, cost + offer[n]);
+                }
+            }
+        }
+        
+        unsigned bits = 0;
+        for (int i = 0; i < n; i++) {
+            bits |= needs[i] << (i * 3);
+        }
+        return costs[bits];
+    }
+};
