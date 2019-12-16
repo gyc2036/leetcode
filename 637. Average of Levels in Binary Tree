@@ -1,0 +1,51 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    vector<double> 
+    averageOfLevels(TreeNode* root) 
+    {
+        vector<double> vecRet = vector<double>();
+        vector<pair<TreeNode*,int>> vecNodes = vector<pair<TreeNode*,int>>();
+        
+        if (!root) return (vecRet);
+        
+        queue<pair<TreeNode*,int>> qNodes; // pair[Node*,level]
+        qNodes.push(make_pair(root,1)); // level start at 1 (i.e. root)
+        while(qNodes.size()) {
+            vecNodes.push_back(qNodes.front());
+            if (qNodes.front().first->left) {
+                qNodes.push(make_pair(qNodes.front().first->left,qNodes.front().second+1));
+            }
+            if (qNodes.front().first->right) {
+                qNodes.push(make_pair(qNodes.front().first->right,qNodes.front().second+1));
+            }
+            qNodes.pop();
+        }
+        int level = 1;
+        double sum = 0;
+        double cnt = 0;
+        for (int i = 0; i < vecNodes.size(); i++) {
+            TreeNode* ptrNode = vecNodes[i].first;
+            if (vecNodes[i].second == level) {
+                sum = sum + ptrNode->val;
+                cnt++;
+            } else {
+                vecRet.push_back((double)sum/cnt);
+                level = vecNodes[i].second;
+                sum = 0;
+                cnt = 0;
+                i--;
+            }
+        }
+        vecRet.push_back((double)sum/cnt);
+        return (vecRet);
+    }
+};
