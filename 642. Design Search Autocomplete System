@@ -1,0 +1,107 @@
+struct CustomCompare{
+    bool operator()(pair<int, string> a, pair<int, string> b){
+        return a.first == b.first ? a.second > b.second : a.first < b.first;
+    }
+};
+
+class TrieNode {
+public:
+    TrieNode(){
+        vector<TrieNode*> children(96, NULL);
+        this->children = children;
+        score = 0;
+        word = "";
+    }
+    int score;
+    string word;
+    vector<TrieNode*> children;
+
+    void insert(char c){
+        children[c-' '] = new TrieNode();     
+    }   
+};
+
+class Trie{
+public:
+    TrieNode * root;
+    Trie(){
+        root = new TrieNode();
+    }
+    
+    void insert(string word, int score){
+        TrieNode * curr = root;
+        for (char &c : word){
+            
+            if(curr->children[c-' '] == NULL)
+                curr->insert(c);
+            // Go to next node
+            curr = curr->children[c-' '];
+        }
+        
+        curr->word = word;
+        curr->score += score;        
+    }
+};
+
+class AutocompleteSystem {
+private:
+    Trie trie;
+    TrieNode * currNode;
+    string currWord;
+
+    void traverse(TrieNode * root, priority_queue<pair<int, string>, vector<pair<int, string>>, CustomCompare> & candidates){
+        TrieNode * curr = root;
+        if (curr->word != ""){
+            candidates.push(make_pair(curr->score, curr->word));
+        }
+        for (TrieNode * child : curr->children){
+            if (child != NULL){
+                traverse(child, candidates);
+            }
+        }
+    }
+    
+public:
+    AutocompleteSystem(vector<string>& sentences, vector<int>& times) {
+        for (int i = 0; i<sentences.size(); i++){
+            trie.insert(sentences[i], times[i]);
+        }
+        currNode = trie.root;
+        currWord = "";
+    }
+    
+    vector<string> input(char c) {
+        vector<string> result;
+        priority_queue<pair<int, string>, vector<pair<int, string>>, CustomCompare> candidates;
+
+        if(c == '#'){
+            trie.insert(currWord, 1);
+            currWord = "";
+            currNode = trie.root;
+            return {};
+        }
+        
+        currWord += c;
+        
+        if (currNode == NULL || !currNode->children[c-' ']){
+            currNode = NULL;
+            return result;
+        } else {
+            currNode = currNode->children[c-' '];
+            traverse(currNode, candidates);
+        }
+        
+        for (int i = 0; i<3 && candidates.size() > 0; i++){
+            result.push_back(candidates.top().second);
+            candidates.pop();
+        }
+        
+        return result;
+    }
+};
+
+/**
+ * Your AutocompleteSystem object will be instantiated and called as such:
+ * AutocompleteSystem* obj = new AutocompleteSystem(sentences, times);
+ * vector<string> param_1 = obj->input(c);
+ */
