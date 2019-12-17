@@ -1,0 +1,29 @@
+class Solution {
+public:
+    int countSubstrings(string s) {
+        int n=s.size();
+        vector<vector<bool>> dp(n,vector<bool>(n,false));
+        int count=0;
+        
+        // check palindromic for substrings with size from 1 to n
+        for(int size=1; size<=s.size(); size++){
+            // start position i. end position j should not exceeds string size
+            for(int i=0; i+size<=n; i++){
+                int j = i+size-1;
+                if(size == 1){
+                    // single charactor is considered as palindromic
+                    dp[i][j] = true;
+                }
+                else{
+                    // if character at i and j are the same, check the inner substring s[i+1...j-1]
+                    dp[i][j] = (s[j] == s[i]) && (size>2?dp[i+1][j-1]:true);
+                }
+                if(dp[i][j]){
+                    count++;
+                }
+            }
+        }
+        
+        return count;
+    }
+};
