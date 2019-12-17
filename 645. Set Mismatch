@@ -1,0 +1,30 @@
+class Solution {
+public:
+    vector<int> findErrorNums(vector<int>& nums)
+    {
+        std::unordered_set<int> set;
+        int duplicate, sum = 0;
+       
+		// We are searching for the duplicated element, using a set.
+		// If the set contains one of the numbers already, that number will be our duplicated element; it's pretty straightforward.
+		// In the meantime, we are calculating the sum of the numbers in the array.
+        for (int i : nums)
+        {
+            if (set.count(i))
+                duplicate = i;
+            else
+                set.insert(i);
+            
+            sum += i;
+        }
+        
+		// We add up all the numbers from 1 to N. 
+		// The missing number will be the difference between sumToN and the sum of the
+		// numbers in the array minus the duplicated number. It saves us having to iterate
+		// through the set a second time (or whatever data structure you used to find the duplicated element). 
+        int sumToN = (1 + nums.size()) * nums.size() / 2;
+        int missing = sumToN - (sum - duplicate);
+        
+        return {duplicate, missing};
+    }
+};
