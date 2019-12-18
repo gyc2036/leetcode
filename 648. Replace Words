@@ -1,0 +1,75 @@
+#define ALPHABET 27
+class Solution {
+    
+    struct TrieNode {
+        TrieNode() {
+            for(int i = 0; i < ALPHABET; i++) {
+                children[i] = nullptr;
+            }
+            end = false;
+        }
+        TrieNode* children[ALPHABET];
+        bool end;
+    };
+    
+    void insert(TrieNode *root, string& key) {
+        // Standard trie insertion.
+        TrieNode *itr = root;
+        for(int i = 0; i < key.size(); i++) {
+            int index = key[i] - 'a';
+            if (!itr->children[index]) {
+                itr->children[index] = new TrieNode;
+            }
+            itr = itr->children[index];
+        }
+        itr->end = true;
+    }
+    void search(TrieNode *root, string &key, string &result) {
+        if (!root->children[key[0] - 'a']) {
+            // The first letter is not in the trie.
+            result = key;
+            return;
+        }
+        
+        TrieNode *itr = root;
+        for(int i = 0; i < key.size(); i++) {
+            int index = key[i] - 'a';
+            if (!itr->children[index] || itr->end) { 
+                // Either the word is not found, or we found the shortest root.
+                break;
+            }
+            result = result + key[i];
+            itr = itr->children[index];
+        }
+        
+        if (!itr->end) { // Make sure we stopped at a valid root.
+            result = key;
+        }
+    }
+public:
+    string replaceWords(vector<string>& dict, string sentence) {
+        TrieNode *root = new TrieNode;
+        
+        // Insert all dict words into the trie.
+        for (auto &s: dict) {
+            insert(root, s);
+        }
+        istringstream ss(sentence); 
+        string result, word;
+        
+        // Split the sentence into words
+        while(ss) { 
+            string wordRoot;
+            ss >> word;
+            if (!ss) {
+                break;
+            }
+            // Search the trie and return the root if found, or the word itself otherwise.
+            search(root, word, wordRoot);
+            result += wordRoot + ' ';
+        } while (ss);
+        
+        // Remove the trailing whitespace.
+        return result.substr(0, result.size() - 1);
+    }
+};
