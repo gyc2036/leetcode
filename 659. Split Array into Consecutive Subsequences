@@ -1,0 +1,59 @@
+class Solution {
+	unordered_map<int,int> M;
+	queue<int> Q;
+public:
+    bool isPossible(vector<int>& nums);
+    int bfs(int num);
+};
+
+bool Solution::isPossible(vector<int>& nums)
+{
+	for (int i = 0; i < nums.size(); i++) {
+		auto it = M.find(nums[i]);
+		if (it == M.end()) {
+			M.insert(make_pair(nums[i], 1));
+			Q.push(nums[i]);
+		} else {
+			it->second++;
+		}
+	}
+	
+	while (!Q.empty()) {
+		int num = Q.front();
+		int cnt = bfs(num);
+		if (cnt < 3) return false;
+	}
+	return true;
+}
+
+
+int Solution::bfs(int num)
+{
+	queue<pair<int,int>> q;
+	pair<int,int> p;
+    
+	auto it = M.find(num);
+	it->second--;
+	q.push(make_pair(it->first, it->second));
+	if (it->second == 0) {
+		M.erase(it);
+		Q.pop();
+	}
+	
+	int cnt = 0;
+	while (!q.empty()) {
+		p = q.front(); q.pop();
+		cnt++;
+		
+		it = M.find(p.first+1);
+		if (it == M.end()) return cnt;
+		if (it->second <= p.second) return cnt;
+		it->second--;
+		q.push(make_pair(it->first, it->second));
+		if (it->second == 0) {
+			M.erase(it);
+			Q.pop();
+		}
+	}
+	return cnt;
+}
