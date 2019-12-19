@@ -1,0 +1,28 @@
+class Solution {
+public:
+    vector<int> findClosestElements(vector<int>& arr, int k, int x) {
+        auto lower = lower_bound(arr.begin(), arr.end(), x);
+        int idx = lower - arr.begin();
+        if(idx > 0 && x - arr[idx - 1] < arr[idx] - x)
+            idx = idx - 1;
+        int left = idx, right = idx;
+        k -= 1;
+        while(k)
+        {
+            if(left > 0 && right < (int)arr.size() - 1)
+            {
+                if(x - arr[left - 1] <= arr[right + 1] - x)
+                    left--;
+                else
+                    right++;
+            }
+            else if(left <= 0)
+                right++;
+            else
+                left--;
+            k--;
+        }
+        return vector<int>(arr.begin() + left, arr.begin() + right + 1);
+    }
+};
+static int fast_io = []() { std::ios::sync_with_stdio(false); cin.tie(nullptr); return 0; }();
