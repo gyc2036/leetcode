@@ -1,0 +1,24 @@
+class Solution {
+public:
+    vector<vector<int>> imageSmoother(vector<vector<int>>& M) {
+        vector<vector<int>>ans(M.size(),vector<int>(M[0].size()));
+        for(int i=0;i<M.size();i++){
+            for(int j=0;j<M[i].size();j++){
+                int num=0;
+                int den=0;
+                for(int k=-1;k<=1;k++){
+                    for(int l=-1;l<=1;l++){
+                        if(i+k >=0 && i+k<M.size() && j+l >=0 && j+l <M[0].size()){
+                            num+=M[i+k][j+l];
+                            den++;
+                        }
+                    }
+                }
+                double aa=(double(num))/den;
+                int bb=(int)floor(aa);
+                ans[i][j]=bb;
+            }
+        }
+        return ans;
+    }
+};
