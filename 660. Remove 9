@@ -1,0 +1,18 @@
+class Solution {
+public:
+    int newInteger(int n) {
+        vector<int> digits;
+        while (n > 0)
+        {
+            digits.push_back(n % 9);
+            n /= 9;            
+        }
+        reverse(digits.begin(), digits.end());
+        int result = 0;
+        for (auto d : digits)
+        {
+            result = result * 10 + d;
+        }
+        return result;
+    }
+};
