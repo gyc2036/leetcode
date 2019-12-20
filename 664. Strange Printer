@@ -1,0 +1,23 @@
+    int compensation(int i, int j, int k, string& s) {
+        return int(s[i] == s[j]);
+    }
+    
+    int strangePrinter(string s) {
+        int n = s.size();
+        if (n == 0) return 0;
+        // dp[ileft][iright] - answer for substring 
+        vector<vector<int>> dp(n, vector<int>(n, 0));
+        for (int d1 = 0; d1 < n; ++d1) {
+            for (int d2 = 0; d2 + d1 < n; ++d2) {
+                // move by diagonals from the main one up
+                // due to the structure of formula
+                int i = d2;
+                int j = d2 + d1;
+                if (i == j) dp[i][j] = 1;
+                else dp[i][j] = 1e6;
+                for (int k = i; k < j; ++k)
+                    dp[i][j] = min(dp[i][j], dp[i][k] + dp[k+1][j] - compensation(i,j,k, s));
+            }
+        }
+        return dp[0].back();
+    }
