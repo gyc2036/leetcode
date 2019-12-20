@@ -1,0 +1,42 @@
+class Solution {
+public:
+    int widthOfBinaryTree(TreeNode* root) {
+        if (!root) {
+            return 0;
+        }
+        unordered_map<TreeNode*, int> map;
+        unordered_map<TreeNode*, TreeNode*> parents;
+        parents[root] = new TreeNode(0);
+        map[parents[root]] = 1;
+        queue<pair<TreeNode*, bool>> q;
+        q.push(make_pair(root, true));
+        int wid = 1;
+        while (!q.empty()) {
+            int size = q.size();
+            int start;
+            int end;
+            int cur = 0;
+            for (int i = 0; i < size; i++) {
+                pair<TreeNode*, bool> pair = q.front();
+                q.pop();
+                if (i == 0) {
+                    start = map[parents[pair.first]];
+                    cur += (pair.second ? 0 : -1);
+                }
+                end = map[parents[pair.first]];
+                int offset = (pair.second ? 0 : 1) + cur;
+                if (pair.first -> left) {
+                    parents[pair.first -> left] = pair.first;
+                    q.push(make_pair(pair.first -> left, true));
+                }
+                if (pair.first -> right) {
+                    parents[pair.first -> right] = pair.first;
+                    q.push(make_pair(pair.first -> right, false));
+                }
+                map[pair.first] = (end - start + 1)*2 - 1 + offset;
+                wid = max(map[pair.first], wid);
+            }
+        }
+        return wid;
+    }
+};
