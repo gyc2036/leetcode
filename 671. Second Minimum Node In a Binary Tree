@@ -1,0 +1,16 @@
+class Solution {
+public:
+    int findSecondMinimumValue(TreeNode* root) {
+        int ans = find(root,root->val);      
+        return ans==INT_MAX ? -1 : ans;
+    }
+    
+    int find(TreeNode* root,int val){
+        if(root==NULL) return INT_MAX;
+        
+        if(root->val!=val) return root->val;
+
+        return min( find(root->left,val), find(root->right,val) );
+        
+    }
+};
