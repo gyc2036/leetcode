@@ -1,0 +1,32 @@
+class Solution {
+public:
+    int maximumSwap(int num) {
+        string s = to_string(num);
+        int maxidx =0;int maxval;
+        int found=0;
+        for(int i=0;i<s.length();i++)
+        {
+            maxval = s[i]-48;
+            for(int j=i+1;j<s.length();j++)
+            {
+                if(maxval<s[j]-48)
+                {
+                    maxval = max(maxval,s[j]-48);
+                    maxidx=j;
+                    found=1;
+                }
+                if(maxval<=s[j]-48)
+                {
+                    maxidx = j;
+                }
+            }
+            if(found==1)
+            {
+                s[maxidx]=s[i];
+                s[i]=maxval+48;
+                break;
+            }
+        }
+        return stoi(s);
+    }
+};
