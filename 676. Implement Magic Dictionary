@@ -1,0 +1,76 @@
+struct TrieNode {
+
+    TrieNode() {
+        children.reserve(26);
+    }
+    
+    // True if one of the input strings terminates at this node
+    bool isTerminal() {
+        return children.count(0);
+    }
+    
+    std::unordered_map<char, TrieNode*> children;
+};
+    
+class MagicDictionary {
+public:
+    
+    /** Initialize your data structure here. */
+    MagicDictionary() {
+        
+    }
+    
+    /** Build a dictionary through a list of words */
+    void buildDict(vector<string> dict) {
+        
+        _root = new TrieNode();
+        
+        for(auto& word : dict) {
+            TrieNode* node = _root;
+            
+            for(char c : word) {
+                auto it = node->children.find(c);
+                
+                if(it == node->children.end()) {
+                    auto [insertion_it, inserted] = node->children.emplace(c, new TrieNode());
+                    it = insertion_it;
+                }
+                
+                node = it->second;   
+            }
+            
+            // Insert the termination character so that we know where in the trie there are ending strings
+            node->children.emplace(0, new TrieNode());
+        }
+    }
+    
+    /** Returns if there is any word in the trie that equals to the given word after modifying exactly one character */
+    bool search(string word) {
+        return do_search(_root, word, 0, 0);
+    }
+    
+    bool do_search(TrieNode* n, const string& word, int ind, int num_mismatches) {
+        
+        if(num_mismatches > 1) {
+            return false;
+        }
+        if(ind >= word.size()) {
+            // There must be exactly one mismatch AND we must be at a "termination point".
+            // Second check is important otherwise dictionary containing hello would accept hhll
+            return num_mismatches == 1 && n->isTerminal();
+        }
+        
+        // Do a recursive search in the children
+        for(const auto& [character, child_node] : n->children) {
+            int new_num_mismatches = num_mismatches + (word[ind] != character);
+            bool found = do_search(child_node, word, ind+1, new_num_mismatches);
+            if(found) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    TrieNode* _root;
+};
