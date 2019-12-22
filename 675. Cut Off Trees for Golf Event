@@ -1,0 +1,68 @@
+class Solution
+{
+public:
+	int cutOffTree(vector<vector<int>>& forest)
+	{
+		atomic<int> result = 0;
+
+		// enumerate all trees
+		vector<pair<int, int>> trees;
+		for (int y = 0; y < forest.size(); ++y)
+			for (int x = 0; x < forest[y].size(); ++x)
+				if (forest[y][x] > 1) trees.push_back({ y,x });
+		// sort by height
+		::sort(trees.begin(), trees.end(), [&](auto& a, auto& b) {return forest[a.first][a.second] < forest[b.first][b.second]; });
+
+		// run each search in a separate thread
+		pair<int, int> pos = { 0,0 };
+		vector<thread> threads;
+		for (int i = 0; i < trees.size(); ++i)
+		{
+			threads.push_back(thread(&Solution::shortestPath, this, trees[i], pos, forest, ::ref(result)));
+			pos = trees[i];
+		}
+		for (auto& t : threads)
+			t.join();
+
+		return result;
+	}
+
+protected:
+
+	vector<pair<int, int>> adj = { {1,0}, {-1,0}, {0, 1}, {0, -1} }; // pos adjust
+
+	void shortestPath(const pair<int, int>& target, pair<int, int> pos, vector<vector<int>> forest, atomic<int>& res)
+	{
+		int steps = 0;
+		queue<pair<int, int>> q;
+		q.push(pos);
+		forest[pos.first][pos.second] = 0; // visited ("obstacle")
+		while (!q.empty() && res != -1)
+		{
+			int n = q.size();
+			for (int i = 0; i < n; ++i)
+			{
+				auto p = q.front();
+				q.pop();
+
+				if (p == target)
+				{
+					if (res.fetch_add(steps) == -1) // fetch_add() returns value before addition
+						res = -1;
+					return;
+				}
+
+				for (auto& a : adj)
+				{
+					pair<int, int> cur(p.first + a.first, p.second + a.second);
+					if (cur.first < 0 || cur.first >= forest.size() || cur.second < 0 || cur.second >= forest[0].size()
+						|| forest[cur.first][cur.second] == 0) continue;
+					forest[cur.first][cur.second] = 0; // visited
+					q.push(cur);
+				}
+			}
+			++steps;
+		}
+		res = -1;
+	}
+};
