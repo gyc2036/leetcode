@@ -1,0 +1,20 @@
+class Solution {
+public:
+    int flipLights(int n, int m) {
+        if(m==0){ // if there are no bulbs
+            return 1; //  only 1 state
+        }else if(m == 1){ // if there is at least one bulb & we operate only once
+            return min(n+1,4); // we can get no more than 4 status (n+1 from the description which shows operate 1, 2, 3 bulbs once means 2, 3, 4 states)
+        }else{ //if there is at least one bulb and we operate more than once
+            int sum = 1;
+            for(int i = 0; i < n && i < 3; i++){// we can get no more than pow(2,n) states (i < 3 means we do not need to calculate when i >= 3 because sum is more than 8 in that time)
+                sum *=2;
+            }
+            int minn = 7; // if we operate only twice , we can NOT get one of 8 states. That state we cannot get  back in the second time , 7 = 8 - 1
+            if(m > 2){
+					minn = 8; // we can get no more than 8 states
+            }
+            return min(sum,minn);
+        }
+    }
+};
