@@ -1,0 +1,104 @@
+class MapSum
+{
+    struct TrieNode
+    {
+        int sum;
+        TrieNode* children[26] = { nullptr };
+        
+        TrieNode()
+        {
+            this->sum = 0;
+        }
+        
+        TrieNode(const int& val)
+        {
+            this->sum = 0;
+            this->sum += val;
+        }
+        
+        TrieNode(const TrieNode& trieNode) = delete;
+        
+        TrieNode& operator=(const TrieNode& trieNode) = delete;
+        
+        ~TrieNode() = default;
+    };
+    
+public:
+    TrieNode* root;
+    unordered_set<string> dict;
+    
+    /** Initialize your data structure here. */
+    MapSum()
+    {
+        this->root = new TrieNode();
+    }
+    
+    MapSum(const MapSum& mapsum) = delete;
+    
+    MapSum& operator=(const MapSum& mapsum) = delete;
+    
+    ~MapSum()
+    {
+        delete this->root;
+    }
+    
+    void insert(string key, int val)
+    {
+        TrieNode* curr = this->root;
+        
+        bool newKey = false;
+        if (dict.find(key) == dict.end())
+        {
+            dict.insert(key);
+            newKey = true;
+        }
+        
+        for (char c : key)
+        {
+            int index = c - 'a';
+            
+            if (curr->children[index] == nullptr)
+            {
+                curr->children[index] = new TrieNode(val);
+            }
+            
+            else if (curr->children[index] != nullptr)
+            {
+                if (!newKey) { curr->children[index]->sum = val; }
+                else { curr->children[index]->sum += val; }
+            }
+            
+            curr = curr->children[index];
+        }
+    }
+    
+    int sum(string prefix)
+    {
+        TrieNode* curr = this->root;
+
+        int ans = 0;
+        
+        for (char c : prefix)
+        {
+            int index = c - 'a';
+            
+            if (curr->children[index] == nullptr)
+            {
+                ans = 0;
+                break;
+            }
+            
+            curr = curr->children[index];
+            ans = curr->sum;
+        }
+        
+        return ans;
+    }
+};
+
+/**
+ * Your MapSum object will be instantiated and called as such:
+ * MapSum* obj = new MapSum();
+ * obj->insert(key,val);
+ * int param_2 = obj->sum(prefix);
+ */
