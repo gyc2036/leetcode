@@ -1,0 +1,31 @@
+public class Solution {
+    public bool ValidPalindrome(string s) {
+        int begin = 0;
+        int end = s.Length-1;
+        var charArr = s.ToCharArray();
+        while (begin<=end) {
+           if (charArr[begin] == charArr[end]) {
+                ++begin;
+                --end;
+           } else {
+               return (IsPalindrom(s, begin+1, end) || IsPalindrom(s, begin, end-1));
+           }
+       }
+       return true;
+    }
+    
+    private bool IsPalindrom(string s, int begin, int end) {
+        if (s.Length == 1) {
+            return true;
+        }
+        var charArr = s.ToCharArray();
+        while (begin <= end) {
+            if (charArr[begin] != charArr[end]) {
+                return false;
+            }
+            ++begin;
+            --end;
+        }
+        return true;
+    }
+}
