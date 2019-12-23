@@ -1,0 +1,18 @@
+class Solution:
+    def nextClosestTime(self, time: str) -> str:
+        time = list(map(int, time.replace(':', '')))
+        
+        times, minimal = set(time), min(time)
+        limit = [2, 4 if time[0] == 2 else 10, 6, 10]
+        
+        for i in reversed(range(4)):
+            closest = next((t for t in range(time[i] + 1 , limit[i]) if t in times), None)
+            if closest is not None:
+                time[i] = closest
+                for i in range(i + 1, 4):
+                    time[i] = minimal
+                
+                time = ''.join(map(str, time))
+                return '%s:%s' % (time[:2], time[2:])
+                   
+        return "%s:%s" % (str(minimal) * 2, str(minimal) * 2)    
