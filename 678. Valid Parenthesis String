@@ -1,0 +1,67 @@
+/* Idea: Use the stack method to eliminate all the matching parathesis. 
+* At the end of this if we see there are ")" pending in the stack then we need to find a "*" 
+* in the index before it to match that. 
+* Similarly if there is "(" pending in the stack then we need to find a "*" in the index
+* after it to match that.
+*/
+class Solution {
+public:
+    bool checkValidString(string str) {
+      if(str.size() == 0)
+        return true;
+      stack<pair<char,int>> s; //bracket and index it is seen at
+      vector<int> special; //Index where * is seen      
+      for(int i=0; i<str.size();++i)
+      {
+        if(str[i] == '*')
+        {
+          special.push_back(i);
+          continue;
+        }
+        if(str[i] == ')' && !s.empty() && s.top().first == '(')        
+          s.pop();      
+        else
+          s.push({str[i],i});
+      }
+      while(!s.empty())
+      {
+        char c = s.top().first;
+        int index = s.top().second;        
+        if(c == ')')
+        {
+          bool found = false;
+          //Find * in index lower than ')'s index
+          for(int i=0;i<special.size();++i)
+          {
+            if(special[i] != -1 && special[i] < index)
+            {
+              found = true;
+              special[i] = -1;
+              s.pop();
+              break;
+            }   
+          }
+          if(!found)
+            return false;
+        }
+        if(c == '(')
+        {
+          //Find * in index higher than '('s index
+          bool found = false;
+          for(int i=special.size()-1;i>=0;--i)
+          {
+            if(special[i] != -1 && special[i] > index)
+            {
+              found = true;
+              special[i] = -1;
+              s.pop();
+              break;
+            }   
+          }
+          if(!found)
+            return false;
+        }
+      }
+      return true;
+    }
+};
