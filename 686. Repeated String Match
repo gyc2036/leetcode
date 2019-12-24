@@ -1,0 +1,13 @@
+class Solution {
+public:
+    int repeatedStringMatch(string A, string B) {
+        int m=A.size(), n=B.size();
+        int l=m+n-1, c=l/m+(l%m?1:0);
+        string s;
+        while(c--) s+=A;
+        auto p=s.find(B);
+        if (p==string::npos) return -1;
+        l=p+n;
+        return l/m+(l%m?1:0);
+    }
+};
