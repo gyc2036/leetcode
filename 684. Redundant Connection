@@ -1,0 +1,61 @@
+class Solution {
+public:
+    
+    bool StartDFS(vector<vector<int>>& edges, vector<int> edge, int cur, map<int, vector<int>>& m){
+        vector<bool> visited(1001, false); //Initializing a vector for visited value
+        return DFS(edges, edge, cur, m, visited);
+    }
+    
+    bool DFS(vector<vector<int>>& edges, vector<int> edge, int cur, map<int, vector<int>>& m, vector<bool>& visited){
+        int start = edge[0];
+        int destination = edge[1];
+        
+        visited[cur] = true; //Updating current node as visited
+        
+        auto it = m.find(cur); // "it->second" vector will show all the nodes that are connected to current node
+        if(it == m.end()) cout << "Error" << endl;
+		
+        for(int i = 0; i < it->second.size(); i++){
+            int opposite = it->second[i];
+            
+            if(opposite == destination && cur != start) return true;  // This is the time when we reach the destination during DFS traversing.
+            
+            if(opposite != destination && !visited[opposite]){  // If the opposite node hasn't been visted, we do DFS
+                if(DFS(edges, edge, opposite, m, visited)) return true;
+            }
+        }
+        return false; //We couldn't find the destination node after DFS
+        
+    }
+    
+    vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+        vector<int> ans;
+        map<int, vector<int>> m;
+        
+		//Making a hashmap that has each node as keys, and nodes that are connected to the key node as values.
+        for(int i = 0; i < edges.size(); i++){
+            int first = edges[i][0];
+            int second = edges[i][1];
+            
+            auto it = m.find(first);
+            if(it == m.end()){
+                vector<int> tmp = {second};
+                m.insert(pair<int, vector<int>>(first, tmp));
+            }
+            else it->second.push_back(second);
+            
+            it = m.find(second);
+            if(it == m.end()){
+                vector<int> tmp = {first};
+                m.insert(pair<int, vector<int>>(second, tmp));
+            }
+            else it->second.push_back(first);
+        }
+        
+        for(int i = 0; i < edges.size(); i++){
+            if(StartDFS(edges, edges[i], edges[i][0], m)) ans = edges[i];
+        }
+        
+        return ans;
+    }
+};
