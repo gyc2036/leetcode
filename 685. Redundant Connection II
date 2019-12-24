@@ -1,0 +1,62 @@
+struct union_find_tree {
+  vector<int> data;
+
+  union_find_tree() = default;
+
+  explicit union_find_tree(std::size_t n) : data(n, -1) {}
+
+  bool is_root(int i) { return data[i] < 0 ;}
+  
+  int find_root(int i) {
+    return is_root(i) ? i : data[i] = find_root(data[i]);
+  }
+
+  std::size_t tree_size(int i) { return -data[i]; }
+  
+  void unite(int i, int j) {
+    if (tree_size(i) < tree_size(j)) std::swap(i, j);
+    data[i] += data[j];
+    data[j] = i;
+  }
+
+  bool try_unite_trees(int i, int j) {
+    i = find_root(i), j = find_root(j);
+    return i == j ? false : (unite(i, j), true); 
+  }
+};
+
+class Solution {
+ public:
+  vector<int> findRedundantDirectedConnection(vector<vector<int>>& edges) {
+    // 1-based
+    union_find_tree dsu(edges.size() + 1);
+
+    auto last_degree2_edge_pair = [&]() -> optional<pair<vector<int>, vector<int>>> {
+      optional<pair<vector<int>, vector<int>>> result;
+      unordered_map<int, int> parent;
+      for (const vector<int> & edge : edges) {
+        if (parent.find(edge[1]) == parent.end())
+          parent[edge[1]] = edge[0];
+        else 
+          result = std::make_pair(vector<int>{parent[edge[1]], edge[1]},
+                                  vector<int>{edge[0], edge[1]});
+      }
+      return result;
+    };
+
+    if (const auto candidates = last_degree2_edge_pair(); candidates.has_value()) {
+      const auto [edge1, edge2] = candidates.value();
+      auto it = std::find_if(ALL(edges),
+                             [&](const auto &x) {
+                               return x != edge2 and not dsu.try_unite_trees(x[0], x[1]); });
+
+      return it == edges.end() ? edge2 : edge1;
+    }
+    else {
+      auto it = std::find_if(ALL(edges),
+                             [&](const auto &x) {
+                               return not dsu.try_unite_trees(x[0], x[1]);} );
+      return *it;
+    }
+  }
+};
