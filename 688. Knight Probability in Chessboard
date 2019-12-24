@@ -1,0 +1,90 @@
+class Solution {
+public:
+    double knightProbability(int N, int K, int r, int c) {
+        
+        
+        if(K==0) return 1.0;
+        
+        if(N <= 2) return 0.0;
+                
+        vector<vector<double>> board(N,vector<double>(N,0.0));
+        
+        double pfall = 0.0;
+        board[r][c] = 1.0;
+        
+        int inext, jnext;
+        
+        for(int k=0; k<K; k++)
+        {
+            vector<vector<double>> board_temp = board;
+
+            for(int i =0; i<N; i++)
+                for(int j =0; j<N; j++)
+                    board[i][j] = 0.0;
+            
+            for(int i =0; i<N; i++)
+            {
+                for(int j =0; j<N; j++)
+                {
+                    if(board_temp[i][j] > 0.0)
+                    {
+                        inext = i+2, jnext = j-1;
+                        if(inext < N && jnext >=0)
+                            board[inext][jnext] += board_temp[i][j]/8.0;
+                        else
+                            pfall += board_temp[i][j]/8.0;
+
+                        inext = i+2, jnext = j+1;
+                        if(inext < N && jnext < N)
+                            board[inext][jnext] += board_temp[i][j]/8.0;
+                        else
+                            pfall += board_temp[i][j]/8.0;
+                        
+                        inext = i+1, jnext = j-2;
+                        if(inext < N && jnext >= 0)
+                            board[inext][jnext] += board_temp[i][j]/8.0;
+                        else
+                            pfall += board_temp[i][j]/8.0;                    
+
+                        inext = i+1, jnext = j+2;
+                        if(inext < N && jnext < N)
+                            board[inext][jnext] += board_temp[i][j]/8.0;
+                        else
+                            pfall += board_temp[i][j]/8.0;
+                    
+                        inext = i-2, jnext = j-1;
+                        if(inext >= 0 && jnext >= 0)
+                            board[inext][jnext] += board_temp[i][j]/8.0;
+                        else
+                            pfall += board_temp[i][j]/8.0;
+                    
+                        inext = i-2, jnext = j+1;
+                        if(inext >= 0 && jnext < N)
+                            board[inext][jnext] += board_temp[i][j]/8.0;
+                        else
+                            pfall += board_temp[i][j]/8.0;
+                    
+                        inext = i-1, jnext = j-2;
+                        if(inext >= 0 && jnext >= 0)
+                            board[inext][jnext] += board_temp[i][j]/8.0;
+                        else
+                            pfall += board_temp[i][j]/8.0;
+                    
+                        inext = i-1, jnext = j+2;                    
+                        if(inext >= 0 && jnext < N)
+                            board[inext][jnext] += board_temp[i][j]/8.0;
+                        else
+                            pfall += board_temp[i][j]/8.0;
+   
+                    }    
+                 }                   
+                
+                }                    
+            }    
+            
+         
+        
+        return 1.0 - pfall;
+        
+    }
+};
