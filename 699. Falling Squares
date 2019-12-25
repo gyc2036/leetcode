@@ -1,0 +1,63 @@
+class Solution {
+public:
+    vector<int> fallingSquares(vector<vector<int>>& positions) {
+        
+       std::map<std::array<int,2>,uint,decltype(cmp)> m(cmp);
+        int n = positions.size();
+        std::vector<int> res(n,0);
+        int t(0);
+        
+        for (int i=0; i<n; ++i){
+            
+            const auto& u = positions[i];
+            const std::array<int,2> v({u[0],u[0]+u[1]});
+            res[i] = std::max(insert(m,v),t);
+            t=res[i];
+            
+        }
+        
+        return res;
+    }
+    
+private:
+    static constexpr auto cmp = [](const std::array<int,2>& u1, const std::array<int,2>& u2)
+                    { return u1[1] <= u2[0]; };
+    
+    int insert(std::map<std::array<int,2>,uint,decltype(cmp)>& m, const std::array<int,2>& intv) {
+        
+
+        auto [it1,it2] = m.equal_range(intv);        
+        int height(0);
+        std::vector<std::pair<std::array<int,2>,uint>> v;
+        
+
+        if(it1!=m.end() && it1->first[0] < intv[0]){
+            v.push_back({{it1->first[0],intv[0]},it1->second});            
+        }
+
+        if(it1!=m.end()){
+            auto it3 = std::prev(it2,1);
+            if(it3->first[1] > intv[1]){
+              v.push_back({{intv[1],it3->first[1]},it3->second});   
+            }  
+        }
+        
+        for(auto it=it1; it!=it2; ){
+            if(it->second>height){
+                height = it->second;
+            }
+            it = m.erase(it);
+        }
+        
+        
+        m.insert({intv,height+intv[1]-intv[0]});
+        for(auto const& p: v){
+            m.insert(p);
+        }
+
+        return height+intv[1]-intv[0];
+        
+    }
+    
+
+};
