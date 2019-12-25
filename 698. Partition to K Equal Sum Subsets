@@ -1,0 +1,50 @@
+class Solution {
+public:
+    bool canPartition(vector<int>& nums, int idx, int k, int target, vector<int>& used)
+    {
+	//if there is only one subset that we haven't found, then it means we have found a solution.
+        if(k == 1)
+            return true;
+        
+        for(int i = idx; i < nums.size(); i++)
+        {
+		//if the current number is used or it's greater than current target, then we skip it.
+            if(used[i] || target < nums[i])
+                continue;
+            
+            used[i] = 1;
+            
+            if(canPartition(nums, 
+							//if one subset is found, we have to search from the beginning.
+                            (i + 1) * (!(target == nums[i])), 
+							//there are 1 less number of subsets we have to search
+                            k - (target == nums[i]), 
+							//reset target if needed,
+                            target == nums[i] ? origin_target : (target - nums[i]),
+                            used)
+              )
+                return true;
+            
+            used[i] = 0;
+        }
+        return false;
+    }
+    
+    bool canPartitionKSubsets(vector<int>& nums, int k)
+    {
+        sort(nums.begin(), nums.end(), greater<int>());
+        
+        int sum = 0;
+        for(int i = 0; i < nums.size(); i++)
+            sum += nums[i];
+        
+        if(sum % k)
+            return false;
+        
+        vector<int> used(nums.size());
+        origin_target = sum / k;
+        return canPartition(nums, 0, k, origin_target, used);
+    }
+    
+    int origin_target = 0;
+};
