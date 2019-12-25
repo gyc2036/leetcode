@@ -1,0 +1,70 @@
+class Solution {
+public:
+    int numDistinctIslands(vector<vector<int>>& grid);
+    string bfs(vector<vector<int>>& grid, int startRow, int startCol);
+    bool isValid(vector<vector<int>>& grid, int row, int col);
+};
+
+bool Solution::isValid(vector<vector<int>>& grid, int row, int col)
+{
+	if (row < 0 || col < 0 || row >= grid.size() || col >= grid[0].size())
+		return false;
+	return grid[row][col] == 1 ? true : false;
+}
+
+string Solution::bfs(vector<vector<int>>& grid, int startRow, int startCol)
+{
+	string shape;
+	queue<pair<int,int>> q;
+	pair<int,int> p;
+	int row, col;
+	int dirs[4][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, +1}};
+	string strs[4] = {"U", "D", "L", "R"};
+	
+	row = startRow;
+	col = startCol;
+	
+	grid[row][col] = 2;
+	shape += "S";
+	q.push(make_pair(row, col));
+	
+	while (!q.empty()) {
+		p = q.front(); q.pop();
+		for (int i = 0; i < 4; i++) {
+			int row = p.first + dirs[i][0];
+			int col = p.second + dirs[i][1];
+			if (isValid(grid, row, col)) {
+				grid[row][col] = 2;
+				shape += strs[i];
+				q.push(make_pair(row, col));
+			} else {
+				shape += "X";
+			}
+		}
+	}
+	
+	return shape;
+}
+
+int Solution::numDistinctIslands(vector<vector<int>>& grid)
+{
+	if (grid.size() == 0)
+		return 0;
+	if (grid[0].size() == 0)
+		return 0;
+		
+	unordered_set<string> ans;
+	
+	for (int i = 0; i < grid.size(); i++) {
+		for (int j = 0; j < grid[0].size(); j++) {
+			if (grid[i][j] == 1) {
+				string shape = bfs(grid, i, j);
+				if (ans.find(shape) == ans.end()) {
+					ans.insert(shape);
+				}
+			}
+		}
+	}
+	
+	return ans.size();
+}
