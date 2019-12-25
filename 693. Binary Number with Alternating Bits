@@ -1,0 +1,25 @@
+class Solution {
+public:
+    bool hasAlternatingBits(int n) {
+       
+        int mask1 = 1;
+        int mask2 = 2;
+        int state = 0;
+        int tmp, tmp1;
+        while (n) {
+            tmp = n & mask1;
+            tmp1 = n & mask2;
+            tmp1 = tmp1 >> 1;
+            if (tmp == tmp1) {
+                break;
+            }
+            n = n >> 1;
+        }
+        
+        if (!n)
+            state = 1;
+        return state;
+        
+
+    }
+};
