@@ -1,0 +1,43 @@
+class Solution {
+
+
+public:
+
+int minStickers(vector<string>& stickers, string target) {
+	// actually unnecessary, but did it for return -1;
+    vector<vector<int> > map{stickers.size(), vector<int>(26, 0)}; vector<int> sum(26, 0);
+    for (int i=0; i<=stickers.size()-1; i++) for (auto c: stickers[i]) {map[i][c-'a']++; sum[c-'a']++; }
+    for (int i=0; i<=target.size()-1; i++) {if (!sum[target[i]-'a']) return -1;}
+	
+	// dp
+    unordered_map<int, int> dp; dp[0] = 0;
+
+	// BFS 
+    queue<pair<int, int> > temp;
+    temp.push( {(1<<target.size())-1, 0} );
+    while(!temp.empty()){
+        pair<int, int> mypair = temp.front(); temp.pop(); // get stuff
+        auto tar_ = mypair.first; auto level = mypair.second; int start=0;
+        if(!dp[tar_]) dp[tar_]=1; else continue; // DP trimming when duplicated
+        while(start<=target.size()-1) if(!(tar_>>start & 1)) start++; else break; // find the starting point from the right that need to be eliminated
+        if (start == target.size()) return level; // return when found
+
+        for (int i=0; i<=stickers.size()-1; i++){
+            if (!map[i][target[target.size()-1-start]-'a']) continue; // another trimming since the sequence of stickers don't matter, eliminate the duplicated braches
+            auto target_cp(tar_);
+            for (int j=0; j<=stickers[i].size()-1; j++)  
+                for (int r=start; r<=target.size()-1; r++)
+                {
+                    if (target[target.size()-1-r] == stickers[i][j] && ((target_cp >> r) & 1)) { //could apply
+                        target_cp ^= (1 << r);
+                        break;
+                    }
+                }
+
+
+            temp.push({target_cp, level+1}); 
+        }
+    }
+    return -1;
+}
+};
