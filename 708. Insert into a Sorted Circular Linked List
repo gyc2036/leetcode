@@ -1,0 +1,34 @@
+Node* insert(Node* head, int insertVal) {
+	if (head == NULL) {
+		Node * temp = new Node(insertVal);
+		temp -> next = temp;
+		return temp;
+	}
+
+	int maxValue = head -> val, minValue = head -> val;
+	Node * curNode = head, * pre = head, * added = new Node(insertVal);
+	do {
+		pre = curNode;
+		curNode = curNode -> next;
+		if (curNode -> val < minValue) {
+			minValue = curNode -> val;
+			if (insertVal < minValue || insertVal > maxValue) {
+				pre -> next = added;
+				added -> next = curNode;
+				return head;
+			}
+		}
+		maxValue = max(maxValue, curNode -> val);
+		if (insertVal <= curNode -> val && insertVal >= pre -> val) {
+			pre -> next = added;
+			added -> next = curNode;
+			return head;
+		} else if (curNode == head) {
+			pre -> next = added;
+			added -> next = curNode;
+			return head;
+		}
+	} while (1);
+
+	return head;
+}
