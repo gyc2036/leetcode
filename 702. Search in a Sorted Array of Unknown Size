@@ -1,0 +1,24 @@
+int search(const ArrayReader& reader, int target) {
+        int l = 0;
+        int r = 1;
+        
+        while (reader.get(r) < target) {
+            l = r;
+            r *= 2;
+        }
+        
+        int m;
+        while (l <= r) {
+            m = l + (r-l)/2;
+            if (reader.get(m) == target) {
+                return m;
+            }
+            else if (reader.get(m) < target) {
+                l = m+1;
+            }
+            else {
+                r = m-1;
+            }
+        }
+        return -1;
+    }
