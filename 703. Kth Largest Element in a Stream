@@ -1,0 +1,26 @@
+class KthLargest
+{
+public:
+
+KthLargest(int k, std::vector<int>& nums) : _k(k) 
+{
+    for(const auto &el: nums)
+    {
+        _s.insert(el);
+    }
+}
+
+int add(int v) 
+{
+    _s.insert(v);
+    const size_t dim = _s.size();
+    const auto it = _s.begin();
+    const int res = *std::next(_s.begin(), dim-_k);
+    return res;
+}
+
+private:
+
+std::multiset<int> _s;
+int _k;
+};
