@@ -1,0 +1,299 @@
+static const int _ = []() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    return 0;
+}();
+
+class AVLTreeNode {
+
+	public:
+		int key;
+        int value;
+		AVLTreeNode* left;
+		AVLTreeNode* right;
+		int height;
+
+		AVLTreeNode(int key , int value){
+			this->key = key;
+            this->value = value;
+			this->left = nullptr;
+			this->right = nullptr;
+			this->height = 1;
+		}
+};
+
+class AVLTree {
+
+	private:
+		AVLTreeNode* head = nullptr;
+
+		int getHeight(AVLTreeNode* node){
+			
+			return (node == nullptr) ? 0 : node->height;
+		}
+
+		int getBalance(AVLTreeNode* root){
+
+			return getHeight(root->left) - getHeight(root->right);
+		}
+
+		void updateHeights(AVLTreeNode* node){
+
+			node->height = max(getHeight(node->left) , getHeight(node->right)) + 1;
+		}
+
+		AVLTreeNode* leftRotate(AVLTreeNode* node){
+
+			AVLTreeNode* newRoot = node->left;
+			AVLTreeNode* temp = newRoot->right;
+
+			newRoot->right = node;
+			node->left = temp;
+
+			updateHeights(node);
+			updateHeights(newRoot);
+
+			return newRoot;
+
+		}
+
+		AVLTreeNode* rightRotate(AVLTreeNode* node){
+            
+			AVLTreeNode* newRoot = node->right;
+			AVLTreeNode* temp = newRoot->left;
+
+			node->right = temp;
+			newRoot->left = node;
+
+			updateHeights(node);
+			updateHeights(newRoot);
+
+			return newRoot;
+
+		}
+
+		AVLTreeNode* insert(AVLTreeNode* root , int key , int value){
+
+			if (root == nullptr){
+				return new AVLTreeNode(key,value);
+			}
+
+			if (key < root->key){
+				root->left = insert(root->left,key,value);
+			}
+			else if (key > root->key){
+				root->right = insert(root->right,key,value);
+			}
+			else{
+				root->value = value;
+                
+			}
+
+			updateHeights(root);
+
+			int balance = getBalance(root);
+
+			if (balance > 1 ){
+				
+				if (key < root->left->key){
+					return leftRotate(root);
+				}
+
+				else{
+                    
+					root->left = rightRotate(root->left);
+					return leftRotate(root);
+				}
+			}
+
+			else if (balance < -1){
+
+				if (key > root->right->key){
+					return rightRotate(root);
+				}
+
+				else {
+					root->right = leftRotate(root->right);
+					return rightRotate(root);
+				}
+			}
+
+			return root;
+		}
+
+	
+
+		AVLTreeNode* inorderSuccesor(AVLTreeNode* root){
+
+			while (root->left != nullptr){
+				root = root->left;
+			}
+			return root;
+
+		}
+
+		AVLTreeNode* deleteNode(AVLTreeNode* root, int key){
+
+			if (root == nullptr){
+				return root;
+			}
+
+			if (key < root->key){
+				root->left = deleteNode(root->left , key);
+			}
+
+			else if (key > root->key){
+				root->right = deleteNode(root->right , key);
+			}
+
+			else {
+
+				if (root->left == nullptr && root->right == nullptr){
+					delete root;
+					root = nullptr;
+				}
+
+				else if (root->left == nullptr || root->right == nullptr){
+					AVLTreeNode* temp = (root->left) ? (root->left) : (root->right);
+					delete root;
+					root = temp;
+				}
+
+				else {
+				    AVLTreeNode* temp = inorderSuccesor(root->right);
+					root->key = temp->key;
+                    root->value = temp->value;
+					root->right = deleteNode(root->right,temp->key);
+				}
+			}
+
+			if (root == nullptr){
+				return root;
+			}
+
+			updateHeights(root);
+			int balance = getBalance(root);
+
+			if (balance > 1 ){
+				
+				if (getBalance(root->left) >= 0){
+					return leftRotate(root);
+				}
+
+				else{
+					root->left = rightRotate(root->left);
+					return leftRotate(root);
+				}
+			}
+
+			else if (balance < -1){
+
+				if (getBalance(root->right) <= 0){
+					return rightRotate(root);
+				}
+
+				else {
+					root->right = leftRotate(root->right);
+					return rightRotate(root);
+				}
+			}
+
+			return root;
+
+		}
+
+	public:
+
+		void insert(int key, int value){
+
+			this->head = insert(this->head,key,value);
+		}
+
+
+		int search(int key){
+
+			AVLTreeNode* p = head;
+
+			while (p != nullptr){
+				if (p->key == key){
+					return p->value;
+				}
+
+				if (key < p->key){
+					p = p->left;
+				}
+				else if (key > p->key){
+					p = p->right;
+				}
+			}
+			return -1;
+		}
+
+		~AVLTree(){
+			destroyTree(head);
+		}
+
+		void destroyTree(AVLTreeNode* root){
+
+			if (root == nullptr){
+				return;
+			}
+			destroyTree(root->left);
+			destroyTree(root->right);
+
+			
+			delete root;
+		}
+
+		void deleteNode(int key){
+			this->head = deleteNode(head,key);
+		}
+};
+
+
+
+
+/**
+ * Your MyHashSet object will be instantiated and called as such:
+ * MyHashSet* obj = new MyHashSet();
+ * obj->add(key);
+ * obj->remove(key);
+ * bool param_3 = obj->contains(key);
+ */
+class MyHashMap {
+public:
+    /** Initialize your data structure here. */
+    int size = 80;
+    vector<AVLTree*> hashMap;
+    MyHashMap() {
+        for (int i = 0; i < size; ++i){
+            hashMap.push_back(new AVLTree());
+        }
+    }
+    
+    /** value will always be non-negative. */
+    void put(int key, int value) {
+        int hashValue = (key * 13)%size;
+        hashMap[hashValue]->insert(key , value);
+    }
+    
+    /** Returns the value to which the specified key is mapped, or -1 if this map contains no mapping for the key */
+    int get(int key) {
+        int hashValue = (key * 13)%size;
+        return hashMap[hashValue]->search(key);
+    }
+    
+    /** Removes the mapping of the specified value key if this map contains a mapping for the key */
+    void remove(int key) {
+        int hashValue = (key * 13) % size;
+        hashMap[hashValue]->deleteNode(key);
+    }
+};
+
+/**
+ * Your MyHashMap object will be instantiated and called as such:
+ * MyHashMap* obj = new MyHashMap();
+ * obj->put(key,value);
+ * int param_2 = obj->get(key);
+ * obj->remove(key);
+ */
