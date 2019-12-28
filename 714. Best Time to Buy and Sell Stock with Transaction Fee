@@ -1,0 +1,24 @@
+class Solution {
+public:    
+    int maxProfit(vector<int>& prices, int fee) {
+        // variables defined at the end of the i_th day
+        
+        int max_profit_without_stock = 0, max_profit_with_stock = -prices[0];
+        
+        
+        for(int i=1;i<prices.size();i++) {
+            // NOTE: variables calculated for the end of i_th day
+            
+            max_profit_with_stock = max(
+                max_profit_with_stock // did not buy stock on i_th day
+              , max_profit_without_stock - prices[i] // bought stock on the i_th day
+            );
+            
+            max_profit_without_stock = max(
+                max_profit_without_stock // did not sell on the i_th day
+              , max_profit_with_stock + prices[i] - fee // sold at the end of i_th day
+            );
+        }
+        return max_profit_without_stock; // as in the end will not have any stock left
+    }
+};
