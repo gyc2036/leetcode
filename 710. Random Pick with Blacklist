@@ -1,0 +1,75 @@
+struct RangeOffset {
+    int low;
+    int high;
+    int offset;
+};
+
+class Solution {
+private:
+    int randInRange(int low, int high) {  
+        random_device rd;
+        mt19937 eng(rd());
+        uniform_int_distribution<> distr(low, high);
+        return distr(eng);
+    }
+    
+    vector<RangeOffset> rOffsets;
+    
+    void splitLastOffset(int splitter) {
+        RangeOffset l, r;
+        
+        RangeOffset back = rOffsets.back();
+        l.low = back.low;
+        l.high = splitter-1;
+        l.offset = back.offset;
+        
+        r.low = splitter+1;
+        r.high = back.high;
+        r.offset = back.offset+1;
+        
+        rOffsets.pop_back();
+        
+        if (l.low <= l.high)
+            rOffsets.push_back(l);
+        if (r.low <= r.high)
+            rOffsets.push_back(r);
+    }
+    
+    void packIn() {
+        for (auto& range : rOffsets) {
+            range.low -= range.offset;
+            range.high -= range.offset;
+        }
+    }
+public:
+    Solution(int N, vector<int>& blacklist) {
+        sort(blacklist.begin(), blacklist.end());
+        
+        rOffsets.push_back(RangeOffset{0, N-1, 0});
+        for (int i = 0; i < blacklist.size(); ++i) {
+            splitLastOffset(blacklist[i]);
+        }        
+        packIn();
+    }
+    
+    int pick() {
+        int contiguousRand = randInRange(0, rOffsets.back().high);
+        
+        int low = 0; int high = rOffsets.size()-1;
+        RangeOffset selectedROffset;
+        while (low <= high) {
+            int mid = low + (high - low)/2;
+            
+            if (rOffsets[mid].low <= contiguousRand && rOffsets[mid].high >= contiguousRand) {
+                selectedROffset = rOffsets[mid];
+                break;
+            } else if (rOffsets[mid].low > contiguousRand) {
+                high = mid-1;
+            } else {
+                low = mid+1;
+            }
+        }
+        
+        return contiguousRand + selectedROffset.offset;
+    }
+};
