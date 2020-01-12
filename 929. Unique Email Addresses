@@ -1,0 +1,37 @@
+int numUniqueEmails(vector<string>& emails) 
+    {
+      unordered_set<string> final_data;  
+        string to_find{"@"};
+        for(auto &email:emails)
+        {
+            size_t index=email.find(to_find);
+            
+            for(size_t i=0;i<index;i++)
+            {
+                if(email[i]=='+')
+                {
+                   email.erase(email.begin()+i,email.begin()+index);
+                    break;
+                }
+                else if(email[i]=='.')
+                {
+                    email.erase(email.begin()+i);
+                    if(index!=0)
+                    index--;
+                }
+            }
+              index=email.find(to_find);
+            size_t end_index=email.size();
+            for(size_t i=index+1;i<end_index;i++)
+            {
+                if(email[i]=='.')
+                {
+                    string temp=email.substr(1);
+                    if(temp.find(".")>= end_index)
+                        email.erase(email.begin()+i);
+                }
+            }
+            final_data.insert(email);
+        }
+        return final_data.size();
+    }
