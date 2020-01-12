@@ -1,0 +1,44 @@
+template <typename T, std::size_t N>
+array<T, N> equal_split(const T& x, array<T, N> result = {}) {
+  for (int i = 0; i < N; ++i)
+    std::copy(begin(x) + i * size(x) / 3, begin(x) + (i + 1) * size(x) / 3, std::back_inserter(result[i]));
+  return result;
+}
+
+template <typename T, typename F>
+vector<int> index_tracker(const T &x, F&& f, vector<int> result = {}) {
+  for (int i = 0; i < size(x); ++i) if (std::forward<F>(f)(x[i])) result.emplace_back(i);
+  return result;
+}
+
+class Solution {
+ public:
+  vector<int> threeEqualParts(vector<int>& A) {
+    const int n = size(A);
+    const vector<int> impossible = {-1, -1};
+
+    const auto ones_id = index_tracker(A, [&](auto x){ return x == 1; });
+
+    if (size(ones_id) == 0)
+      return {0, 2};
+    else if (size(ones_id) % 3 != 0)
+      return impossible;
+    else {
+      const auto [fst, snd, thd] = equal_split<vector<int>, 3>(ones_id);
+      const int last_zeros = n - (thd.back() + 1);
+      const int fst_interval_zeros = snd.front() - (fst.back() + 1);
+      const int snd_interval_zeros = thd.front() - (snd.back() + 1);
+      auto solution = [&]() -> vector<int> {
+        if (std::min(fst_interval_zeros, snd_interval_zeros) < last_zeros
+            or not std::equal(begin(A) + fst.front(), begin(A) + fst.back(),
+                              begin(A) + snd.front(), begin(A) + snd.back()) 
+            or not std::equal(begin(A) + snd.front(), begin(A) + snd.back(),
+                              begin(A) + thd.front(), begin(A) + thd.back()))
+            return impossible;
+        else
+          return {fst.back() + last_zeros, snd.back() + last_zeros + 1};
+      };
+      return solution();
+    }
+  }
+};
