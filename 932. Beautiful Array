@@ -1,0 +1,23 @@
+class Solution {
+public:
+  vector<int> beautifulArray(int N) {
+   	return go(N, N);	   
+  }
+
+  vector<int> go(int sz, int N) {
+  	if(sz == 1) {
+		return {1};
+  	}
+  	(sz % 2 == 0) ? sz = sz/2 : sz = sz/2 + 1;
+  	vector<int> prev = go(sz, N);
+  	int k = prev.size();
+  	vector<int> res;
+	for(int i = 0; i < k; i++) {
+		if(prev[i] * 2 <= N) res.pb(prev[i] * 2);
+	}
+	for(int i = 0; i < k; i++) {
+		if(prev[i] * 2 - 1 <= N) res.pb(prev[i] * 2 - 1);
+	}
+	return res;
+  }
+};
