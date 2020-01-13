@@ -1,0 +1,15 @@
+ int minFallingPathSum(vector<vector<int>>& v) {
+
+    size_t n = v.size();
+    for (size_t r = 1; r < n; ++r) {
+      for (size_t c = 0; c < n; ++c) {
+        int up = v[r - 1][c];
+        int upLeft = c > 0 ? v[r - 1][c - 1] : up;
+        int upRight = c < n - 1 ? v[r - 1][c + 1] : up;
+
+        v[r][c] += std::min(up, std::min(upLeft, upRight));
+      }
+    }
+
+    return *std::min_element(v.back().begin(), v.back().end());
+  }
