@@ -1,0 +1,34 @@
+class Solution {
+    int match(string s, string t) {
+        int count = 0;
+        for (int i = 0; i < s.size(); i++) {
+            if (t[i] != '?') count++;
+            if (t[i] != '?' && s[i] != t[i]) return 0;
+        }
+        return count;
+    }
+public:
+    vector<int> movesToStamp(string stamp, string target) {
+        int m = stamp.size(), n = target.size();
+        vector<int> res;
+        int count = 0;
+        while(count < n) {
+            int onePass = 0;
+            for (int i = 0; i <= n - m; i++) {
+                string t = target.substr(i, m);
+                int matched = match(stamp, t);
+                if (matched) {
+                    for (int j = i; j < i+m; j++) 
+                        target[j] = '?';
+                    res.push_back(i);
+                }
+                onePass += matched;
+            }
+            if (onePass == 0) break;
+            count += onePass;
+        }
+        if (count < n) return {};
+        reverse(res.begin(), res.end());
+        return res;
+    }
+};
