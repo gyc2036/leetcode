@@ -1,0 +1,82 @@
+class Solution
+{
+public:
+
+std::vector<std::string> 
+    reorderLogFiles(std::vector<std::string>& logs) 
+{
+    std::vector<std::string> res;
+    std::vector<std::string> llogs;
+    std::vector<std::string> dlogs;
+ 
+    for(size_t i = 0; i < logs.size(); i++)
+    {
+        const auto aLog = logs[i];
+        
+        for(size_t j = 0; j < aLog.size() - 1; j++)
+        {
+            if(aLog[j] == ' ')
+            {
+                if(std::isalpha(aLog[j+1]))
+                {
+                    llogs.push_back(aLog);
+                    break;
+                }
+                else if(std::isdigit(aLog[j+1]))
+                {
+                    dlogs.push_back(aLog);
+                    break;
+                }
+            }
+        }
+    }
+           
+    std::sort(llogs.begin(), llogs.end(),
+              []
+              (const std::string &a, const std::string &b)
+              {
+                  std::string t1;
+                  std::string t2;
+                                        
+                  for(size_t i = 0; i < a.size(); i++)
+                  {
+                      if(a[i] == ' ')
+                      {
+                          t1 = a.substr(i+1);
+                          break;
+                      }
+                  }
+                  
+                  for(size_t i = 0; i < b.size(); i++)
+                  {
+                      if(b[i] == ' ')
+                      {
+                          t2 = b.substr(i+1);
+                          break;
+                      }
+                  }
+                  
+                  if(t1 < t2) return true;
+                  
+                  if(t1 == t2)
+                  {
+                      return a < b;
+                  }
+                  
+                  return false;
+              });
+    
+    
+    for(const auto &el: llogs)
+    {
+        res.push_back(el);
+    }
+    
+    for(const auto &el: dlogs)
+    {
+        res.push_back(el);
+    }
+    
+    return res;
+}
+};
