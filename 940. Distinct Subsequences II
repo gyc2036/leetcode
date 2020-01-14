@@ -1,0 +1,23 @@
+  /**
+ Denote by dp[i] the number of distinct subsequences ending with the character S[i], and init to '1' for all 'i'.
+ S[i] = Sum{j in 0 to i-1} S[j], if S[i] != S[j] 
+ S[i] = (Sum{j in k to i-1} S[j]) - 1, otherwise. Here S[k] = S[i] and no element between k and i are S[i].
+ The -1 comes for eliminating the subsequnce consisting of the single character S[i], which is already
+ accounted for in S[k].
+*/
+    int distinctSubseqII(string S) {
+      long mod = 1000000007;
+      vector<long>dp(S.size(),1);
+      long cnt = 0;
+      for(int i = 0; i< S.size(); i++){
+        for(int j = i-1; j >=0; j--) {
+          dp[i] = (dp[i] + dp[j]) % mod;
+          if(S[i] == S[j]){
+            dp[i] = (dp[i] -1) % mod;
+            break;
+          }
+        }
+        cnt = (cnt + dp[i]) % mod;
+      }
+      return cnt;
+    }
