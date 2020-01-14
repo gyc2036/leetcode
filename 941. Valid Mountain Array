@@ -1,0 +1,16 @@
+class Solution {
+public:
+    bool validMountainArray(vector<int>& A) {
+        if(A.size()<3)return false;
+        int low = 0;int high = A.size()-1;
+        
+        for(;low<high&&A[low]<A[low+1];low++);
+        for(;low<high&&A[high]<A[high-1];high--);
+        //if use while like this ,it just beat 40+%
+        //while(low<high&&A[low]<A[low+1])low++;
+       // while(low<high&&A[high]<A[high-1])high--;
+        
+        if(low==high&&low>0&&low<A.size()-1)return true;
+        else return false;
+    }
+};
