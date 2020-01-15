@@ -1,0 +1,50 @@
+class Solution {
+public:
+    string shortestSuperstring(vector<string>& A) {
+        if (A.size() == 0) return "";
+        vector<string> longstrs;
+        string longstr = "";
+        backtrack(longstrs, longstr, 0, A);
+        string shortest = longstrs[0];
+        for (string s : longstrs) {
+            if (s.length() < shortest.length()) {
+                shortest = s;
+            }
+        }
+        return shortest;
+    }
+    
+private:
+    void backtrack(vector<string>& longstrs, string longstr, int contained_str, const vector<string>& A) {
+        if (contained_str == A.size()) {
+            longstrs.push_back(longstr);
+            return;
+        }
+        for (int i = 0; i < A.size(); ++i) {
+            if (longstr.find(A[i]) != string::npos) // contains A[i]
+            {
+                continue;
+            }
+            string newlongstr = mergeTwoString(longstr, A[i]);
+            backtrack(longstrs, newlongstr, contained_str + 1, A);
+        }
+    }
+    
+    string mergeTwoString(string s1, string s2) {
+        int prefix = s1.length();
+        for (int i = 0; i < s1.length(); ++i) {
+            if (s1[i] == s2[0]) {
+                int p1 = i, p2 = 0;
+                while(p1 < s1.length() && p2 < s2.length() && s1[p1] == s2[p2]) {
+                    p1++;
+                    p2++;
+                }
+                if (p1 == s1.length()) {
+                    prefix = i;
+                    break;
+                }
+            }
+        }
+        return s1 + s2.substr(s1.length() - prefix);
+    }
+};
