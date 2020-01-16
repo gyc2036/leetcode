@@ -1,0 +1,33 @@
+class Solution
+{
+public:
+
+bool isAlienSorted(std::vector<std::string>& words, std::string order) 
+{
+    const auto w2 = words;
+    
+    std::map<char, int> ma;
+    int idx = 0;
+    
+    for(const auto &el: order)
+    {
+        ma[el] = idx++;
+    }
+    
+    std::sort(words.begin(), words.end(),[&]
+              (const std::string &s1, const std::string &s2)
+              { 
+                  return std::lexicographical_compare(
+                      s1.begin(), s1.end(),
+                      s2.begin(), s2.end(),
+                      [&](const char & ch1, 
+                          const char & ch2)
+                      {
+                          return ma[ch1] < ma[ch2];
+                      });
+              }
+             );
+    
+    return w2 == words; 
+}
+};
