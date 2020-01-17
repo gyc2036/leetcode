@@ -1,0 +1,39 @@
+class Solution {
+public:
+    bool canReorderDoubled(vector<int>& A) {
+        map<int,int> m;
+        for(auto x : A){
+            m[x]++;
+        }
+        if(m.count(0)&&m[0]&1){
+            return false;
+        }
+        m.erase(0);
+        auto ptr = m.begin();
+        while(ptr != m.end()){
+            int val = 0;
+            int tmp = ptr->first;
+            if (tmp < 0){
+                if(tmp&1){
+                    return false;
+                }
+                val = tmp/2;
+            } else {
+                val = tmp * 2;
+            }
+            auto _ptr = m.find(val);
+            if(_ptr == m.end()){
+                return false;
+            }
+            _ptr->second--;
+            if(_ptr->second == 0){
+                m.erase(_ptr);
+            }
+            ptr->second--;
+            if(ptr->second == 0){
+                ptr = m.erase(ptr);
+            }
+        }
+        return true;
+    }
+};
