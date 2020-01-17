@@ -1,0 +1,27 @@
+class Solution {
+public:
+    int tallestBillboard(vector<int>& rods) {
+        int s = rods.size();
+        int cumsum = std::accumulate(rods.begin(), rods.end(), 0);
+        
+        vector<vector<int>> dp(2, std::vector<int>(2*cumsum+1,-1001));
+        dp[0][cumsum] = 0;
+        int cumsums(cumsum);
+
+        for(int i=s-1, k=1; i>=0; --i, k^=1){
+            cumsum -= rods[i];
+            for(uint j= cumsums-cumsum; j<=cumsums+cumsum; ++j){
+                dp[k][j] = std::max(-1,
+                                std::max(dp[k^1][j],
+                                    std::max(dp[k^1][j-rods[i]],
+                                        rods[i] + dp[k^1][j+rods[i]])));
+                if(dp[k][j]==-1){
+                    dp[k][j] -= 1000;
+                }
+            }
+        }
+        
+        return dp[s%2][cumsums];
+    
+    }
+};
