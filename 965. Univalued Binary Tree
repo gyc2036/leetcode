@@ -1,0 +1,11 @@
+bool isUnivalTree(TreeNode* root) {
+    return traverse(root, root->val);
+}
+    
+bool traverse(TreeNode *node, int val) {
+    if (node == NULL)
+	    return true;
+    if (val != node->val)
+		return false;
+	return traverse(node->left, val) && traverse(node->right, val);
+}
