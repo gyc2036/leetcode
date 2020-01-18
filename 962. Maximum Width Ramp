@@ -1,0 +1,14 @@
+int maxWidthRamp(vector<int>& A) {
+        int n = A.size();
+        if(n==0) return 0;
+        vector<pair<int,int>> B;
+        for(int i=0;i<n;i++) B.push_back(pair(A[i],i));
+        sort(B.begin(), B.end());
+        int res = 0;
+        int min_index = B[0].second;
+        for(int i=1;i<n;i++) {
+            res = max(res, B[i].second - min_index);
+            min_index = min(min_index, B[i].second);
+        }
+        return res;
+    }
