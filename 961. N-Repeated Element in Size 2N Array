@@ -1,0 +1,21 @@
+class Solution
+{
+public:
+
+int repeatedNTimes(std::vector<int>& A) 
+{
+    std::map<int, int> ma;
+    
+    for(const auto &el: A)
+    {
+        ma[el]++;
+        
+        if(ma[el] >= 2)
+        {
+            return el;
+        }
+    }
+    
+    return 0;
+}
+};
