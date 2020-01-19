@@ -1,0 +1,70 @@
+class Solution {
+public:
+    vector<string> spellchecker(vector<string>& wordlist, vector<string>& queries) {
+        
+        vector<string> res(queries.size(), "");
+        int n = queries.size();
+        unordered_set<string> words;
+        unordered_map<string, string> ignoreCase;
+        unordered_map<string, string> vowels;
+        
+        for(int i=0; i<wordlist.size(); i++)
+        {
+            words.insert(wordlist[i]);
+            string temp = wordlist[i];
+            
+            transform(temp.begin(), temp.end(), temp.begin(), ::tolower);
+            if(ignoreCase.find(temp) == ignoreCase.end())
+                ignoreCase[temp] = wordlist[i];
+            
+            for(auto& ch : temp)
+            {
+                if(isVowel(ch))
+                    ch = '#';
+            }
+            
+            if(vowels.find(temp) == vowels.end())
+                vowels[temp] = wordlist[i];
+        }
+        
+        for(int i=0; i<n; i++)
+        {
+            string check = queries[i];
+            transform(check.begin(), check.end(), check.begin(), ::tolower);
+            if(words.find(queries[i]) != words.end())
+                res[i] = queries[i];
+            else if(ignoreCase.find(check) != ignoreCase.end())
+                res[i] = ignoreCase[check];
+            else 
+            {
+                for(auto& ch : check)
+                {
+                    if(isVowel(ch))
+                        ch = '#';
+                }
+                
+                if(vowels.find(check) != vowels.end())
+                    res[i] = vowels[check];
+            }
+        }
+        return res;
+    }
+    
+    bool isVowel(char ch)
+    {
+        switch(ch)
+        {
+            case 'a':
+            case 'e':
+            case 'i':
+            case 'o':
+            case 'u':
+                return true;
+                break;
+            default:
+                return false;
+            
+            return false;
+        }
+    }
+};
