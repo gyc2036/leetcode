@@ -1,0 +1,28 @@
+class Solution {
+public:
+    vector<int> pancakeSort(vector<int>& A) {
+         vector<int> ans;
+    int l = A.size(), maxE = INT_MIN, index;
+    while (l > 0) {
+        for (int i = 0; i < l; i++) {
+            if (maxE < A[i]) {
+                index = i;
+                maxE = A[i];
+            }
+        }
+        if (index == l - 1)l--;
+        else if (index == 0) {
+            for (int k = 0; k < l / 2; k++)swap(A[k], A[l - k-1]);
+            ans.push_back(l--);
+        }
+        else{
+            for (int k = 0; k < (index + 1) / 2; k++)swap(A[k], A[index - k]);
+            for (int k = 0; k < l / 2; k++)swap(A[k], A[l - k - 1]);
+            ans.push_back(index + 1);
+            ans.push_back(l--);
+        }
+        maxE = INT_MIN;
+    }
+    return ans;
+    }
+};
