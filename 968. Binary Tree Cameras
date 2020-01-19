@@ -1,0 +1,22 @@
+class Solution {
+public:
+int minCameraCoverSub(TreeNoderoot, int status) {
+if (!root) {
+*status = 0;
+return 0;
+}
+int leftStatus = -1, rightStatus = -1;
+int count = minCameraCoverSub(root->left, &leftStatus) + minCameraCoverSub(root->right, &rightStatus);
+if (leftStatus == -1 || rightStatus == -1) { // child must be covered.
+*status = 1;
+return count + 1;
+}
+status = (leftStatus == 1 || rightStatus == 1) ? 0 : -1;
+return count;
+}
+int minCameraCover(TreeNode root) {
+int status = -1; // uncovered. 0 covered but not in the root; 1 covered in the root.
+int count = minCameraCoverSub(root, &status);
+return (status == -1) + count;
+}
+};
