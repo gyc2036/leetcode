@@ -1,0 +1,17 @@
+class Solution {
+public:
+    int findJudge(int N, vector<vector<int>>& trust) {
+        unordered_map<int, int> incomingEdges;
+        unordered_map<int, int> outgoingEdges;
+        for(auto t : trust){
+            incomingEdges[t[1]]++;
+            outgoingEdges[t[0]]++;
+        }
+        for(int i = 1; i<=N; i++){
+            if(incomingEdges[i] == N-1 && outgoingEdges[i] == 0){
+                return i;
+            }
+        }
+        return -1;
+    }
+};
