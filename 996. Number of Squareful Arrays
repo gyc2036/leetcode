@@ -1,0 +1,41 @@
+class Solution {
+public:
+    int numSquarefulPerms(vector<int>& A) {
+        vector<vector<int>> res;
+        vector<int> tmp;
+        vector<int> visit = vector<int>(A.size(), 0);
+        sort(A.begin(), A.end());
+        backtrack(res, tmp, A, visit);
+        return res.size();
+    }
+    
+private:
+    void backtrack(vector<vector<int>>& res, vector<int>& tmp, const vector<int> & A, vector<int>& visit) {
+        if (tmp.size() == A.size()) {
+            res.push_back(tmp);
+            return;
+        }
+        
+        for (int i = 0; i < A.size(); ++i) {
+            if (visit[i] || i > 0 && A[i] == A[i - 1] && !visit[i - 1]) {
+                continue;
+            }
+            if (tmp.empty() || tmp.size() > 0 && isSquare(tmp.back() + A[i])) {
+                tmp.push_back(A[i]);
+                visit[i] = 1;
+                backtrack(res, tmp, A, visit);
+                tmp.pop_back();
+                visit[i] = 0;
+            }
+        }
+    }    
+
+    bool isSquare(int n) {
+        for (long long i = 0; i <= n/2 + 1; ++i) {
+            if (i * i == (long long)n) {
+                return true;
+            }
+        }
+        return false;
+    }
+};
