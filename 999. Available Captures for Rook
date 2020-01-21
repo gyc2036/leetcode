@@ -1,0 +1,85 @@
+class Solution
+{
+public:
+
+int numRookCaptures(vector<vector<char>>& b) 
+{
+    const auto dim = 8;
+    
+    int xR = 0;
+    int yR = 0;
+    bool flg = false;
+    
+    for(size_t i = 0; i < dim; i++)
+    {
+        for(size_t j = 0; j < dim; j++)
+        {
+            if(b[i][j] == 'R')
+            {
+                xR = i;
+                yR = j;
+                flg = true;
+                break;
+            }
+        }
+        
+        if(flg) break;
+    }
+    
+    int res = 0;
+    
+    for(size_t i = yR+1; i < dim; i++)
+    {
+        if(b[xR][i] == 'B')
+        {
+            break;
+        }
+        else if(b[xR][i] == 'p')
+        {
+            res++;
+            break;
+        }
+    }
+    
+    for(size_t i = yR; i > 0; i--)
+    {
+        if(b[xR][i] == 'B')
+        {
+            break;
+        }
+        else if(b[xR][i] == 'p')
+        {
+            res++;
+            break;
+        }
+    }
+    
+    for(size_t i = xR+1; i < dim; i++)
+    {
+        if(b[i][yR] == 'B')
+        {
+            break;
+        }
+        else if(b[i][yR] == 'p')
+        {
+            res++;
+            break;
+        }
+    }
+    
+    for(size_t i = xR; i > 0; i--)
+    {
+        if(b[i][yR] == 'B')
+        {
+            break;
+        }
+        else if(b[i][yR] == 'p')
+        {
+            res++;
+            break;
+        }
+    }
+    
+    return res;
+}
+};
