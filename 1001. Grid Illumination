@@ -1,0 +1,86 @@
+class Solution {
+    struct lamp_hash {
+        size_t operator() (const vector<int> &v) const {
+            return hash<int>()(v[0]) ^ hash<int>()(v[1]);
+        }
+    };
+    struct lamp_equal {
+        bool operator() (const vector<int> &a, const vector<int> &b) const {
+            return (a[0] == b[0] && a[1] == b[1]);
+        }
+    };
+    struct eq_hash {
+        size_t operator() (const vector<int> &v) const {
+            return hash<int>()(v[0]) ^ hash<int>()(v[1]) ^ hash<int>()(v[2]);
+        }
+    };
+    struct eq_equal {
+        bool operator() (const vector<int> &a, const vector<int> &b) const {
+            return (a[0] == b[0] && a[1] == b[1] && a[2] == b[2]);
+        }
+    };
+    // O(N) space
+    unordered_set<vector<int>, lamp_hash, lamp_equal> l;
+    // O(4*N) space
+    unordered_map<vector<int>,int, eq_hash, eq_equal> lines_on;
+    
+    int size {0};
+    
+    // O(1)
+    void turn_on_lamp (const vector<int> &lamp) {
+        l.emplace(lamp);
+        lines_on[{ 1, 0,          - lamp[0]}]++;
+        lines_on[{ 0, 1,          - lamp[1]}]++;
+        lines_on[{-1, 1,  lamp[0] - lamp[1]}]++;
+        lines_on[{ 1, 1, -lamp[0] - lamp[1]}]++;
+    }
+    
+    // O(1)
+    void turn_off_lamp(const vector<int> &lamp) {
+        if (l.count(lamp) == 0) return;
+        l.erase(lamp);
+        lines_on[{ 1, 0,          - lamp[0]}]--;
+        lines_on[{ 0, 1,          - lamp[1]}]--;
+        lines_on[{-1, 1,  lamp[0] - lamp[1]}]--;
+        lines_on[{ 1, 1, -lamp[0] - lamp[1]}]--;
+    }
+    
+    // O(1)
+    int is_illuminated(const vector<int> &pos) {
+        vector<vector<int>> equations;
+        equations.push_back({ 1, 0,         - pos[0]});
+        equations.push_back({ 0, 1,         - pos[1]});
+        equations.push_back({-1, 1,  pos[0] - pos[1]});
+        equations.push_back({ 1, 1, -pos[0] - pos[1]});
+        for (auto &e : equations) {
+            if (lines_on.count(e) != 0 && lines_on[e] > 0) return 1;
+        }
+        return 0;
+    }
+    
+    // O(1)
+    void stop_illumination(const vector<int> &position) {
+        vector<vector<int>> neighbours;
+        for (int i = -1; i <= 1; ++i) {
+            for (int j = -1; j <= 1; ++j) {
+                turn_off_lamp({position[0] + i, position[1] + j});
+            }
+        }
+    }
+    
+public:
+    vector<int> gridIllumination(int N, vector<vector<int>>& lamps, vector<vector<int>>& queries) {
+        size = N;
+        // O(N)
+        for (auto &lamp : lamps) {
+            turn_on_lamp(lamp);
+        }
+        vector<int> res;
+        // O(Q)
+        for (auto &q : queries) {
+            res.push_back(is_illuminated(q));
+            if (res.back() == 1) stop_illumination(q);
+        }
+        return res;
+    }
+};
