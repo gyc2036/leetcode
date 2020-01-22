@@ -1,0 +1,48 @@
+
+class Solution {
+public:
+	int n;
+	int ans;
+	
+	int longestOnes(vector<int>& A, int K) {
+		n = A.size();
+		ans = -1;
+		int left = 0;
+		int right;
+		int zeros = 0;
+		
+		//calculate the sliding window till i
+		for (int i = 0; i<n; i++) {
+			right = i;
+			
+			if (A[right] == 0) {
+				zeros++;
+			}
+			
+			//If zeros are greater than K, move left pointer and decrease zeros
+			if (zeros > K) {
+				while (zeros > K && left <= right) {
+					if (A[left] == 0) {
+						zeros--;
+						left++;
+					}else{
+						left++;
+					}
+				}
+			}
+			
+			//size of window
+			int siz = right - left + 1;
+			
+			if (ans == -1) {
+				ans = siz;
+			}else{
+				//find max window
+				ans = max(ans, siz);
+			}
+		}
+		
+		//return answer
+		return ans;
+	}
+};
