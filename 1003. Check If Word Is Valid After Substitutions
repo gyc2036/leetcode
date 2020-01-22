@@ -1,0 +1,23 @@
+class Solution {
+public:
+    bool isValid(string S) {
+        stack<string> st;
+        for (const auto &n: S) {
+            if (n == 'a') {
+                st.push("a");
+            } else if (n == 'b') {
+                if (st.empty()) return false;
+                auto p = st.top();
+                st.pop();
+                if (p.back() != 'a') return false;
+                st.push("ab");
+            } else {
+                if (st.empty()) return false;
+                auto p = st.top();
+                st.pop();
+                if (p.back() != 'b') return false;
+            }
+        }
+        return st.empty();
+    }
+};
