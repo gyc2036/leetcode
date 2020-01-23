@@ -1,0 +1,28 @@
+class Solution
+{
+public:
+
+int bitwiseComplement(int N)
+{
+    if(N == 0) return 1;
+    
+    std::string s = std::bitset<64>(N).to_string();
+    
+    for(size_t i = 0; i < s.size(); i++)
+    {
+        if(s[i] == '1')
+        {
+            s = s.substr(i);
+            break;
+        } 
+    }
+    
+    for(size_t i = 0; i < s.size(); i++)
+    {
+        if(s[i] == '1') s[i] = '0';
+        else s[i] = '1';
+    }
+    
+    return std::stoi(s, 0, 2);
+}
+};
