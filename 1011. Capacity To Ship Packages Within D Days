@@ -1,0 +1,36 @@
+class Solution {
+public:
+    int finishShip(vector<int>& weights, int capacity){
+        int days = 1;
+        int temp = 0;
+        for (int i=0;i<weights.size();i++){
+            if (temp+weights[i] > capacity){
+                temp = weights[i];
+                days++;
+            }else{
+                temp+=weights[i];
+            }
+        }
+        return days;
+    }
+    int shipWithinDays(vector<int>& weights, int D) {
+        int min = *max_element(weights.begin(), weights.end());
+        int max = 0;
+        
+        for (int i=0;i<weights.size();i++){
+            max += weights[i];
+        }
+        
+        while (min < max){
+            int tempCapacity = (min + max) / 2;
+            int num = finishShip(weights,tempCapacity);
+            if (num <= D){
+                max = tempCapacity;
+            }else{
+                min = tempCapacity+1;
+            }
+        }
+        return max;
+        
+    }
+};
