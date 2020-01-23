@@ -1,0 +1,46 @@
+class Solution {``
+public:
+    string a;
+    int dp[10][2][1<<10][2];
+    int rec(int ind,int small,int mask,int flag){
+        //flag is to keep track of atleast one digit occurring more than 1 time or not 
+        if(ind>=a.length()){
+            return flag==1?1:0;
+        }
+        if(dp[ind][small][mask][flag]!=-1){
+            return dp[ind][small][mask][flag];
+        }
+        int ans=0;
+        for(int i=0;i<=9;i++){
+            int u=a[ind]-'0';
+            if(small==0||i<u){
+                if(mask==0&&i==0){
+                    ans+=rec(ind+1,0,mask,0);
+                }
+                else if((mask&(1<<i))!=0){
+                    ans+=rec(ind+1,0,mask,1);
+                }
+                else{
+                    ans+=rec(ind+1,0,(mask|(1<<i)),flag);
+                }
+            }
+            else if(i==u){
+                if(mask==0&&i==0){
+                    ans+=rec(ind+1,0,mask,0);
+                }
+                else if((mask&(1<<i))!=0){
+                    ans+=rec(ind+1,small,mask,1);
+                }
+                else{
+                    ans+=rec(ind+1,small,(mask|(1<<i)),flag);
+                }
+            }
+        }
+        return dp[ind][small][mask][flag]=ans;
+    }
+    int numDupDigitsAtMostN(int n) {
+        a=to_string(n);
+        memset(dp,-1,sizeof(dp));
+        return rec(0,1,0,0);
+    }
+};
