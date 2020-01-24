@@ -1,0 +1,33 @@
+class Solution {
+public:
+    int maxScoreSightseeingPair(vector<int>& A) {
+        // eq1 = A[i] + i 
+        // eq2 = A[j] - j
+        int n = A.size();
+        vector <int> eq1, eq2;
+        
+        for(int i=0;i<n;i++) {
+            eq1.push_back(A[i] + i);
+            eq2.push_back(A[i] - i);
+        }
+        
+        int lrmax[n], rlmax[n];
+        
+        for(int i=0;i<n;i++) {
+            if(i == 0) lrmax[0] = eq1[0];
+            else lrmax[i] = max(lrmax[i-1], eq1[i]);
+        }
+        
+        for(int i=n-1;i>=0;i--) {
+            if(i == n-1) rlmax[n-1] = eq2[n-1];
+            else rlmax[i] = max(rlmax[i+1], eq2[i]);
+        }
+        
+        int ans = INT_MIN;
+        for(int i=0;i<n-1;i++) {
+            ans = max(ans, lrmax[i] + rlmax[i+1]);
+        }
+        
+        return ans;
+    }
+};
