@@ -1,0 +1,14 @@
+class Solution {
+public:
+    bool canThreePartsEqualSum(vector<int>& A) {
+        int sum = accumulate(A.begin(), A.end(), 0);
+        if(sum % 3 != 0) return false;
+        int part = sum / 3;
+        int cur = 0;
+        for(int i : A) {
+            cur += i;
+            if(cur == part) cur = 0;
+        }
+        return !cur;
+    }
+};
