@@ -1,0 +1,19 @@
+class Solution {
+public:
+    vector<bool> prefixesDivBy5(vector<int>& A) {
+        vector<bool> ans;
+        long long  val = 0;
+        for(auto n : A){
+            val = val*2+n;
+            if(val% 5 ==0){
+                ans.push_back(true);
+            }
+            else{ 
+                ans.push_back((false));
+                }
+            val = val %5;
+            }
+        
+        return ans;
+    }
+};
