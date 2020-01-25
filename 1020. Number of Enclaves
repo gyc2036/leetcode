@@ -1,0 +1,71 @@
+//Fast IO
+static auto magic = []() {ios_base::sync_with_stdio(false); cin.tie(nullptr); return false; }();
+
+class Solution {
+public:
+	//variables needed for DFS
+	bool vis[505][505];
+	int n;
+	int m;
+	int ans;
+	int xpos[4] = { 1, -1, 0, 0 };
+	int ypos[4] = { 0, 0, 1, -1 };
+
+	bool isSafe(int x, int y)
+	{
+		return x >= 0 && y >= 0 && x < n && y < m;
+	}
+
+	bool onShore(int x, int y)
+	{
+		return x == 0 || y == 0 || x == n - 1 || y == m - 1;
+	}
+
+	void reset()
+	{
+		for (int i = 0; i < n; i++)
+		{
+			for (int j = 0; j < m; j++)
+			{
+				vis[i][j] = false;
+			}
+		}
+	}
+
+	int dfs(vector<vector<int>>& A, int x, int y, bool &isOnShore)
+	{
+		vis[x][y] = true;
+		int ans = 1;
+		if (onShore(x, y))
+			isOnShore = true;
+		for (int i = 0; i < 4; i++)
+		{
+			int x1 = x + xpos[i];
+			int y1 = y + ypos[i];
+			if (isSafe(x1, y1) && vis[x1][y1] == false && A[x1][y1] == 1)
+				ans += dfs(A, x1, y1, isOnShore);
+		}
+		return ans;
+	}
+
+	int numEnclaves(vector<vector<int>>& A) {
+		n = A.size();
+		m = A[0].size();
+		ans = 0;
+		reset();
+		for (int i = 0; i < n; i++)
+		{
+			for (int j = 0; j < m; j++)
+			{
+				if (vis[i][j] == false && A[i][j] == 1)
+				{
+					bool isOnShore = false;
+					int temp = dfs(A, i, j, isOnShore);
+					if (!isOnShore)
+						ans += temp;
+				}
+			}
+		}
+		return ans;
+	}
+};
