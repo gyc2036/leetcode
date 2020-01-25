@@ -1,0 +1,22 @@
+class Solution {
+public:
+    int sum=0;
+    int sumRootToLeaf(TreeNode* root)
+    {
+        string s="";
+        help(root,s);
+        return sum;
+    }
+    void help(TreeNode* root, string s)
+    {
+        if(!root)
+            return;
+        if(root)
+            s+=to_string(root->val);
+            if(!root->left && !root->right)
+                sum+=stoi(s,nullptr,2);
+        
+            help(root->left, s);
+            help(root->right,s);
+    }
+};
