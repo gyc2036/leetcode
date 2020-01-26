@@ -1,0 +1,32 @@
+class Solution {
+public:
+    TreeNode* recoverFromPreorder(string S) {
+        vector<pair<int, TreeNode*>> st;
+        
+        int val = 0, depth = 0;
+        
+        S.push_back('-');
+        st.push_back({-1, new TreeNode(0)});
+        
+        for (int i = 0; i < S.size(); ++i) {
+            if (isdigit(S[i])) {
+                val *= 10;
+                val += S[i] - '0';
+            } else {
+                if (S[i - 1] != '-') {
+                    while (st.back().first >= depth)
+                        st.pop_back();
+
+                    TreeNode* backNode = st.back().second;
+                    TreeNode* newNode = new TreeNode(val);
+                    (backNode->left ? backNode->right : backNode->left) = newNode;
+                    st.push_back({depth, newNode});
+                    val = depth = 0;
+                }
+                ++depth;
+            }
+        }
+        
+        return st[1].second;
+    }
+};
