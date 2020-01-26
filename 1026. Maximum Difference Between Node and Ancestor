@@ -1,0 +1,20 @@
+class Solution {
+public:
+    pair<int, int> helper(TreeNode* root, int& best, int def) {
+        if (nullptr == root) return pair<int, int>(def, def);
+        
+        pair<int, int> fst = helper(root->left, best, root->val);
+        pair<int, int> scn = helper(root->right, best, root->val);
+        
+        int mi = min(fst.first, min(root->val, scn.first));
+        int ma = max(fst.second, max(root->val, scn.second));
+        
+        best = max(best, max(abs(root->val - ma), abs(root->val - mi)));
+        return pair<int, int>(mi,ma);
+    }
+    int maxAncestorDiff(TreeNode* root) {
+        int best = 0;
+        helper(root, best, root->val);
+        return best;
+    }
+};
