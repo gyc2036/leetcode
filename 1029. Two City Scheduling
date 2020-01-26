@@ -1,0 +1,33 @@
+class Solution {
+public:
+    int twoCitySchedCost(vector<vector<int>>& costs) {
+        sort(costs.begin(), costs.end(),
+             [](const vector<int>&v1, const vector<int>& v2) 
+             { return abs(v1[0] - v1[1]) > abs(v2[0] - v2[1]); }
+            );
+      
+        int tcost = 0;
+        int a = 0;
+        int b = 0;
+      
+        for (int i = 0; i < costs.size(); i++) {
+          if ((a < costs.size() / 2) && (b < costs.size() / 2)) {
+            if (costs[i][0] <= costs[i][1]) {
+              a++;
+              tcost += costs[i][0];
+            } else {
+              b++;
+              tcost += costs[i][1];
+            }
+          } else if (a == costs.size() / 2) {
+            b++;
+            tcost += costs[i][1];
+          } else {
+            a++;
+            tcost += costs[i][0];
+          }
+        }
+      
+      return tcost;
+    }
+};
