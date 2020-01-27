@@ -1,0 +1,54 @@
+class StreamChecker {
+public:
+    struct Node {
+        Node * arr[26];
+        bool isALeafNode;
+        Node () {
+            isALeafNode= 0;
+            for(int i=0;i<26;i++) arr[i] = NULL;
+        }
+    };
+    
+    Node *root= new Node();
+    string stream ="";
+    string adds;
+    
+    void buildTree(int  strIdx , Node *node) {
+        
+        if(strIdx>=adds.size()) return ;
+        int idx = adds[strIdx] - 'a';
+        if(!node->arr[idx]) {
+            node->arr[idx] = new Node();
+        }
+        if(strIdx == adds.size()-1) {
+            node->arr[idx]->isALeafNode = true;
+        }
+        buildTree(strIdx+1,node->arr[idx]);
+    }
+    
+    bool search(int strIdx, Node *node) {
+        if(strIdx  == stream.size()) return false ;
+        else {
+            int idx = stream[strIdx] -'a';
+            if(node->arr[idx] == NULL) return false;
+            if(node->arr[idx]->isALeafNode) return true ;
+            else return search(strIdx+1,node->arr[idx]);
+        }
+        
+    }
+    StreamChecker(vector<string>& words) {
+     int size = words.size();
+     for(int i=0;i<size;i++) {
+         reverse(words[i].begin(),words[i].end());
+         adds = words[i];
+         buildTree(0,root);
+     }
+    }
+    
+    bool query(char letter) {
+       stream.insert(0, 1, letter);
+        return search(0,root);
+    }
+    
+    
+};
