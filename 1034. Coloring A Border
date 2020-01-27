@@ -1,0 +1,54 @@
+class Solution {
+public:
+vector<vector> colorBorder(vector<vector>& grid, int r0, int c0, int color) {
+// BFS
+if(!grid.size()) return grid;
+int oldColor = grid[r0][c0];
+if(oldColor == color) return grid;
+int row = grid.size();
+int col = grid[0].size();
+queue<pair<int, int>> neigh;
+vector<vector> tmp = grid;
+set<pair<int, int>> cc;
+neigh.push({r0, c0});
+cc.insert({r0, c0});
+tmp[r0][c0] = color;
+while(!neigh.empty()){
+auto n = neigh.front();
+neigh.pop();
+int x = n.first;
+int y = n.second;
+if(x - 1 >= 0 && tmp[x - 1][y] == oldColor){
+tmp[x - 1][y] = color;
+neigh.push({x - 1, y});
+cc.insert({x - 1, y});
+}
+if(x + 1 < row && tmp[x + 1][y] == oldColor){
+tmp[x + 1][y] = color;
+neigh.push({x + 1, y});
+cc.insert({x + 1, y});
+}
+if(y - 1 >= 0 && tmp[x][y - 1] == oldColor){
+tmp[x][y - 1] = color;
+neigh.push({x, y - 1});
+cc.insert({x, y - 1});
+}
+if(y + 1 < col && tmp[x][y + 1] == oldColor){
+tmp[x][y + 1] = color;
+neigh.push({x, y + 1});
+cc.insert({x, y + 1});
+}
+}
+for(set<pair<int, int>>::iterator iter = cc.begin(); iter != cc.end(); iter++){
+int a = (*iter).first;
+int b = (*iter).second;
+if(cc.find({a - 1, b}) != cc.end() && cc.find({a + 1, b}) != cc.end() && cc.find({a, b - 1}) != cc.end() && cc.find({a, b + 1}) != cc.end()){
+continue;
+}
+else{
+grid[a][b] = color;
+}
+}
+return grid;
+}
+};
