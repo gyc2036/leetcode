@@ -1,0 +1,41 @@
+class Solution {
+public:
+    vector<int> gardenNoAdj(int N, vector<vector<int>>& paths) {
+        vector<int> ans;
+        map<int,list<int> > adjlist;
+        for(auto i:paths)
+        {
+            int u = *(i.begin());
+            int v = *(i.begin()+1);
+            adjlist[u].push_back(v);
+            adjlist[v].push_back(u);
+        }
+        map<int,int> assigned;
+        for(int i=1;i<=N;i++)
+        {
+            int node = i;
+            bool found=true;
+            for(int f=1;f<=4;f++)
+            {
+                bool found=true;
+                for(auto neighbour:adjlist[node])
+                {
+                    if(assigned[neighbour]==f)
+                    {
+                        found=false;
+                        break;
+                    }
+                }
+                if(found)
+                {
+                    assigned[node]=f;
+                    ans.push_back(f);
+                    break;
+                }
+                
+            }
+                
+        }
+       return ans; 
+    }
+};
