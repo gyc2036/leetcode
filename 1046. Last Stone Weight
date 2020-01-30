@@ -1,0 +1,21 @@
+class Solution {
+public:
+    int lastStoneWeight(vector<int>& stones) {
+        sort(stones.begin(), stones.end());
+        int index = stones.size() - 1;
+        int distance;
+        while (index > 0) {
+            distance = stones[index] - stones[index - 1];
+            if (distance == 0) {
+                index -= 2;
+            }
+            else {
+                index -= 2;
+                vector<int>::iterator it = lower_bound(stones.begin(), stones.begin() + index + 1, distance);
+                stones.insert(it, distance);
+                ++index;
+            }
+        }
+        return index == 0 ? stones[0] : 0;
+    }
+};
