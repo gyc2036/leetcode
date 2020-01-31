@@ -1,0 +1,35 @@
+class Solution {
+public:
+    int longestStrChain(vector<string>& words) {
+        if(words.size() <= 1) return words.size();
+        sort(words.begin(), words.end(), mycomp);
+        unordered_map<string, int> memo;
+        for(string word : words) memo[word] = -1; // -1 means unchecked
+        int result = INT_MIN;
+        for(string word : words) DFS(word, result, memo); // backtracking with memo
+        return result;
+    }
+private:
+    int DFS(string& word, int& result, unordered_map<string, int>& memo) {
+        if(memo[word] != -1) return memo[word]; // visted before
+        else if(word.size() == 1) { // base case
+            memo[word] = 1;
+            return memo[word];
+        }
+        int temp = 1; // itself
+        for(int i = 0; i < word.size(); ++i) {
+            string s = word.substr(0, i) + word.substr(i+1); // remove one character
+            if(memo.count(s) == 0) continue; // if s is not in words, continue
+            else if(DFS(s, result, memo) + 1 > temp) temp = DFS(s, result, memo) + 1;
+        }
+        memo[word] = temp;
+        result = max(result, memo[word]); // update result
+        return memo[word];
+    }
+    
+    struct Comp {
+        bool operator() (const string& a, const string& b) {
+            return a.size() > b.size();
+        }
+    } mycomp;
+};
