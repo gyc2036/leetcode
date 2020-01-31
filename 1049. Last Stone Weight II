@@ -1,0 +1,20 @@
+class Solution {
+public:
+    int lastStoneWeightII(vector<int>& st) {
+        int len = st.size();
+        int sum = 0;
+        for(int i = 0;i<len;i++)sum += st[i];
+        int dp[sum+1] = {};
+        dp[0] = 1;
+        for(int i = 0;i<len;i++){
+            for(int j = sum;j>=st[i];j--){
+                dp[j] = (dp[j]|dp[j-st[i]]);
+            }
+        }
+        int ans = INT_MAX;
+        for(int i = 0;i<=sum;i++){
+            if(dp[i])ans = min(ans,abs(2*i-sum));
+        }
+        return ans;
+    }
+};
