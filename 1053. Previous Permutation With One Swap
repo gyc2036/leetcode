@@ -1,0 +1,25 @@
+class Solution {
+public:
+    vector<int> prevPermOpt1(vector<int>& A) {
+        int len = A.size();
+        int mn = INT_MAX;
+        
+        for(int i = len-1;i>=0;i--){
+            if(A[i]>mn){
+                int mx = 0,indx;
+                for(int j = i+1;j<len;j++){
+                    if(A[i]>A[j]){
+                        if(A[j]>mx){
+                            mx = A[j];
+                            indx = j;
+                        }
+                    }
+                }
+                swap(A[i],A[indx]);
+                break;
+            }
+            mn = min(mn,A[i]);
+        }
+        return A;
+    }
+};
