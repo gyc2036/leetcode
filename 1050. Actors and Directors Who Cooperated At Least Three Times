@@ -1,0 +1,11 @@
+#Apparently MySql doesn't let you use common table expressions/sub queries -_-"
+
+/* Write your PL/SQL query statement below */
+
+WITH base as (
+select actor_id, director_id, count(actor_id) as actor_director_count from ActorDirector
+group by actor_id, director_id
+)
+select actor_id, director_id
+from base
+where actor_director_count >= 3
