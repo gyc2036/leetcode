@@ -1,0 +1,39 @@
+string minimizeError(vector<string>& prices, int target) {ddd
+        int _min=0,_max=0;
+        vector<pair<double,int>> vec;
+        vector<int> res;
+        for(int i=0;i<prices.size();i++){
+            auto n=prices[i];
+            double p=stod(n);
+            int fp=floor(p);
+            all+=p;
+            _min+=fp;
+            _max+=ceil(p);
+            vec.push_back({p,i});
+            res.push_back(fp);
+        }
+        
+        if(target>_max || target<_min) return "-1";
+        
+        auto cmp=[](pair<double,int>& a, pair<double,int>& b){
+            return ceil(a.first)-a.first<ceil(b.first)-b.first;
+        };
+        
+        sort(vec.begin(),vec.end(),cmp);
+		
+        int zero=0;
+        while(zero<res.size() && ceil(vec[zero].first)-vec[zero].first==0) zero++;
+        cout<<zero<<endl;
+        for(int i=zero;i<target-_min+zero;i++){
+            res[vec[i].second]++;
+        }
+        
+        double ans=0;
+        for(int i=0;i<prices.size();i++){
+            ans+=abs(vec[i].first-res[vec[i].second]);
+        }
+        
+        cout<<accumulate(res.begin(),res.end(),0.00)<<endl;
+        string s=to_string(ans);
+        return s.substr (0, s.find_first_of ('.', 0) + 4);
+}
