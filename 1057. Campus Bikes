@@ -1,0 +1,63 @@
+class Solution {
+    struct Combo
+    {
+        Combo(int d, int w, int b)
+            : dist(d)
+            , worker(w)
+            , bike(b)
+            {}
+        
+        int dist;
+        int worker;
+        int bike;
+    };
+	
+    
+public:
+    vector<int> assignBikes(vector<vector<int>>& workers, vector<vector<int>>& bikes) {
+	        auto cmp = [](const Combo& lhs, const Combo& rhs)
+        {
+            return lhs.dist == rhs.dist ? 
+                     lhs.worker == rhs.worker ? 
+                        lhs.bike > rhs.bike
+                   : lhs.worker > rhs.worker
+                 : lhs.dist > rhs.dist;
+        };
+
+	
+        std::priority_queue<Combo, vector<Combo>, decltype(cmp)> myQ(cmp);
+        
+        for(int i=0; i<workers.size(); i++)
+        {
+            for(int j=0; j < bikes.size(); j++)
+            {
+                auto dist = std::abs(workers[i][0] - bikes[j][0]) + std::abs(workers[i][1] - bikes[j][1]);
+                myQ.emplace(dist, i, j);
+            }
+        }
+
+        vector<int> res (workers.size(), -1);
+        unordered_set<int> usedBike;
+        unordered_set<int> usedWorker;
+        
+        while(!myQ.empty())
+        {
+            auto t = myQ.top();
+            myQ.pop();
+            
+            if(usedBike.count(t.bike) > 0 || usedWorker.count(t.worker) > 0)
+            {
+                continue;
+            }
+            
+            usedBike.emplace(t.bike);
+            usedWorker.emplace(t.worker);
+            res[t.worker] = t.bike;
+            
+            if(usedWorker.size() == workers.size())
+                break;
+        }
+        
+        return res;
+    }
+};
