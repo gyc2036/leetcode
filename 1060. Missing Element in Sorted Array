@@ -1,0 +1,61 @@
+class Solution
+{
+public:
+	// Minimum of Maximum
+	int missingElement(vector<int>& nums, int K)
+	{
+		// Lower bound
+		int left = 0;
+		// Upper bound
+		int right = nums.size();
+
+		// Return the lower limit that contains K missing numbers
+		// in the range of [left, right] inclusive.
+		// [left, right) exclusive for searching.
+		while (left < right)
+		{
+			// Lower bound limit that contains K missing numbers.
+			int limit = (right - left) / 2 + left;
+
+			int missingNumCount = getMissingNumberCount(nums, limit);
+
+			if (missingNumCount < K)
+			{
+				left = limit + 1;
+			}
+			else
+			{
+				right = limit;
+			}
+		}
+
+		// The lower bound limit (left) contains 
+		// number of missing numbers >= K,
+		// therefore, (left -1) < K.
+		// target = nums[left -1] +K should contains enough 
+		// number of missing numbers.
+		// NOTE:
+		// target here is the limit in the range [0, target] inclusive
+		// that DOES NOT contain any missing numbers.
+		int target = nums[left - 1] + K;
+		int missingNumCount = getMissingNumberCount(nums, left - 1);
+
+		return target - missingNumCount;
+	}
+
+private:
+	int getMissingNumberCount(const vector<int>& nums,
+							  const int limit)
+	{
+		// Current total number counts in the range [0, limit],
+		// that contains missing numbers.
+		int totalNums = nums[limit] - nums[0];
+
+		// Number of missing numbers = Missing number range - 
+		//                             Non-missing number range.
+		// NOTE: limit is the range [0, limit],
+		//       that DOES NOT contain any missing numbers.
+		int missingNumbers = totalNums - limit;
+		return missingNumbers;
+	}
+};
