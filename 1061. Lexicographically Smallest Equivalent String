@@ -1,0 +1,46 @@
+class Solution {
+public:
+    string smallestEquivalentString(string A, string B, string S) {
+        int n = A.size();
+        string ret;
+        if (n == 0) return ret;
+        initSets(); // initialize disjoint sets
+        for (int i = 0; i < n; ++i) {
+            UnionSets(A[i] - 97, B[i] - 97);
+        }
+        for (int i = 0; i < S.size(); ++i) {
+            // since findSet() always returns lexicographically smallest charactor
+            ret.push_back(char(findSet(S[i] - 97) + 97));
+        }
+        return ret;
+    }
+private:
+    vector<int> parent;
+    
+    void initSets(){
+        parent = vector<int>(26, 0);
+        for (int i = 0; i < 26; ++i) {
+            // each charactor is a singleton set, therefore point to itself
+            parent[i] = i; 
+        }
+    }
+    
+    int findSet(int v) {
+        if (parent[v] == v) {
+            return v;
+        }
+        return parent[v] = findSet(parent[v]); // with path compression
+    }
+    
+    void UnionSets(int u, int v) {
+        u = findSet(u);
+        v = findSet(v);
+        if (u != v) {
+            // make sure disjoint sets always points to lexicographically smllest charactor
+            if (v > u) {
+                swap(u, v);
+            }
+            parent[u] = v;
+        }
+    }
+};
