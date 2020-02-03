@@ -1,0 +1,22 @@
+int validSubarrays(vector<int>& nums) {
+	// running set of array start points
+	// every time number is added check which starting points are no longer valid
+	// increment count by one for each item still in set using std::accumulate
+	
+	int res = 0;
+	map<int, int> arrayStartingPoints;
+	// Order O(Nlg(N)S) where N = nums.size(), S = map size (the number of unique numbers)
+	for (auto i = 0; i < nums.size(); ++i) {
+		++arrayStartingPoints[nums[i]];  // O(lg(N) - std::map used to support lower_bound, but slower insert
+		auto it = arrayStartingPoints.upper_bound(nums[i]);      // O(lg(N))
+		// O(S) - erase and accumulate are each O(S), though erased elements and accumulated elements are mutually exclusive
+		arrayStartingPoints.erase(it, arrayStartingPoints.end());
+		res += accumulate(arrayStartingPoints.begin(),             
+				   arrayStartingPoints.end(), 
+				   0,
+				   [](int a, const std::map<int, int>::value_type& m){
+					   return a + m.second;
+				   });
+	}
+	return res;
+}
