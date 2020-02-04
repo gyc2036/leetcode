@@ -1,0 +1,57 @@
+class Solution {
+public:
+    // vector<vector<int>> indexPairs(string text, vector<string>& words) {
+    vector<vector<int>> indexPairs(
+        const string& text,
+        vector<string>& words)
+    {
+        // For each word, spawn a background worker thread to scan the
+        // text for just that one word:
+        vector<future<vector<pair<int,int>>>> future_locations;
+        for(const string& word : words){
+            if(word.size() <= text.size())
+            {
+                future<vector<pair<int,int>>> word_locations = async(launch::async, [&text](const string& word)
+                {
+                    // Now we are on a worker thread, gather all locations where
+                    // `word` is present in `text` and return them in `locations` vec:
+                    vector<pair<int,int>> locations;
+                    const int word_back = word.size() - 1;
+                    int i = 0;
+                    while(i != string::npos){
+                        i = text.find(word, i);
+                        if(i != string::npos){
+                            locations.emplace_back(i, i + word_back);
+                            ++i;
+                        } else {
+                            break;
+                        }
+                    }
+                    return locations;
+                }, word);
+                // Remember the handle to the results for this one word:
+                future_locations.push_back(move(word_locations));
+                //this_thread::sleep_for(chrono::microseconds(1000));
+            }
+        }
+        
+        // Wait for each worker thread to complete and then accumulate its
+        // partial results into one vector, and then sort them all:
+        vector<pair<int,int>> locations;
+        for(auto& partial_locations : future_locations)
+        {
+            const auto& the_vec = partial_locations.get();
+            locations.insert(locations.end(), the_vec.begin(), the_vec.end());
+        }
+        sort(begin(locations), end(locations));
+        
+        // Copy our results out into the less efficient representation
+        // used by the problem author:
+        vector<vector<int>> ret;
+        ret.reserve(locations.size());
+        for(const pair<int,int> loc : locations){
+            ret.push_back({loc.first, loc.second});
+        }
+        return ret;
+    }
+};
