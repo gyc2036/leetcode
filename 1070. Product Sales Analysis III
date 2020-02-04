@@ -1,0 +1,6 @@
+SELECT product_id, year AS first_year, quantity, price
+FROM(
+    SELECT *, rank() over(partition BY product_id ORDER BY year ASC) AS ranking 
+    FROM sales
+    ) tem
+WHERE ranking = 1
