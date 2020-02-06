@@ -1,0 +1,3 @@
+select test.project_id from (
+select project_id, rank() over( order by count(distinct employee_id) DESC ) as total from Project group by project_id
+) as test where test.total=1
