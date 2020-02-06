@@ -1,0 +1,29 @@
+class Solution {
+public:
+	vector<int> addNegabinary(vector<int>& arr1, vector<int>& arr2) {
+		int m = arr1.size();
+        int n = arr2.size();
+        int mx = max(m,n)+2;
+        arr1.insert(arr1.begin(),mx-m,0);
+        arr2.insert(arr2.begin(),mx-n,0);
+        int carry = 0;//the carry bit
+        for(int i = mx-1;i>=0;i--){
+            arr1[i]+=arr2[i]-carry;
+            carry = 0;
+            if(arr1[i]==-1){  //for example, '11'+'1' = '0', so we can use the '11' to express '-1' 
+                arr1[i] = 1;
+                arr1[i-1]+= 1;
+            }
+            else{
+                carry = arr1[i]/2;
+                arr1[i] = arr1[i]%2;
+            }
+        }
+        
+        while(arr1[0]==0&&arr1.size()>1){
+            arr1.erase(arr1.begin());
+        }
+        return arr1;
+        
+    }
+};
