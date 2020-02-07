@@ -1,0 +1,13 @@
+Select project_id, employee_id
+from
+(Select project_id
+, employee_id
+, dense_rank() over (partition by project_id order by experience_years desc ) as exp_rank
+from
+(Select A.*
+, B.experience_years
+from Project as A left join Employee as B on
+A.employee_id =B.employee_id
+)As A
+) As B
+where exp_rank=1
