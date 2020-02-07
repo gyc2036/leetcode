@@ -1,0 +1,30 @@
+class Solution {
+public:
+    string smallestSubsequence(string text) {
+        int count[26]={};
+        for (int i=0;i<text.size();i++){
+            count[text[i]-'a']++;
+        }
+        string res = "";
+        int memo[26]={};
+        for (auto c: text){
+            count[c-'a']--;
+            if (memo[c-'a']>0){
+                continue;
+            }
+            
+            while (c<res.back()&&res.size()>0){
+                if (count[res.back()-'a']>0){
+                    memo[res.back()-'a']--;
+                    res.pop_back();
+                }
+                else{break;}
+            }
+            
+            memo[c-'a']++;
+            res += c;
+        }
+        return res;
+        
+    }
+};
