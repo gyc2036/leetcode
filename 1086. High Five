@@ -1,0 +1,27 @@
+vector<vector<int>> highFive(vector<vector<int>>& items) 
+{
+	map<int, vector<int>> scoreMap;
+
+	for(const auto& item : items)
+	{
+		scoreMap[item[0]].push_back(item[1]);
+	}
+
+	vector<vector<int>> avgScores;
+
+	for(auto& [student, scores] : scoreMap)
+	{
+		sort(scores.rbegin(), scores.rend());
+
+		int scoreSum = 0;
+
+		for(int i = 0; i < 5; ++i)
+		{
+			scoreSum += scores[i];
+		}
+
+		avgScores.push_back({student, scoreSum / 5});
+	}
+
+	return avgScores;
+}
