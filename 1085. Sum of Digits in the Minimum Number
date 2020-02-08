@@ -1,0 +1,14 @@
+int sumOfDigits(vector<int>& A)
+{
+	auto min = *min_element(A.begin(), A.end());
+
+	int digSum = 0;
+
+	while(min > 0)
+	{
+		digSum += min % 10;
+		min /= 10;
+	}
+
+	return digSum % 2 == 0;
+}
