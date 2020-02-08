@@ -1,0 +1,42 @@
+class Solution {
+public:
+    vector<string> expand(string S) {
+        vector<string> res;
+        vector<string> curr;
+        vector<char> options;
+        res.push_back("");
+        
+        int i = 0;
+        while(i < S.size()){
+            char c = S[i];
+            if(c == '{'){
+                while(S[i] != '}'){
+                    if(isalpha(S[i])){
+                        options.push_back(S[i]);
+                    }
+                    i++;
+                }
+                i++;
+                curr = res;
+                res.clear();
+                sort(options.begin(),options.end());
+				for(string str : curr){
+					for(char op : options){
+						res.push_back(str + op);
+					}
+				}
+                
+                curr.clear();
+                options.clear();
+            }
+            else if(isalpha(c)){
+                for(int i = 0; i < res.size(); i++){
+                    res[i] += c;
+                }
+                i++;
+            }
+        }
+        
+        return res;
+    }
+};
