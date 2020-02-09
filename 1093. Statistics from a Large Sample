@@ -1,0 +1,99 @@
+class Solution {
+public:
+vector sampleStats(vector& count)
+{
+vector result;
+long long mx=-1, mn=256, mode, entries = 0, sum = 0, mx_freq = 0;
+double median;
+double mean;
+int n = 256;
+
+    for(long long i=0;i<n;i++)
+    {
+        if(count[i]>0)
+        {
+            mx = max(mx, i);
+            mn = min(mn, i);
+            entries += count[i]; 
+            sum += i*count[i];
+            
+            if(mx_freq<count[i])
+            {
+                mx_freq = count[i];
+                mode = i;
+            }
+            
+        }
+         
+    }
+    
+    if(entries%2==0)
+    {
+        long long t1 = entries/2;
+        long long t2 = t1+1;
+        
+        long long f1 = -1, f2 = -1;
+        
+        entries=0;
+        
+        for(long long i=0;i<n;i++)
+        {
+            if(count[i]>0)
+            {                    
+                entries += count[i];
+               
+                if(f2==-1 && entries>=t2)
+                {
+                    f2 = i;
+                }
+                if(f1==-1 && entries>=t1)
+                {
+                    f1 = i;
+                }
+
+            }
+
+        }
+        
+        median = (f1+f2)/2.0;
+        
+    }
+    else
+    {
+        long long t1 = entries/2 + 1;
+        
+        long long f1 = -1;
+        
+        entries=0;
+        
+        for(long long i=0;i<n;i++)
+        {
+            if(count[i]>0)
+            {                    
+                entries += count[i];
+               
+                if(f1==-1 && entries>=t1)
+                {
+                    f1 = i;
+                }
+
+            }
+
+        }
+        
+        median = f1/1.0;
+          
+        
+    }
+        
+    
+    result.push_back(1.0*mn);
+    result.push_back(1.0*mx);
+    result.push_back(((1.0*sum)/entries));
+    result.push_back(1.0*median);
+    result.push_back(1.0*mode);
+    
+    
+ return result; 
+}
+};
