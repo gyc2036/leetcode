@@ -1,0 +1,75 @@
+class Solution {
+public:
+    int confusingNumberII(int N) {
+        const string s = to_string(N);
+        unordered_map<int, int> m;
+        int size = s.size(), res = countValid(s, m, 0, 'A');
+        res -= symAcc[size-1] + dfs(s, 0, 'A', flip(0) <= s.back());
+        return res;
+    }
+    
+    int countValid(const string& N, unordered_map<int, int>& m, const int i, const char last) {
+        if(i == N.size()) return 1;
+        if(i > 0 && last < N[i-1]) return pow5[N.size()-i];
+        if(m.count(i)) return m[i];
+        
+        int res = 0;        
+        for(const auto &n: v1) {
+            if(n <= N[i]) res += countValid(N, m, i+1, n);
+            else break;
+        }
+        return m[i] = res;
+    }
+    
+    int dfs(const string& N, const int i, const char last, const bool valid) {
+        const int j = N.size()-1-i;
+        if(i > j) {
+            if(valid) return 1;
+            else { // If no more digits, make sure last digit is less or we have invalid number
+                if(last < N[i-1]) return 1;
+                return 0;
+            }
+        }
+        if(i > 0 && last < N[i-1]) return sym5[j-i+1];
+
+        int res = 0;
+        for(const auto& n: v1) {
+            if(i == 0 && n == '0') continue;
+            if(i == j && (n == '6' || n == '9')) continue;
+            if(n <= N[i]) {
+                if(n == N[i]) {
+                    if(flip(n) > N[j]) res += dfs(N, i+1, n, false);
+                    else if(flip(n) == N[j]) res += dfs(N, i+1, n, valid);
+                    else res += dfs(N, i+1, n, true);
+                } else res += dfs(N, i+1, n, true);
+            } else break;
+        }
+        return res;
+    }
+        
+    static inline char flip(const char c) {
+        switch(c) {
+            case '0': return '0';
+            case '1': return '1';
+            case '6': return '9';
+            case '8': return '8';
+            case '9': return '6';
+        }
+        return 'a';
+    }
+    
+    // Digit vector
+    const vector<char> v1 = {'0', '1', '6', '8', '9'};
+
+    //Power vector of 5
+    const vector<int> pow5 = {1, 5, 25, 125, 625, 3125, 15625, 78125, 390625, 1953125};
+    
+    //Cumulative count of valid but symmetric number rwt # digits, without value restriction
+    //Asymmetric count = [0, 3, 4, 12, 20, 60, 100, 300, 500, 1500];
+    const vector<int> symAcc = {0, 3, 7, 19, 39, 99, 199, 499, 999, 2499};
+    
+    //Count of possible symmetric combinations wrt # digits
+    const vector<int> sym5 = {0, 3, 5, 15, 25, 75, 125, 325, 625, 1875};
+};
+
+auto gucciGang = []() {std::ios::sync_with_stdio(false);cin.tie(nullptr);cout.tie(nullptr);return 0;}();
