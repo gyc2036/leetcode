@@ -1,0 +1,61 @@
+class Solution {    
+private : 
+    int dp[1001][1001];
+    int length1 , length2;
+    string ret ="";
+    
+    void constructString(int idx1, int idx2,string &s1, string &s2) {
+        if(idx1 >= length1 && idx2 >= length2) return;
+        if(idx1 >= length1){
+             ret += s2.substr(idx2, length2-idx2);
+             return ;
+        }
+        else if(idx2 >= length2) {
+            ret += s1.substr(idx1, length1-idx1);
+            return ;
+        }
+        else {
+             if(dp[idx1][idx2] == solve(idx1,idx2+1,s1,s2)+1) {
+                ret +=s2[idx2];
+                constructString(idx1, idx2+1,s1,s2);
+            } else if(dp[idx1][idx2] == solve(idx1+1,idx2,s1,s2)+1) {
+                ret +=s1[idx1];
+                constructString(idx1+1, idx2,s1,s2);
+            } else if((dp[idx1][idx2] == solve(idx1+1,idx2+1,s1,s2)+1)) {
+                ret +=s1[idx1];
+                constructString(idx1+1, idx2+1,s1,s2);
+            }
+        }  
+    }
+    
+    int solve(int idx1, int idx2, string &s1, string &s2) {
+        
+        if(idx1 >= length1 && idx2 >= length2) return 0;
+        else if(idx1 >= length1) return length2- idx2;
+        else if(idx2 >= length2) return length1- idx1;
+        else if(dp[idx1][idx2] != -1) return dp[idx1][idx2];
+        else {
+            int ret = solve(idx1+1,idx2,s1,s2)+1;
+            ret = min(ret, solve(idx1,idx2+1,s1,s2)+1);
+            if(s1[idx1] == s2[idx2]) {
+                ret = min(ret , solve(idx1+1, idx2+1, s1,s2)+1);
+            }
+            dp[idx1][idx2] = ret;
+            return dp[idx1][idx2];
+        }
+    }
+
+public:
+    
+    Solution() {
+        memset(dp,-1,sizeof dp);
+    }
+    
+    string shortestCommonSupersequence(string str1, string str2) {
+        length1 = str1.length();
+        length2 = str2.length();
+        solve(0,0,str1,str2);
+        constructString(0,0,str1,str2);
+        return ret;
+    }
+};
