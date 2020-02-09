@@ -1,0 +1,36 @@
+
+```class Solution {
+    struct node{
+        int value;
+        int label;
+        node(int v,int l):value(v),label(l){}
+    };
+public:
+    
+    int largestValsFromLabels(vector<int>& values, vector<int>& labels, int num_wanted, int use_limit) {
+        
+        int res=0;
+        int cnt=0;
+        unordered_map<int,int> labelUsedTimes;
+        vector<node*> cache;
+        for(int i=0;i<values.size();++i){
+            node* n=new node(values[i],labels[i]);
+            cache.emplace_back(n);
+        }
+        
+        sort(cache.begin(),cache.end(),[](node* a,node* b){
+            return a->value > b->value;
+        } );
+        
+        for(int i=0;i<cache.size();++i){
+            if(labelUsedTimes[cache[i]->label]++>=use_limit) continue;
+            res+=cache[i]->value;
+            if(++cnt>=num_wanted) return res;
+            
+        }
+        
+        return res;
+    }
+};
+
+Time(O(nlogn))
