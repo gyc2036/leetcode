@@ -1,0 +1,27 @@
+int cmpfunc(const int* a, const int* b){
+    return *a - *b;
+}
+
+int twoSumLessThanK(int* A, int ASize, int K){
+    qsort(A, ASize, sizeof(int), cmpfunc);
+    
+    int l = 0;
+    int r = ASize-1;
+    int temp;
+    int ret = -1;
+    while (l<r){
+        if((A[l] + A[r])>=K){
+            r--;
+            continue;
+        }
+        temp = A[l] + A[r]; 
+        if(ret == -1)
+            ret = temp;
+        else{
+            if(temp > ret)
+                ret = temp;
+        }
+        l++;
+    }
+    return ret;
+}
