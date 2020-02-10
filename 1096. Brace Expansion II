@@ -1,0 +1,61 @@
+class Solution {
+public:
+    int end;
+
+    string get_word(string& expression, int& pos) {
+        string result;
+        while('a' <= expression[pos] && expression[pos] <= 'z') {
+            result += expression[pos++];
+        }
+        return result;
+    }
+
+    void set_union(set<string>& set1, set<string> set2){ // insert into set1
+        for(auto& s : set2) {
+            set1.insert(s);
+        }
+    }
+
+    void set_multiply(set<string>& set1, set<string> set2) {
+        set<string> set;
+        string s;
+        for(auto& s1: set1) {
+            for (auto& s2: set2) {
+                s = s1 + s2;
+                set.insert(s);
+            }
+        }
+        swap(set1, set);
+    }
+
+    // 计算一次 笛卡尔积所在的优先级 
+    // 对于 {a, {b,c}{d,e}}，a是在{b,c}{d,e}上两层（递归层数）的
+    set<string> get_set(string& expression, int& pos) { 
+        set<string> s = {""}; // 用于记录最终的set
+        while(pos<end && expression[pos]!='}') { // 遇到紧邻的右括号，到达递归终点
+            switch (expression[pos]) {
+            case '{': // 如果计算完的部分的后面，紧跟着 '{'，需要计算笛卡尔积（递归），运算结果与算完的部分做笛卡尔积。这里没有优先级的问题
+                pos++;
+                set_multiply(s, get_set(expression, pos));
+                pos++; // 算完了，跳过 '}'，要lookahead一位
+                break;
+            case ',': // 对于',' 递归计算（）后，取交集
+                pos++;
+                set_union(s, get_set(expression, pos)); //这里的get_set() 体现了优先级，先算笛卡尔积。
+                break;
+            default:
+                set_multiply(s, set<string>({get_word(expression, pos)}));
+                break;
+            }
+        }
+        return s;
+    }
+
+    vector<string> braceExpansionII(string expression) { 
+        int pos = 0;
+        end = expression.length(); 
+        set<string> res_set = {""};
+        set_multiply(res_set, get_set(expression, pos));
+        return vector<string>(res_set.begin(), res_set.end());
+    }
+};
