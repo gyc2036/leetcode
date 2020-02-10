@@ -1,0 +1,29 @@
+SELECT Table1.inst_dt AS
+install_dt,
+Table1.installs AS
+installs,
+Ifnull(Round(( Table2.no_of_players / Table1.installs ), 2), 0) AS
+Day1_retention
+FROM (SELECT S.install_dt AS inst_dt,
+Count(player_id) AS installs
+FROM (SELECT player_id,
+Min(event_date) AS install_dt
+FROM activity
+GROUP BY player_id) AS S
+GROUP BY install_dt) Table1
+LEFT JOIN (SELECT install_date,
+Count(pl_id) AS no_of_players
+FROM (SELECT DISTINCT( first_login_date ) AS install_date,
+T2.player_id AS pl_id
+FROM (SELECT player_id,
+Min(event_date) AS first_login_date
+FROM activity
+GROUP BY player_id) T1
+LEFT JOIN activity T2
+ON T1.player_id = T2.player_id
+AND T1.first_login_date =
+T2.event_date - 1)
+S
+GROUP BY install_date)Table2
+ON Table1.inst_dt = Table2.install_date
+GROUP BY Table1.inst_dt
