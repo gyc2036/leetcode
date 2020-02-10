@@ -1,0 +1,21 @@
+class Solution {
+    const int MAX_LOCATIONS=1001;//since 0 <= trips[i][1] < trips[i][2] <= 1000
+public:
+      bool carPooling(vector<vector<int>>& trips, int capacity) {
+         int locations [MAX_LOCATIONS]= {};
+          for (auto t : trips) {
+              int num_passengers = t[0];
+              int start = t[1];
+              int end = t[2];
+              locations[start]+=num_passengers;
+              locations[end]-=num_passengers;
+          }
+          
+          int count = 0;
+          for(int i= 0; i<MAX_LOCATIONS;i++){
+              count+=locations[i];
+              if (count>capacity) return false;
+          }
+          return true;
+      }
+};
