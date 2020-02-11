@@ -1,0 +1,45 @@
+int ceilToPow2(int x) {
+    --x;
+    x |= x >> 1;
+    x |= x >> 2;
+    x |= x >> 4;
+    for (int i = 1; i < sizeof(int); i <<= 1) {
+        x |= x >> (i << 3);
+    }
+    ++x;
+    return x;
+}
+
+class Solution {
+public:
+    int minHeightShelves(vector<vector<int>>& books, int shelf_width) {
+        const int n = books.size();
+        int dp_mask = ceilToPow2(shelf_width + 1); // ceil to pow2 to use fast operator & instead of %
+        // it is enough to store only shelf_width + 1 previous values of dynamic programming 
+        vector<vector<int>> dp(dp_mask, vector<int>(3, 0)); // 0 - total height, 1 - last shelf height, 2 - last shelf free space
+        dp_mask--;
+        
+        for (int i = 0; i < n; ++i) {
+            int shelf_free_space = shelf_width - books[i][0];
+            int shelf_height = books[i][1];
+            int min_total_height = dp[i & dp_mask][0] + shelf_height;
+            auto& new_shelf = dp[(i + 1) & dp_mask];
+            new_shelf[0] = min_total_height;
+            new_shelf[1] = shelf_height;
+            new_shelf[2] = shelf_free_space;
+            // try to move previos books from previos shelf to new one and select minimum total heigth
+            for (int j = i - 1; j >= 0 && shelf_free_space >= books[j][0]; --j) {
+                shelf_free_space -= books[j][0];
+                shelf_height = max(shelf_height, books[j][1]);
+                min_total_height = shelf_height + dp[j & dp_mask][0];
+                if (min_total_height < new_shelf[0]) {
+                    new_shelf[0] = min_total_height;
+                    new_shelf[1] = shelf_height;
+                    new_shelf[2] = shelf_free_space;
+                }
+            }
+        }
+        
+        return dp[n & dp_mask][0];
+    }
+};
