@@ -1,0 +1,56 @@
+class Solution {
+public:
+    class Comp {
+        public:
+        bool operator() (const pair<int, pair<int,int>>& lhs, const pair<int, pair<int,int>>& rhs) {
+            return lhs.first < rhs.first;
+        }
+    };
+    
+    vector<int> rows = {0, 0, 1, -1};
+    vector<int> cols = {1, -1, 0 , 0};
+    
+    int maximumMinimumPath(vector<vector<int>>& A) {
+        if (A.empty()) {
+            return 0;
+        }
+                
+        // Use a max heap because the first element is the minimum value seen so far
+        // and since this is a max heap, we will end up with the maximum of the minimum values
+        using qtype = pair<int, pair<int, int>>;
+        std::priority_queue<qtype, vector<qtype>, Comp> pq;
+        
+        // Start with 0,0 and the value there
+        pq.push({A[0][0], {0, 0}});
+        
+        const int m = A.size()-1;
+        const int n = A[0].size()-1;
+        
+        vector<vector<bool>> visited(m+1, vector<bool>(n+1, false));
+        while (!pq.empty()) {
+            auto v = pq.top().first;
+            auto r = pq.top().second.first;
+            auto c = pq.top().second.second;
+            pq.pop();
+            
+            if (r == m && c == n) {
+                return v;
+            }
+            
+            visited[r][c] = true;
+            
+            for (int i = 0; i < rows.size(); ++i) {
+                int a = r + rows[i];
+                int b = c + cols[i];
+                
+                if (a >= 0 && a <= m && b >= 0 && b <= n && !visited[a][b]) {
+                    pq.push({min(A[a][b], v), {a, b}});
+                }
+            }
+            
+        }
+        
+        return -1;
+        
+    }
+};
