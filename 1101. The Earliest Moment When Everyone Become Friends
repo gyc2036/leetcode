@@ -1,0 +1,52 @@
+class Solution {
+
+    private:
+    
+    int findParent(int x, int parent[]){
+        while(parent[x] != x){
+            parent[x] = parent[parent[x]];
+            x = parent[x];
+        }
+        return x;
+    }
+    
+    public:
+    
+    int earliestAcq(vector<vector<int>>& logs, int N) {
+        
+        map<int,vector<pair<int,int>>> info;
+        for(int i=0; i<logs.size(); i++){
+            info[logs[i][0]].push_back(make_pair(logs[i][1], logs[i][2]));
+        }
+        
+        int parent[N], rank[N];
+        for(int i=0; i<N; i++){
+            parent[i] = i;
+            rank[i] = 1;
+        }
+        
+        for(auto itr=info.begin(); itr!=info.end(); itr++){
+            vector<pair<int,int>> curr = itr->second;
+            for(int i=0; i<curr.size(); i++){
+                int a = curr[i].first;
+                int b = curr[i].second;
+                int p_a = findParent(a, parent);
+                int p_b = findParent(b, parent);
+                if(p_a != p_b){
+                    if(rank[p_a] > rank[p_b]){
+                        parent[p_b] = p_a;
+                        rank[p_a] += rank[p_b];
+                    }
+                    else{
+                        parent[p_a] = p_b;
+                        rank[p_b] += rank[p_a];
+                    }
+                    if(rank[p_a] == N || rank[p_b] == N)
+                        return itr->first;
+                }
+            }
+        }
+        
+        return -1;
+    }
+};
