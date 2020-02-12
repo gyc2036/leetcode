@@ -1,0 +1,15 @@
+vector<int> maxDepthAfterSplit(string seq) {
+	vector<int> depth(seq.size());
+	for (int i=0, currDepth = 0; i<seq.size(); ++i) {
+		// example: depth of string "()" is "1,1"
+		// so use prefix increment for '(' but postfix decment for ')' 
+		depth[i] = seq[i] == '(' ? ++currDepth : currDepth--;
+	}
+
+	const int maxDepth = *max_element(depth.begin(), depth.end());
+	for (int &curr : depth) {
+		// positions deeper than half depth go to B
+		curr = curr > maxDepth/2 ? 1 : 0;
+	}
+	return depth;
+}
