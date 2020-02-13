@@ -1,0 +1,9 @@
+SELECT student_id, MIN(course_id) AS course_id, grade
+FROM 
+    Enrollments
+    JOIN (SELECT student_id, MAX(grade) AS max_grade 
+          FROM Enrollments 
+          GROUP BY student_id) a USING (student_id)
+WHERE grade = max_grade
+GROUP BY 1, 3
+ORDER BY 1; 
