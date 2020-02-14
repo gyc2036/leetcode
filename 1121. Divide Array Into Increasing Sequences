@@ -1,0 +1,35 @@
+class Solution {
+public:
+    bool canDivideIntoSubsequences(vector<int>& nums, int K) {
+        if (nums.size() == 0) 
+            return K < 1;
+        
+        int max_count = 0;
+        int curr_count = 0;
+        int curr_num = nums[0];
+        for (int i = 0; i < nums.size(); ++i) {
+            if (curr_num == nums[i]) ++curr_count;
+            else {
+                max_count = max(max_count, curr_count);
+                while (i + max_count < nums.size() && nums[i] != nums[i + max_count])  {
+                    ++i;
+				    / * The code below is the second optimization discussed, which is slower in the OJ while theoretically faster.
+					i = distance(nums.begin(), lower_bound(
+                            nums.begin() + i,
+                            nums.begin() + i + max_count,
+                            nums[i + max_count]
+                        )
+                    );
+					*/
+				}
+                if (i + max_count >= nums.size())
+                    break;
+                i += max_count;
+                curr_count = max_count + 1;
+                curr_num = nums[i];
+            }
+        }
+        max_count = max(max_count, curr_count);
+        return K*max_count <= nums.size();
+    }
+};
