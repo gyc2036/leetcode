@@ -1,0 +1,17 @@
+vector<int> relativeSortArray(vector<int>& arr1, vector<int>& arr2) {
+        map<int,int> freqVal;
+        for(const auto val: arr1){
+            freqVal[val]++;
+        }
+        arr1.clear();
+        for(const auto val: arr2){
+            vector<int> temp(freqVal[val],val);
+            arr1.insert(arr1.end(),temp.begin(),temp.end());
+            freqVal.erase(val);
+        }
+        for(auto it: freqVal){
+            vector<int> temp(it.second,it.first);
+            arr1.insert(arr1.end(),temp.begin(),temp.end());
+        }
+        return arr1;
+    }
