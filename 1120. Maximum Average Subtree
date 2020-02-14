@@ -1,0 +1,19 @@
+ double maxave = 0;
+	
+    double maximumAverageSubtree(TreeNode* root) {
+        helperdfs(root);
+        return maxave;
+    }
+    
+    pair<int, int> helperdfs(TreeNode* node) {
+        if (node == NULL) return make_pair(0, 0);
+        pair<int, int> leftpair = helperdfs(node->left);
+        pair<int, int> rightpair = helperdfs(node->right);
+        
+        int cursum = leftpair.first + rightpair.first + node->val;
+        int curnum = leftpair.second + rightpair.second + 1;
+        
+        maxave = max(maxave, cursum*1.0 / curnum);
+        
+        return make_pair(cursum, curnum);
+    }
