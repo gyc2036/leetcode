@@ -1,0 +1,42 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+private:
+    int LCADepth;
+    TreeNode* lca;
+    
+    int postorderFindLCA(TreeNode* n, int currDepth) {
+        if (n == nullptr) {
+            return currDepth;
+        }
+        
+        int leftD = postorderFindLCA(n->left, currDepth+1);
+        int rightD = postorderFindLCA(n->right, currDepth+1);
+        
+        if (leftD == rightD && leftD >= LCADepth) {
+            LCADepth = leftD;
+            lca = n;
+            
+            return leftD;
+        }
+        
+        return max(leftD, rightD);
+    }
+    
+public:
+    TreeNode* lcaDeepestLeaves(TreeNode* root) {
+        LCADepth = INT_MIN;
+        lca = nullptr;
+        
+        postorderFindLCA(root, 0);
+        
+        return lca;
+    }
+};
